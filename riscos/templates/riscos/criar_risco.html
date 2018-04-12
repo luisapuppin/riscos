@@ -1,0 +1,43 @@
+{% extends 'riscos/base.html' %} {% block main_content %}
+
+<div class="container criar-macroprocesso">
+    <h2> Criar Risco </h2> <br>
+    <form id="filtro-cadeia" data-cadeia-url="{% url 'riscos:ajax_load_cadeia' %}">
+        {% for field in form2 %}
+        <div class="form-group">
+            {{ field.label_tag }} {{ field }} {{ field.errors }}
+        </div>
+        {% endfor %}
+    </form>
+    <form id="filtro-macroprocesso" data-macroprocesso-url="{% url 'riscos:ajax_load_macroprocesso' %}">
+        {% for field in form3 %}
+        <div class="form-group">
+            {{ field.label_tag }} {{ field }} {{ field.errors }}
+        </div>
+        {% endfor %}
+    </form>
+    <form id="filtro-processo" data-processo-url="{% url 'riscos:ajax_processo' %}">
+        {% for field in form4 %}
+        <div class="form-group">
+            {{ field.label_tag }} {{ field }} {{ field.errors }}
+        </div>
+        {% endfor %}
+    </form>
+    <form id="risco-form" class="risco-form" action="{% url 'riscos:criar_risco' %}" method="post">
+        {% csrf_token %} {% for field in form %}
+        <div class="form-group">
+            {{ field.label_tag }} {{ field }} {{ field.errors }}
+        </div>
+        {% endfor %}
+        <input type="submit" name="submit-macroprocesso" value="Criar risco" class="btn btn-success">
+        <a class="btn btn-danger" href="{% url 'riscos:listar_risco' %}">Cancelar</a>
+    </form> <br>
+</div>
+
+<script>
+    ajaxForm("#id_cadeia", "#id_plan", ["#id_cadeia", "#id_macroprocesso", "#id_id_processo"], "#filtro-cadeia", "data-cadeia-url");
+    ajaxForm("#id_macroprocesso", "#id_cadeia", ["#id_id_processo", "#id_macroprocesso"], "#filtro-macroprocesso", "data-macroprocesso-url");
+    ajaxForm("#id_id_processo", "#id_macroprocesso", ["#id_id_processo"], "#filtro-processo", "data-processo-url");
+</script>
+
+{% endblock %}

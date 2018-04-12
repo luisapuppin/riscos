@@ -1,0 +1,21 @@
+{% extends 'riscos/base.html' %} {% block main_content %}
+
+<div class="container listar-objeto">
+    <h2> Cadeias </h2> <br>
+
+    <table class="table table-striped table-hover">
+        <tr>
+            <th style="width: 50%">Planejamento Estratégico</th>
+            <th style="width: 50%">Cadeia</th>
+        </tr>
+        {% for item in lista %}
+        <tr>
+            <td style="width: 50%"><a style="color: black;" href="{% url 'riscos:detalhar_planejamento' target_id=item.id_planejamento.pk %}">{{item.id_planejamento}}</a></td>
+            <td style="width: 50%"><a style="color: black;" href="{% url 'riscos:detalhar_cadeia' target_id=item.pk %}">{{item.ds_cadeia}}</a></td>
+        </tr>
+        {% endfor %}
+    </table>
+    <br>
+    <a class="btn btn-info" href="{% url 'riscos:criar_cadeia' %}">Criar nova cadeia</a>
+</div>
+<br> {% endblock %}

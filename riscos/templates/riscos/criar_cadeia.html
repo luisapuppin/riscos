@@ -1,0 +1,17 @@
+{% extends 'riscos/base.html' %} {% block main_content %}
+
+<div class="container criar-cadeia">
+    <h2> Criar Cadeia </h2> <br>
+
+    <form class="cadeia-form" action="{% url 'riscos:criar_cadeia' %}" method="post">
+        {% csrf_token %} {% for field in form %}
+        <div class="form-group">
+            {{ field.errors }} {{ field.label_tag }} {{ field }}
+        </div>
+        {% endfor %}
+        <input type="submit" name="submit-cadeia" value="Criar cadeia" class="btn btn-success">
+        <a class="btn btn-danger" href="{% url 'riscos:listar_cadeia' %}">Cancelar</a>
+    </form> <br>
+</div>
+
+{% endblock %}

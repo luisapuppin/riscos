@@ -1,0 +1,30 @@
+{% extends 'riscos/base.html' %} {% block main_content %}
+
+<div class="container">
+    <h2> Detalhar macroprocesso </h2> <br>
+    <h4> {{observacao.ds_macroprocesso}} </h4> <br>
+    <table class="table table-striped table-hover">
+        <tr>
+            <td class="campo">ID</td>
+            <td class="valor">{{observacao.id}}</td>
+        </tr>
+        <tr>
+            <td class="campo">Nome do Macroprocesso</td>
+            <td class="valor">{{observacao.ds_macroprocesso}}</td>
+        </tr>
+        <tr>
+            <td class="campo">Cadeia</td>
+            <td class="valor">{{observacao.id_cadeia}}</td>
+        </tr>
+        <tr>
+            <td class="campo">Data de cadastro</td>
+            <td class="valor">{{observacao.dt_cadastro}}</td>
+        </tr>
+        <tr>
+            <td class="campo">Cadastrado por</td>
+            <td class="valor">{{observacao.ds_usuario}}</td>
+        </tr>
+    </table>
+    <a class="btn btn-primary" href="{{request.META.HTTP_REFERER}}">Voltar</a>
+</div>
+<br> {% endblock %}

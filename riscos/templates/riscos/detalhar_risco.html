@@ -1,0 +1,46 @@
+{% extends 'riscos/base.html' %} {% block main_content %}
+
+<div class="container">
+    <h2> Detalhar risco </h2> <br>
+    <h4> {{observacao.ds_risco}} </h4> <br>
+    <table class="table table-striped table-hover">
+        <tr>
+            <td class="campo">ID</td>
+            <td class="valor">{{observacao.id}}</td>
+        </tr>
+        <tr>
+            <td class="campo">Nome do Risco</td>
+            <td class="valor">{{observacao.ds_risco}}</td>
+        </tr>
+        <tr>
+            <td class="campo">Processo</td>
+            <td class="valor">{{observacao.id_processo}}</td>
+        </tr>
+        <tr>
+            <td class="campo">Dimensão</td>
+            <td class="valor">{{observacao.id_dimensao}}</td>
+        </tr>
+        <tr>
+            <td class="campo">Tipo</td>
+            <td class="valor">{{observacao.id_tipo_risco}}</td>
+        </tr>
+        <tr>
+            <td class="campo">Impacto</td>
+            <td class="valor">{{observacao.nr_impacto}}</td>
+        </tr>
+        <tr>
+            <td class="campo">Probabilidade</td>
+            <td class="valor">{{observacao.nr_probabilidade}}</td>
+        </tr>
+        <tr>
+            <td class="campo">Data de cadastro</td>
+            <td class="valor">{{observacao.dt_cadastro}}</td>
+        </tr>
+        <tr>
+            <td class="campo">Cadastrado por</td>
+            <td class="valor">{{observacao.ds_usuario}}</td>
+        </tr>
+    </table>
+    <a class="btn btn-primary" href="{{request.META.HTTP_REFERER}}">Voltar</a>
+</div>
+<br> {% endblock %}

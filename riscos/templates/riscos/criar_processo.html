@@ -1,0 +1,35 @@
+{% extends 'riscos/base.html' %} {% block main_content %}
+
+<div class="container criar-macroprocesso">
+    <h2> Criar Processo </h2> <br>
+    <form id="filtro-cadeia" data-cadeia-url="{% url 'riscos:ajax_load_cadeia' %}">
+        {% for field in form2 %}
+        <div class="form-group">
+            {{ field.errors }} {{ field.label_tag }} {{ field }}
+        </div>
+        {% endfor %}
+    </form>
+    <form id="filtro-macroprocesso" data-macroprocesso-url="{% url 'riscos:ajax_load_macroprocesso' %}">
+        {% for field in form3 %}
+        <div class="form-group">
+            {{ field.errors }} {{ field.label_tag }} {{ field }}
+        </div>
+        {% endfor %}
+    </form>
+    <form id="macroprocesso-form" class="macroprocesso-form" action="{% url 'riscos:criar_processo' %}" method="post">
+        {% csrf_token %} {% for field in form %}
+        <div class="form-group">
+            {{ field.errors }} {{ field.label_tag }} {{ field }}
+        </div>
+        {% endfor %}
+        <input type="submit" name="submit-macroprocesso" value="Criar processo" class="btn btn-success">
+        <a class="btn btn-danger" href="{% url 'riscos:listar_processo' %}">Cancelar</a>
+    </form> <br>
+</div>
+
+<script>
+    ajaxForm("#id_cadeia", "#id_plan", ["#id_cadeia", "#id_id_macroprocesso"], "#filtro-cadeia", "data-cadeia-url");
+    ajaxForm("#id_id_macroprocesso", "#id_cadeia", ["#id_id_macroprocesso"], "#filtro-macroprocesso", "data-macroprocesso-url");
+</script>
+
+{% endblock %}

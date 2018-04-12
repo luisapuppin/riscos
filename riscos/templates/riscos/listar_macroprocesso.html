@@ -1,0 +1,35 @@
+{% extends 'riscos/base.html' %} {% block main_content %}
+
+<div class="container listar-objeto">
+    <h2> Macroprocessos </h2> <br>
+
+    <table class="table table-striped table-hover">
+        <tr>
+            <th style="width: 33.33%">Planejamento Estratégico</th>
+            <th style="width: 33.33%">Cadeia</th>
+            <th style="width: 33.33%">Macroprocesso</th>
+        </tr>
+        {% for item in lista %}
+        <tr>
+            <td style="width: 33.33%">
+                <a style="color: black;" href="{% url 'riscos:detalhar_planejamento' target_id=item.id_cadeia.id_planejamento.pk %}">
+                    {{item.id_cadeia.id_planejamento}}
+                </a>
+            </td>
+            <td style="width: 33.33%">
+                <a style="color: black;" href="{% url 'riscos:detalhar_cadeia' target_id=item.id_cadeia.pk %}">
+                    {{item.id_cadeia}}
+                </a>
+            </td>
+            <td style="width: 33.33%">
+                <a style="color: black;" href="{% url 'riscos:detalhar_macroprocesso' target_id=item.pk %}">
+                    {{item.ds_macroprocesso}}
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    <br>
+    <a class="btn btn-info" href="{% url 'riscos:criar_macroprocesso' %}">Criar novo macroprocesso</a>
+</div>
+<br> {% endblock %}

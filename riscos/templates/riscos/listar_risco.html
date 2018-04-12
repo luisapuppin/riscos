@@ -1,0 +1,47 @@
+{% extends 'riscos/base.html' %} {% block main_content %}
+
+<div class="container listar-objeto">
+    <h2> Riscos </h2> <br>
+
+    <table class="table table-striped table-hover">
+        <tr>
+            <th style="width: 20%">Planejamento Estratégico</th>
+            <th style="width: 20%">Cadeia</th>
+            <th style="width: 20%">Macroprocesso</th>
+            <th style="width: 20%">Processo</th>
+            <th style="width: 20%">Risco</th>
+        </tr>
+        {% for item in lista %}
+        <tr>
+            <td style="width: 20%">
+                <a style="color: black;" href="{% url 'riscos:detalhar_planejamento' target_id=item.id_processo.id_macroprocesso.id_cadeia.id_planejamento.pk %}">
+                    {{item.id_processo.id_macroprocesso.id_cadeia.id_planejamento}}
+                </a>
+            </td>
+            <td style="width: 20%">
+                <a style="color: black;" href="{% url 'riscos:detalhar_cadeia' target_id=item.id_processo.id_macroprocesso.id_cadeia.pk %}">
+                    {{item.id_processo.id_macroprocesso.id_cadeia}}
+                </a>
+            </td>
+            <td style="width: 20%">
+                <a style="color: black;" href="{% url 'riscos:detalhar_macroprocesso' target_id=item.id_processo.id_macroprocesso.pk %}">
+                    {{item.id_processo.id_macroprocesso}}
+                </a>
+            </td>
+            <td style="width: 20%">
+                <a style="color: black;" href="{% url 'riscos:detalhar_processo' target_id=item.id_processo.pk %}">
+                    {{item.id_processo}}
+                </a>
+            </td>
+            <td style="width: 20%">
+                <a style="color: black;" href="{% url 'riscos:detalhar_risco' target_id=item.pk %}">
+                    {{item.ds_risco}}
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    <br>
+    <a class="btn btn-info" href="{% url 'riscos:criar_risco' %}">Criar novo risco</a>
+</div>
+<br> {% endblock %}
