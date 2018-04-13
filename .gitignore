@@ -1,6 +1,5 @@
 db\.sqlite3
-
 riscos/__pycache__/
-
+mysite/__pycache__/
 riscos/migrations/*
 !riscos/migrations/__init__.py
