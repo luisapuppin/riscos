@@ -2,5 +2,5 @@ db\.sqlite3
 
 riscos/__pycache__/
 
-riscos/migrations/
+riscos/migrations/*
 !riscos/migrations/__init__.py
