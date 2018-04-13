@@ -117,12 +117,15 @@ def detalhar_processo(request, target_id):
 # ------- RISCO -------
 def criar_risco(request):
     if request.method == 'POST':
-        form2 = forms.FormSelecionarPlanejamento()
-        form3 = forms.FormSelecionarCadeia()
-        form4 = forms.FormSelecionarMacroprocesso()
+        form2 = forms.FormSelecionarPlanejamento(request.POST)
+        form3 = forms.FormSelecionarCadeia(request.POST)
+        form4 = forms.FormSelecionarMacroprocesso(request.POST)
         form = forms.FormRisco(request.POST)
         if form.is_valid():
             instance = form.save(commit=False)
+            instance2 = form2.save(commit=False)
+            instance3 = form3.save(commit=False)
+            instance4 = form4.save(commit=False)
             instance.ds_usuario = "usuario-teste"
             instance.save()
             return redirect(reverse("riscos:listar_risco"))
