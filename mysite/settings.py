@@ -15,7 +15,6 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
 
@@ -25,7 +24,7 @@ SECRET_KEY = 'u(q&z5*m9%dr48^#e16mm7si!m39_h#_^-kvg!aoyt@u93tv%#'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["172.16.102.90", "127.0.0.1"]
+ALLOWED_HOSTS = ["172.16.102.90", "127.0.0.1", ".now.sh"]
 
 
 # Application definition
@@ -117,5 +116,10 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
-
+STATIC_ROOT = '/var/www/static'
 STATIC_URL = '/static/'
+
+STATICFILES_DIRS = [
+    "/code/mysite/riscos/static", 
+    "/code/riscos/static",
+]

@@ -1,0 +1,4 @@
+Django>=2.0
+psycopg2
+gunicorn>=19.6.0
+dj-static
