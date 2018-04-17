@@ -1,7 +1,7 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404, get_list_or_404
 from django.core import serializers
 from django.urls import reverse
-from django.http import HttpResponse
+from django.forms.models import modelformset_factory
 from django import forms
 from . import forms
 from . import models
@@ -125,7 +125,8 @@ def criar_risco(request):
             instance = form.save(commit=False)
             instance.ds_usuario = "usuario-teste"
             instance.save()
-            return redirect(reverse("riscos:listar_risco"))
+            saved_id = instance.pk
+            return redirect(reverse("riscos:criar_risco_causa", kwargs={"target_id":saved_id}))
     else:
         form2 = forms.FormSelecionarPlanejamento()
         form3 = forms.FormSelecionarCadeia()
@@ -141,8 +142,41 @@ def listar_risco(request):
 
 def detalhar_risco(request, target_id):
     observacao = get_object_or_404(models.Risco, pk=target_id)
-    context = {'observacao': observacao}
+    causas = models.Causa.objects.filter(id_risco=target_id)
+    consequencias = models.Consequencia.objects.filter(id_risco=target_id)
+    context = {
+        'observacao': observacao,
+        "causas": causas,
+        "consequencias": consequencias,
+    }
     return render(request, 'riscos/detalhar_risco.html', context)
+
+def criar_risco_causa(request, target_id):
+    RiscoCausaFormset = modelformset_factory(models.Causa, form=forms.FormCausa, extra=5)
+    RiscoConsequenciaFormset = modelformset_factory(models.Consequencia, form=forms.FormConsequencia, extra=5)
+    opcoes = models.Risco.objects.filter(pk=target_id)
+    queryset = models.Causa.objects.filter(id_risco=target_id)
+    queryset2 = models.Consequencia.objects.filter(id_risco=target_id)
+    formset = RiscoCausaFormset(request.POST or None, queryset=queryset)
+    formset2 = RiscoConsequenciaFormset(request.POST or None, queryset=queryset2)
+    if formset.is_valid() and formset2.is_valid():
+        instances = formset.save(commit=False)
+        for instance in instances:
+            instance.id_risco_id = target_id
+            instance.ds_usuario = 'usuario-teste'
+            instance.save()
+        instances2 = formset2.save(commit=False)
+        for instance in instances2:
+            instance.id_risco_id = target_id
+            instance.ds_usuario = 'usuario-teste'
+            instance.save()
+        return redirect(reverse("riscos:listar_risco"))
+    context = {
+        "formset": formset,
+        "formset2": formset2,
+        "opcoes": opcoes,
+    }
+    return render(request, "riscos/criar_risco_causa.html", context)
 
 # ------- AJAX -------
 def load_cadeia(request):
