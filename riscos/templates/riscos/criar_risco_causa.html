@@ -1,0 +1,51 @@
+{% extends 'riscos/base.html' %} {% block main_content %}
+
+<div class="container criar-macroprocesso">
+    <h2> Criar Risco </h2>
+    <hr><br>
+    <h4> {{ opcoes.ds_risco }} </h4>
+    <h5> Cadastrar causas </h5>
+    <hr>
+    <form method="POST" action="">
+        {{ formset.management_form }} {% for form in formset %} {% csrf_token %}
+        <div> {{form}} <br> </div> {% endfor %}
+        <div style="text-align: end">
+            <button type="button" class="btn btn-success" id="add-causa">+</button>
+            <button type="button" class="btn btn-danger" id="remove-causa">-</button> <br>
+        </div><br>
+        <h5> Cadastrar Consequências </h5>
+        <hr> {{ formset2.management_form }} {% for form in formset2 %} {% csrf_token %}
+        <div> {{form}} <br> </div> {% endfor %}
+        <div style="text-align: end">
+            <button type="button" class="btn btn-success" id="add-consequencia">+</button>
+            <button type="button" class="btn btn-danger" id="remove-consequencia">-</button> <br>
+        </div>
+        <hr><br>
+        <input type="submit" name="submit-risco" value="Criar risco" class="btn btn-success">
+    </form> <br>
+</div>
+
+<script>
+    $("form>div:has(input[id$=ds_causa]):gt(0)").hide();
+    $("#add-causa").on("click", function() {
+        $("form>div:has(input[id$=ds_causa]):hidden:first").show();
+    })
+    $("#remove-causa").on("click", function() {
+        if ($("form>div:has(input[id$=ds_causa]):not(:hidden)").length > 1) {
+            $("form>div:has(input[id$=ds_causa]):not(:hidden):last>input[id$=ds_causa]")[0].value = "";
+            $("form>div:has(input[id$=ds_causa]):not(:hidden):last").hide();
+        }
+    })
+
+    $("form>div:has(input[id$=ds_consequencia]):gt(0)").hide();
+    $("#add-consequencia").on("click", function() {
+        $("form>div:has(input[id$=ds_consequencia]):hidden:first").show();
+    })
+    $("#remove-consequencia").on("click", function() {
+        if ($("form>div:has(input[id$=ds_consequencia]):not(:hidden)").length > 1) {
+            $("form>div:has(input[id$=ds_consequencia]):not(:hidden):last>input[id$=ds_consequencia]")[0].value = "";
+            $("form>div:has(input[id$=ds_consequencia]):not(:hidden):last").hide();
+        }
+    })
+</script>
+{% endblock %}
