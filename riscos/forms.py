@@ -90,6 +90,28 @@ class FormRisco(forms.ModelForm):
             "id_probabilidade": forms.Select(attrs={"class": "form-control"})
         }
 
+class FormCausa(forms.ModelForm):
+    class Meta:
+        model = models.Causa
+        fields = ("ds_causa",)
+        labels = {"ds_causa": ""}
+        widgets = {
+            "ds_causa": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "Descrição da causa"}
+            )
+        }
+
+class FormConsequencia(forms.ModelForm):
+    class Meta:
+        model = models.Consequencia
+        fields = ("ds_consequencia",)
+        labels = {"ds_consequencia": ""}
+        widgets = {
+            "ds_consequencia": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "Descrição da consequência"}
+            )
+        }
+
 class FormSelecionarPlanejamento(forms.Form):
     plan = forms.ModelChoiceField(
         label="Planejamento Estratégico",
