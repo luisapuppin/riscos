@@ -6,8 +6,6 @@ RUN mkdir /code
 WORKDIR /code
 ADD . /code/
 
-RUN ls /code
-
 RUN pip install -r /code/requirements.txt
 RUN python3 manage.py collectstatic --noinput --clear
 
@@ -17,6 +15,7 @@ RUN echo Migrating.
 RUN yes yes | python3 manage.py migrate
 
 RUN python3 create_admin.py
+RUN python3 create_db.py
 
 EXPOSE 8000
 
