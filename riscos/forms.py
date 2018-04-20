@@ -71,21 +71,19 @@ class FormProcesso(forms.ModelForm):
 class FormRisco(forms.ModelForm):
     class Meta:
         model = models.Risco
-        fields = ("id_processo", "ds_risco", "id_dimensao", "id_tipo_risco",
+        fields = ("id_processo", "ds_risco", "id_tipo_risco",
                   "id_impacto", "id_probabilidade",)
         labels = {
             "id_processo": 'Nome do processo',
-            "id_dimensao": 'Dimensão do risco',
             "id_tipo_risco": "Tipo do risco",
-            "ds_risco": "Nome do risco",
+            "ds_risco": "Descrição do risco",
             "id_impacto": "Impacto",
             "id_probabilidade": "Probabilidade"
         }
         widgets = {
             "id_processo": forms.Select(attrs={"class": "selectpicker form-control"}),
-            "id_dimensao": forms.Select(attrs={"class": "selectpicker form-control"}),
             "id_tipo_risco": forms.Select(attrs={"class": "selectpicker form-control"}),
-            "ds_risco": forms.TextInput(attrs={"class": "form-control", "placeholder": "Nome do risco"}),
+            "ds_risco": forms.TextInput(attrs={"class": "form-control", "placeholder": "Descrição do risco"}),
             "id_impacto": forms.Select(attrs={"class": "form-control"}),
             "id_probabilidade": forms.Select(attrs={"class": "form-control"})
         }
@@ -111,6 +109,50 @@ class FormConsequencia(forms.ModelForm):
                 attrs={"class": "form-control", "placeholder": "Descrição da consequência"}
             )
         }
+
+class FormTratamento(forms.ModelForm):
+    class Meta:
+        model = models.Tratamento
+        fields = ("ds_controle", "ds_status",)
+        labels = {
+            "ds_status": "Status do controle",
+            "ds_controle": "Descrição do controle"
+        }
+        widgets = {
+            "ds_status": forms.Select(attrs={"class": "selectpicker form-control"}),
+            "ds_controle": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "Descreva o que será realizado"}
+            )
+        }
+
+
+class FormPlanoAcao(forms.ModelForm):
+    class Meta:
+        model = models.Plano_Acao
+        fields = ("ds_oque", "ds_quem", "ds_porque", "ds_como",)
+        labels = {
+            "ds_oque": "O que?",
+            "ds_quem": "Quem?",
+            "ds_porque": "Por que?",
+            "ds_como": "Como?",
+        }
+        widgets = {
+            "ds_oque": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "Descreva o que será realizado"}
+            ),
+            "ds_quem": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "Quem será o responsável?"}
+            ),
+            "ds_porque": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "Por que isso será feito?"}
+            ),
+            "ds_como": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "Como isso ocorrerá?"}
+            )
+        }
+
+
+# ----- FORMS AJAX ----- #
 
 class FormSelecionarPlanejamento(forms.Form):
     plan = forms.ModelChoiceField(

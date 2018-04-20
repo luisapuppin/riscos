@@ -64,11 +64,6 @@ def populate():
             {"ds_cadeia": "SUPORTE", "ds_macroprocesso": "GESTÃO DE TECNOLOGIA DA INFORMAÇÃO"},
             {"ds_cadeia": "SUPORTE", "ds_macroprocesso": "ADMINISTRAÇÃO E LOGÍSTICA"}
         ],
-        "Dimensao": [
-            {"ds_dimensao": "Agropecuária"},
-            {"ds_dimensao": "Estratégica"},
-            {"ds_dimensao": "Operacional"}
-        ],
         "Tipo_Risco": [
             {"ds_tipo_risco": "Ambientais"},
             {"ds_tipo_risco": "Climáticos"},
@@ -99,15 +94,6 @@ def populate():
     ds_usuario = "usuario-teste"
 
     print("[DATABASE] Populating database...")
-
-    for values in populate["Dimensao"]:
-        u = models.Dimensao.objects.get_or_create(
-            ds_dimensao=values["ds_dimensao"], ds_usuario=ds_usuario)
-        if u[1] == True:
-            u[0].save()
-        print("Entrada registrada!")
-    
-    print("[DATABASE] Dimensao populated!")
 
     for values in populate["Tipo_Risco"]:
         u = models.Tipo_Risco.objects.get_or_create(

@@ -37,6 +37,8 @@ urlpatterns = [
     re_path(r'^risco/criar/$', views.criar_risco, name="criar_risco"),
     re_path(r'^risco/criar/(?P<target_id>[0-9]+)/causas/$', views.criar_risco_causa,
             name="criar_risco_causa"),
+    re_path(r'^risco/criar/(?P<target_id>[0-9]+)/tratamento/$', views.criar_risco_tratamento,
+            name="criar_risco_tratamento"),
 
     # AJAX
     re_path(r'^ajax/cadeia/$', views.load_cadeia, name="ajax_load_cadeia"),
