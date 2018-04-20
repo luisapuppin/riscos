@@ -70,9 +70,9 @@ class Probabilidade(models.Model):
 
 class Risco(models.Model):
     id_processo = models.ForeignKey(Processo, on_delete=models.CASCADE)
-    id_tipo_risco = models.ForeignKey(Tipo_Risco, on_delete=models.CASCADE)
-    id_impacto = models.ForeignKey(Impacto, on_delete=models.CASCADE)
-    id_probabilidade = models.ForeignKey(Probabilidade, on_delete=models.CASCADE)
+    id_tipo_risco = models.ForeignKey(Tipo_Risco, on_delete=models.PROTECT)
+    id_impacto = models.ForeignKey(Impacto, on_delete=models.DO_NOTHING)
+    id_probabilidade = models.ForeignKey(Probabilidade, on_delete=models.DO_NOTHING)
     ds_risco = models.CharField(max_length=200)
     dt_cadastro = models.DateTimeField(auto_now_add=True)
     ds_usuario = models.CharField(max_length=30)
