@@ -94,6 +94,31 @@
     {% endif %}
     <br><br>
 
+    <h4>Tratamento (controle)</h4>
+    <hr> {% if tratamentos %}
+    <table class="table table-bordered table-hover">
+        <thead class="thead-light">
+            <tr>
+                <th style="width: 10%">Item</th>
+                <th>Descrição do controle</th>
+                <th>Status do controle</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in tratamentos %}
+            <tr>
+                <td style="width: 10%">{{ forloop.counter }}</td>
+                <td>{{item.ds_controle}}</td>
+                <td>{{item.ds_status}}</td>
+            </tr>{% endfor %}
+
+        </tbody>
+    </table>
+    {% else %}
+    <p> Nenhum tratamento registrado </p>
+    {% endif %}
+    <br><br>
+
     <div class="float-right">
         <a class="btn btn-primary" href="#">Editar risco</a>
         <a class="btn btn-dark" href="{{request.META.HTTP_REFERER}}">Voltar</a>

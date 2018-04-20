@@ -1,0 +1,33 @@
+{% extends 'riscos/base.html' %} {% block main_content %}
+
+<div class="container criar-macroprocesso">
+    <h2> Criar Risco </h2>
+    <hr><br>
+    <h4> {{ opcoes.ds_risco }} </h4>
+    <h5> Cadastrar tratamento (controles) </h5>
+    <hr>
+    <form method="POST" action="">
+        {{ formset.management_form }} {% for form in formset %} {% csrf_token %}
+        <div> {{form}} <br>
+            <hr><br> </div> {% endfor %}
+        <div style="text-align: end">
+            <button type="button" class="btn btn-success" id="add-tratamento">+</button>
+            <button type="button" class="btn btn-danger" id="remove-tratamento">-</button> <br>
+        </div><br>
+        <input type="submit" name="submit-risco" value="Criar risco" class="btn btn-success">
+    </form> <br>
+</div>
+
+<script>
+    $("form>div:has(input[id$=ds_controle]):gt(0)").hide();
+    $("#add-tratamento").on("click", function() {
+        $("form>div:has(input[id$=ds_controle]):hidden:first").show();
+    })
+    $("#remove-tratamento").on("click", function() {
+        if ($("form>div:has(input[id$=ds_controle]):not(:hidden)").length > 1) {
+            $("form>div:has(input[id$=ds_controle]):not(:hidden):last>input[id$=ds_controle]")[0].value = "";
+            $("form>div:has(input[id$=ds_controle]):not(:hidden):last").hide();
+        }
+    })
+</script>
+{% endblock %}
