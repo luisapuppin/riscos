@@ -71,11 +71,10 @@ class FormProcesso(forms.ModelForm):
 class FormRisco(forms.ModelForm):
     class Meta:
         model = models.Risco
-        fields = ("id_processo", "ds_risco", "id_dimensao", "id_tipo_risco",
+        fields = ("id_processo", "ds_risco", "id_tipo_risco",
                   "id_impacto", "id_probabilidade",)
         labels = {
             "id_processo": 'Nome do processo',
-            "id_dimensao": 'Dimensão do risco',
             "id_tipo_risco": "Tipo do risco",
             "ds_risco": "Nome do risco",
             "id_impacto": "Impacto",
@@ -83,7 +82,6 @@ class FormRisco(forms.ModelForm):
         }
         widgets = {
             "id_processo": forms.Select(attrs={"class": "selectpicker form-control"}),
-            "id_dimensao": forms.Select(attrs={"class": "selectpicker form-control"}),
             "id_tipo_risco": forms.Select(attrs={"class": "selectpicker form-control"}),
             "ds_risco": forms.TextInput(attrs={"class": "form-control", "placeholder": "Nome do risco"}),
             "id_impacto": forms.Select(attrs={"class": "form-control"}),
