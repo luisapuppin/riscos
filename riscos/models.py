@@ -40,14 +40,6 @@ class Processo(models.Model):
     def __str__(self):
         return self.ds_processo
 
-class Dimensao(models.Model):
-    ds_dimensao = models.CharField(max_length=200)
-    dt_cadastro = models.DateTimeField(auto_now_add=True)
-    ds_usuario = models.CharField(max_length=30)
-
-    def __str__(self):
-        return self.ds_dimensao
-
 class Tipo_Risco(models.Model):
     ds_tipo_risco = models.CharField(max_length=200)
     dt_cadastro = models.DateTimeField(auto_now_add=True)
@@ -78,10 +70,9 @@ class Probabilidade(models.Model):
 
 class Risco(models.Model):
     id_processo = models.ForeignKey(Processo, on_delete=models.CASCADE)
-    id_dimensao = models.ForeignKey(Dimensao, on_delete=models.CASCADE)
-    id_tipo_risco = models.ForeignKey(Tipo_Risco, on_delete=models.CASCADE)
-    id_impacto = models.ForeignKey(Impacto, on_delete=models.CASCADE)
-    id_probabilidade = models.ForeignKey(Probabilidade, on_delete=models.CASCADE)
+    id_tipo_risco = models.ForeignKey(Tipo_Risco, on_delete=models.PROTECT)
+    id_impacto = models.ForeignKey(Impacto, on_delete=models.DO_NOTHING)
+    id_probabilidade = models.ForeignKey(Probabilidade, on_delete=models.DO_NOTHING)
     ds_risco = models.CharField(max_length=200)
     dt_cadastro = models.DateTimeField(auto_now_add=True)
     ds_usuario = models.CharField(max_length=30)
@@ -106,3 +97,31 @@ class Consequencia(models.Model):
 
     def __str__(self):
         return self.ds_consequencia
+
+class Tratamento(models.Model):
+    STATUS_CHOICE = (
+        ("Inexistente", "Inexistente"),
+        ("Ineficaz", "Ineficaz"),
+        ("Ineficiente", "Ineficiente"),
+        ("Existente", "Existente"),
+    )
+    id_risco = models.ForeignKey(Risco, on_delete=models.CASCADE)
+    ds_status = models.CharField(max_length=30, choices=STATUS_CHOICE, default="Inexistente",)
+    ds_controle = models.CharField(max_length=500)
+    dt_cadastro = models.DateTimeField(auto_now_add=True)
+    ds_usuario = models.CharField(max_length=30)
+
+    def __str__(self):
+        return self.ds_controle
+
+class Plano_Acao(models.Model):
+    id_risco = models.ForeignKey(Risco, on_delete=models.CASCADE)
+    ds_oque = models.CharField(max_length=500)
+    ds_quem = models.CharField(max_length=500)
+    ds_porque = models.CharField(max_length=500)
+    ds_como = models.CharField(max_length=500)
+    dt_cadastro = models.DateTimeField(auto_now_add=True)
+    ds_usuario = models.CharField(max_length=30)
+
+    def __str__(self):
+        return self.ds_oque
