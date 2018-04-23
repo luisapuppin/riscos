@@ -128,17 +128,17 @@ def detalhar_processo(request, target_id):
 
 # ------- RISCO -------
 def criar_risco(request):
-    RiscoCausaFormset = modelformset_factory(models.Causa, form=forms.FormCausa, extra=5, min_num=1)
-    RiscoConsequenciaFormset = modelformset_factory(models.Consequencia, form=forms.FormConsequencia, extra=5, min_num=1)
-    queryset = models.Causa.objects.none()
-    queryset2 = models.Consequencia.objects.none()
+    N_EXTRA = 5
+    RiscoCausaFormset = modelformset_factory(   
+        models.CausaConsequencia, form=forms.FormCausaConsequencia, extra=(N_EXTRA * 2 ) + 1, min_num=1, 
+    )
+    queryset = models.CausaConsequencia.objects.none()
     formset = RiscoCausaFormset(request.POST or None, queryset=queryset)
-    formset2 = RiscoConsequenciaFormset(request.POST or None, queryset=queryset2)
     form2 = forms.FormSelecionarPlanejamento()
     form3 = forms.FormSelecionarCadeia()
     form4 = forms.FormSelecionarMacroprocesso()
     form = forms.FormRisco(request.POST or None)
-    if form.is_valid() and formset.is_valid() and formset2.is_valid():
+    if form.is_valid() and formset.is_valid():
         instance = form.save(commit=False)
         instance.ds_usuario = "usuario-teste"
         instance.save()
@@ -148,20 +148,16 @@ def criar_risco(request):
             insta.id_risco_id = saved_id
             insta.ds_usuario = 'usuario-teste'
             insta.save()
-        instances2 = formset2.save(commit=False)
-        for insta in instances2:
-            insta.id_risco_id = saved_id
-            insta.ds_usuario = 'usuario-teste'
-            insta.save()
-        return redirect(reverse("riscos:criar_risco_tratamento", kwargs={"target_id":saved_id}))
+        return redirect(reverse("riscos:detalhar_risco", kwargs={"target_id":saved_id}))
     context = {
         "form": form,
         "form2": form2,
         "form3": form3,
         "form4": form4,
         "formset": formset,
-        "formset2": formset2,
         "active_bar": "risco",
+        "causa": ":" + str(N_EXTRA + 1),
+        "conseq": str(N_EXTRA + 1) + ":",
     }
     return render(request, 'riscos/criar_risco.html', context)
 
@@ -172,8 +168,8 @@ def listar_risco(request):
 
 def detalhar_risco(request, target_id):
     observacao = get_object_or_404(models.Risco, pk=target_id)
-    causas = models.Causa.objects.filter(id_risco=target_id)
-    consequencias = models.Consequencia.objects.filter(id_risco=target_id)
+    causas = models.CausaConsequencia.objects.filter(id_risco=target_id, ds_tipo="Causa")
+    consequencias = models.CausaConsequencia.objects.filter(id_risco=target_id, ds_tipo="Consequência")
     tratamentos = models.Tratamento.objects.filter(id_risco=target_id)
     context = {
         'observacao': observacao,
@@ -183,44 +179,6 @@ def detalhar_risco(request, target_id):
         "active_bar": "risco",
     }
     return render(request, 'riscos/detalhar_risco.html', context)
-
-def criar_risco_causa(request, target_id):
-    RiscoCausaFormset = modelformset_factory(
-        models.Causa,
-        form=forms.FormCausa,
-        extra=5,
-        min_num=1
-    )
-    RiscoConsequenciaFormset = modelformset_factory(
-        models.Consequencia,
-        form=forms.FormConsequencia,
-        extra=5,
-        min_num=1
-    )
-    opcoes = models.Risco.objects.filter(pk=target_id)
-    queryset = models.Causa.objects.filter(id_risco=target_id)
-    queryset2 = models.Consequencia.objects.filter(id_risco=target_id)
-    formset = RiscoCausaFormset(request.POST or None, queryset=queryset)
-    formset2 = RiscoConsequenciaFormset(request.POST or None, queryset=queryset2)
-    if formset.is_valid() and formset2.is_valid():
-        instances = formset.save(commit=False)
-        for instance in instances:
-            instance.id_risco_id = target_id
-            instance.ds_usuario = 'usuario-teste'
-            instance.save()
-        instances2 = formset2.save(commit=False)
-        for instance in instances2:
-            instance.id_risco_id = target_id
-            instance.ds_usuario = 'usuario-teste'
-            instance.save()
-        return redirect(reverse("riscos:detalhar_risco", kwargs={"target_id":target_id}))
-    context = {
-        "formset": formset,
-        "formset2": formset2,
-        "opcoes": opcoes,
-        "active_bar": "risco",
-    }
-    return render(request, "riscos/criar_risco_causa.html", context)
 
 def criar_risco_tratamento(request, target_id):
     RiscoTratamentoFormset = modelformset_factory(

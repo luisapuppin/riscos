@@ -61,7 +61,7 @@
             {% for item in causas %}
             <tr>
                 <td style="width: 10%">{{ forloop.counter }}</td>
-                <td>{{ item.ds_causa }}</td>
+                <td>{{ item.ds_causa_consequencia }}</td>
             </tr>{% endfor %}
 
         </tbody>
@@ -84,7 +84,7 @@
             {% for item in consequencias %}
             <tr>
                 <td style="width: 10%">{{ forloop.counter }}</td>
-                <td>{{item.ds_consequencia}}</td>
+                <td>{{item.ds_causa_consequencia}}</td>
             </tr>{% endfor %}
 
         </tbody>
