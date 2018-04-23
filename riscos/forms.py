@@ -88,26 +88,16 @@ class FormRisco(forms.ModelForm):
             "id_probabilidade": forms.Select(attrs={"class": "form-control"})
         }
 
-class FormCausa(forms.ModelForm):
+class FormCausaConsequencia(forms.ModelForm):
     class Meta:
-        model = models.Causa
-        fields = ("ds_causa",)
-        labels = {"ds_causa": ""}
+        model = models.CausaConsequencia
+        fields = ("ds_causa_consequencia", "ds_tipo",)
+        labels = {"ds_causa_consequencia": "", "ds_tipo": ""}
         widgets = {
-            "ds_causa": forms.TextInput(
-                attrs={"class": "form-control", "placeholder": "Descrição da causa"}
-            )
-        }
-
-class FormConsequencia(forms.ModelForm):
-    class Meta:
-        model = models.Consequencia
-        fields = ("ds_consequencia",)
-        labels = {"ds_consequencia": ""}
-        widgets = {
-            "ds_consequencia": forms.TextInput(
-                attrs={"class": "form-control", "placeholder": "Descrição da consequência"}
-            )
+            "ds_causa_consequencia": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "Descrição"}
+            ),
+            "ds_tipo": forms.Select(attrs={"class": "selectpicker form-control", "style":"display:none"}),
         }
 
 class FormTratamento(forms.ModelForm):

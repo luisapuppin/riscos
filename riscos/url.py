@@ -35,8 +35,6 @@ urlpatterns = [
     re_path(r'^risco/(?P<target_id>[0-9]+)/$', views.detalhar_risco,
             name="detalhar_risco"),
     re_path(r'^risco/criar/$', views.criar_risco, name="criar_risco"),
-    re_path(r'^risco/criar/(?P<target_id>[0-9]+)/causas/$', views.criar_risco_causa,
-            name="criar_risco_causa"),
     re_path(r'^risco/criar/(?P<target_id>[0-9]+)/tratamento/$', views.criar_risco_tratamento,
             name="criar_risco_tratamento"),
 
