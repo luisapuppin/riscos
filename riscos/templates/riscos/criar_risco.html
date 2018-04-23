@@ -41,20 +41,26 @@
             {{ field.label_tag }} {{ field }} {{ field.errors }}
         </div>
         {% endif %} {% endfor %}<br>
+        <div id="form-causa">
         <h5> Causas do Risco </h5>
-        <hr> {{ formset.management_form }} {% for form in formset %} {% csrf_token %}
-        <div> {{form}} <br> </div> {% endfor %}
+        <hr> {{ formset.management_form }}
+               {% for form in formset|slice:causa %}
+                 {% csrf_token %} <div> {{form}} <br> </div>
+               {% endfor %}
         <div style="text-align: end">
             <button type="button" class="btn btn-success" id="add-causa">+</button>
             <button type="button" class="btn btn-danger" id="remove-causa">-</button> <br>
-        </div><br>
+        </div></div><br>
+        <div id="form-consequencia">
         <h5> Consequências do Risco </h5>
-        <hr> {{ formset2.management_form }} {% for form in formset2 %} {% csrf_token %}
-        <div> {{form}} <br> </div> {% endfor %}
+        <hr> {{ formset2.management_form }}
+               {% for form in formset|slice:conseq %}
+                 {% csrf_token %} <div> {{form}} <br> </div>
+               {% endfor %}
         <div style="text-align: end">
             <button type="button" class="btn btn-success" id="add-consequencia">+</button>
             <button type="button" class="btn btn-danger" id="remove-consequencia">-</button> <br>
-        </div><br>
+        </div></div><br>
         <div>
             <input type="submit" name="submit-macroprocesso" value="Criar risco" class="btn btn-success">
             <a class="btn btn-danger" href="{% url 'riscos:listar_risco' %}">Cancelar</a>
@@ -66,27 +72,49 @@
     ajaxForm("#id_cadeia", "#id_plan", ["#id_cadeia", "#id_macroprocesso", "#id_id_processo"], "#filtro-cadeia", "data-cadeia-url");
     ajaxForm("#id_macroprocesso", "#id_cadeia", ["#id_id_processo", "#id_macroprocesso"], "#filtro-macroprocesso", "data-macroprocesso-url");
     ajaxForm("#id_id_processo", "#id_macroprocesso", ["#id_id_processo"], "#filtro-processo", "data-processo-url");
-    $("form>div:has(input[id$=ds_causa]):gt(0)").hide();
+    $("#form-causa>div:has(input[id$=ds_causa_consequencia]):gt(0)").hide();
     $("#add-causa").on("click", function() {
-        $("form>div:has(input[id$=ds_causa]):hidden:first").show();
+        $("#form-causa>div:has(input[id$=ds_causa_consequencia]):hidden:first").show();
     })
     $("#remove-causa").on("click", function() {
-        if ($("form>div:has(input[id$=ds_causa]):not(:hidden)").length > 1) {
-            $("form>div:has(input[id$=ds_causa]):not(:hidden):last>input[id$=ds_causa]")[0].value = "";
-            $("form>div:has(input[id$=ds_causa]):not(:hidden):last").hide();
+        if ($("#form-causa>div:has(input[id$=ds_causa_consequencia]):not(:hidden)").length > 1) {
+            $("#form-causa>div:has(input[id$=ds_causa_consequencia]):not(:hidden):last>input[id$=ds_causa_consequencia]")[0].value = "";
+            $("#form-causa>div:has(input[id$=ds_causa_consequencia]):not(:hidden):last").hide();
         }
     })
 
-    $("form>div:has(input[id$=ds_consequencia]):gt(0)").hide();
+    $("#form-consequencia>div:has(input[id$=ds_causa_consequencia]):gt(0)").hide();
     $("#add-consequencia").on("click", function() {
-        $("form>div:has(input[id$=ds_consequencia]):hidden:first").show();
+        $("#form-consequencia>div:has(input[id$=ds_causa_consequencia]):hidden:first").show();
     })
     $("#remove-consequencia").on("click", function() {
-        if ($("form>div:has(input[id$=ds_consequencia]):not(:hidden)").length > 1) {
-            $("form>div:has(input[id$=ds_consequencia]):not(:hidden):last>input[id$=ds_consequencia]")[0].value = "";
-            $("form>div:has(input[id$=ds_consequencia]):not(:hidden):last").hide();
+        if ($("#form-consequencia>div:has(input[id$=ds_causa_consequencia]):not(:hidden)").length > 1) {
+            $("#form-consequencia>div:has(input[id$=ds_causa_consequencia]):not(:hidden):last>input[id$=ds_causa_consequencia]")[0].value = "";
+            $("#form-consequencia>div:has(input[id$=ds_causa_consequencia]):not(:hidden):last").hide();
         }
     })
+    $("input[name='submit-macroprocesso'").click(function() {
+        $("#form-causa input[name$='ds_causa_consequencia']").each(function(i, elem) {
+            //console.log(i, elem.value)
+            if (elem.value != "") {
+                console.log("#form-causa select option[value='Causa']:eq(" + i + ")")
+                console.log($("#form-causa select option[value='Causa']:eq(" + i + ")")[0])
+                $("#form-causa select option[value='Causa']:eq(" + i + ")").attr('selected','selected');
+                
+            }
+        })
+
+        $("#form-consequencia input[name$='ds_causa_consequencia']").each(function(i, elem) {
+            //console.log(i, elem.value)
+            if (elem.value != "") {
+                console.log("#form-consequencia select option[value='Consequência']:eq(" + i + ")")
+                console.log($("#form-consequencia select option[value='Consequência']:eq(" + i + ")")[0])
+                $("#form-consequencia select option[value='Consequência']:eq(" + i + ")").attr('selected','selected');
+                
+            }
+        })
+    })
+    
 </script>
 
 {% endblock %}

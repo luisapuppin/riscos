@@ -80,23 +80,19 @@ class Risco(models.Model):
     def __str__(self):
         return self.ds_risco
 
-class Causa(models.Model):
+class CausaConsequencia(models.Model):
+    STATUS_CHOICE = (
+        ("Causa", "Causa"),
+        ("Consequência", "Consequência"),
+    )
     id_risco = models.ForeignKey(Risco, on_delete=models.CASCADE)
-    ds_causa = models.CharField(max_length=500)
+    ds_tipo = models.CharField(max_length=30, choices=STATUS_CHOICE,)
+    ds_causa_consequencia = models.CharField(max_length=500)
     dt_cadastro = models.DateTimeField(auto_now_add=True)
     ds_usuario = models.CharField(max_length=30)
 
     def __str__(self):
-        return self.ds_causa
-
-class Consequencia(models.Model):
-    id_risco = models.ForeignKey(Risco, on_delete=models.CASCADE)
-    ds_consequencia = models.CharField(max_length=500)
-    dt_cadastro = models.DateTimeField(auto_now_add=True)
-    ds_usuario = models.CharField(max_length=30)
-
-    def __str__(self):
-        return self.ds_consequencia
+        return self.ds_causa_consequencia
 
 class Tratamento(models.Model):
     STATUS_CHOICE = (
