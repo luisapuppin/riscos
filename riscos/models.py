@@ -96,12 +96,12 @@ class CausaConsequencia(models.Model):
 
 class Tratamento(models.Model):
     STATUS_CHOICE = (
-        ("Inexistente", "Inexistente"),
+        ("Inexistente", "Inexistente") ,
         ("Ineficaz", "Ineficaz"),
         ("Ineficiente", "Ineficiente"),
         ("Existente", "Existente"),
     )
-    id_risco = models.ForeignKey(Risco, on_delete=models.PROTECT)
+    id_causa_consequencia = models.ForeignKey(CausaConsequencia, on_delete=models.PROTECT)
     ds_status = models.CharField(max_length=30, choices=STATUS_CHOICE, default="Inexistente",)
     ds_controle = models.CharField(max_length=500)
     dt_cadastro = models.DateTimeField(auto_now_add=True)
@@ -111,13 +111,17 @@ class Tratamento(models.Model):
         return self.ds_controle
 
 class Plano_Acao(models.Model):
-    id_risco = models.ForeignKey(Risco, on_delete=models.PROTECT)
+    id_tratamento = models.ForeignKey(Tratamento, on_delete=models.PROTECT)
     ds_oque = models.CharField(max_length=500)
     ds_quem = models.CharField(max_length=500)
     ds_porque = models.CharField(max_length=500)
+    ds_onde = models.CharField(max_length=500)
+    ds_quando = models.DateField() 
     ds_como = models.CharField(max_length=500)
+    ds_quanto = models.FloatField(validators=[MinValueValidator(0)]) 
     dt_cadastro = models.DateTimeField(auto_now_add=True)
     ds_usuario = models.CharField(max_length=30)
 
     def __str__(self):
         return self.ds_oque
+

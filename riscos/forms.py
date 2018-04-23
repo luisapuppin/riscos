@@ -119,14 +119,21 @@ class FormTratamento(forms.ModelForm):
 class FormPlanoAcao(forms.ModelForm):
     class Meta:
         model = models.Plano_Acao
-        fields = ("ds_oque", "ds_quem", "ds_porque", "ds_como",)
+        fields = ("id_causa_consequencia", "ds_oque", "ds_quem", "ds_porque", "ds_onde", "ds_quando", "ds_como", "ds_quanto")
         labels = {
+            "id_causa_consequencia": "Alvo do controle",
             "ds_oque": "O que?",
             "ds_quem": "Quem?",
             "ds_porque": "Por que?",
+            "ds_onde": "Onde?",
+            "ds_quando": "Quando?",
             "ds_como": "Como?",
+            "ds_quanto": "Quanto?",
         }
         widgets = {
+            "id_causa_consequencia": forms.Select(
+                attrs={"class": "selectpicker form-control"}
+            ),
             "ds_oque": forms.TextInput(
                 attrs={"class": "form-control", "placeholder": "Descreva o que será realizado"}
             ),
@@ -136,8 +143,17 @@ class FormPlanoAcao(forms.ModelForm):
             "ds_porque": forms.TextInput(
                 attrs={"class": "form-control", "placeholder": "Por que isso será feito?"}
             ),
+            "ds_onde": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "Onde isso será feito?"}
+            ),
+            "ds_quando": forms.DateInput(
+                attrs={"class": "form-control"}, format="%d/%m/%Y", 
+            ),
             "ds_como": forms.TextInput(
                 attrs={"class": "form-control", "placeholder": "Como isso ocorrerá?"}
+            ),
+            "ds_quanto": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "Quanto isso custará (R$) ?"}
             )
         }
 

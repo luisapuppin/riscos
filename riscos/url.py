@@ -38,6 +38,12 @@ urlpatterns = [
     re_path(r'^risco/criar/(?P<target_id>[0-9]+)/tratamento/$', views.criar_risco_tratamento,
             name="criar_risco_tratamento"),
 
+    # PLANO DE AÇÃO
+    re_path(r'^plano/$', views.listar_plano_acao, name="listar_plano_acao"),
+    re_path(r'^plano/(?P<target_id>[0-9]+)/$', views.detalhar_plano_acao,
+            name="detalhar_plano_acao"),
+    re_path(r'^plano/criar/$', views.criar_plano_acao, name="criar_plano_acao"),
+
     # AJAX
     re_path(r'^ajax/cadeia/$', views.load_cadeia, name="ajax_load_cadeia"),
     re_path(r'^ajax/macroprocesso/$', views.load_macroprocesso, name="ajax_load_macroprocesso"),
