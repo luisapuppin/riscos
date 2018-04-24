@@ -108,7 +108,7 @@ class Tratamento(models.Model):
     ds_quem = models.CharField(max_length=500)
     ds_porque = models.CharField(max_length=500)
     ds_onde = models.CharField(max_length=500)
-    ds_quando = models.DateField() 
+    dt_quando = models.DateField() 
     ds_como = models.CharField(max_length=500)
     ds_quanto = models.FloatField(validators=[MinValueValidator(0)]) 
     dt_cadastro = models.DateTimeField(auto_now_add=True)

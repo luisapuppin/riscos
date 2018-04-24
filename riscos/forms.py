@@ -104,7 +104,7 @@ class FormTratamento(forms.ModelForm):
     class Meta:
         model = models.Tratamento
         fields = ("id_causa_consequencia", "ds_controle", "ds_status", "ds_oque", "ds_quem", "ds_porque",
-                  "ds_onde", "ds_quando", "ds_como", "ds_quanto",)
+                  "ds_onde", "dt_quando", "ds_como", "ds_quanto",)
         labels = {
             "id_causa_consequencia": "Controle sobre:",
             "ds_status": "Status do controle",
@@ -113,7 +113,7 @@ class FormTratamento(forms.ModelForm):
             "ds_quem": "Quem?",
             "ds_porque": "Por que?",
             "ds_onde": "Onde?",
-            "ds_quando": "Quando?",
+            "dt_quando": "Quando?",
             "ds_como": "Como?",
             "ds_quanto": "Quanto?",
         }
@@ -139,7 +139,7 @@ class FormTratamento(forms.ModelForm):
             "ds_onde": forms.TextInput(
                 attrs={"class": "form-control", "placeholder": "Onde isso será feito?"}
             ),
-            "ds_quando": forms.DateInput(
+            "dt_quando": forms.DateInput(
                 attrs={"class": "form-control"}, format="%d/%m/%Y", 
             ),
             "ds_como": forms.TextInput(
@@ -174,5 +174,21 @@ class FormSelecionarMacroprocesso(forms.Form):
         label="Macroprocesso",
         queryset=models.Macroprocesso.objects.none(),
         empty_label="Selecione o Macroprocesso",
+        widget=forms.Select(attrs={'class':'form-control', 'readonly': "True"})
+    )
+
+class FormSelecionarProcesso(forms.Form):
+    processo = forms.ModelChoiceField(
+        label="Processo",
+        queryset=models.Processo.objects.none(),
+        empty_label="Selecione o Processo",
+        widget=forms.Select(attrs={'class':'form-control', 'readonly': "True"})
+    )
+
+class FormSelecionarRisco(forms.Form):
+    risco = forms.ModelChoiceField(
+        label="Risco",
+        queryset=models.Risco.objects.none(),
+        empty_label="Selecione o Risco",
         widget=forms.Select(attrs={'class':'form-control', 'readonly': "True"})
     )

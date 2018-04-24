@@ -1,3 +1,5 @@
+from datetime import date
+
 from django.shortcuts import render, redirect, get_object_or_404, get_list_or_404
 from django.core import serializers
 from django.urls import reverse
@@ -185,6 +187,12 @@ def detalhar_risco(request, target_id):
 
 # ------- TRATAMENTO -------
 def criar_tratamento(request):
+    form2 = forms.FormSelecionarPlanejamento()
+    form3 = forms.FormSelecionarCadeia()
+    form4 = forms.FormSelecionarMacroprocesso()
+    form5 = forms.FormSelecionarProcesso()
+    form6 = forms.FormSelecionarRisco()
+    
     form = forms.FormTratamento(request.POST or None)
     if form.is_valid():
         instance = form.save(commit=False)
@@ -195,7 +203,11 @@ def criar_tratamento(request):
 
     context = {
         "form": form,
-        # "form2": form2,
+        "form2": form2,
+        "form3": form3,
+        "form4": form4,
+        "form5": form5,
+        "form6": form6,
         "active_bar": "controle",
     }
     return render(request, "riscos/criar_tratamento.html", context)
@@ -212,6 +224,8 @@ def detalhar_tratamento(request, target_id):
     observacao = get_object_or_404(models.Tratamento, pk=target_id)
     context = {
         'observacao': observacao,
+        "hoje": date.today(),
+        # "cor": cor,
         "active_bar": "controle",
     }
     return render(request, "riscos/detalhar_tratamento.html", context)
@@ -231,3 +245,13 @@ def load_processo(request):
     id_get = request.GET.get('targetId')
     opcoes = models.Processo.objects.filter(id_macroprocesso=id_get).order_by('ds_processo')
     return render(request, 'riscos/dropdown_processo.html', {'opcoes': opcoes})
+
+def load_risco(request):
+    id_get = request.GET.get('targetId')
+    opcoes = models.Risco.objects.filter(id_processo=id_get).order_by('ds_risco')
+    return render(request, 'riscos/dropdown_risco.html', {'opcoes': opcoes})
+
+def load_causa_consequencia(request):
+    id_get = request.GET.get('targetId')
+    opcoes = models.CausaConsequencia.objects.filter(id_risco=id_get).order_by('ds_causa_consequencia')
+    return render(request, 'riscos/dropdown_causa_consequencia.html', {'opcoes': opcoes})
