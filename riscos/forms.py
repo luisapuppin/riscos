@@ -91,7 +91,7 @@ class FormRisco(forms.ModelForm):
 class FormCausaConsequencia(forms.ModelForm):
     class Meta:
         model = models.CausaConsequencia
-        fields = ("ds_causa_consequencia", "ds_tipo",)
+        fields = ("ds_causa_consequencia", "ds_tipo", )
         labels = {"ds_causa_consequencia": "", "ds_tipo": ""}
         widgets = {
             "ds_causa_consequencia": forms.TextInput(
@@ -103,25 +103,12 @@ class FormCausaConsequencia(forms.ModelForm):
 class FormTratamento(forms.ModelForm):
     class Meta:
         model = models.Tratamento
-        fields = ("ds_controle", "ds_status",)
+        fields = ("id_causa_consequencia", "ds_controle", "ds_status", "ds_oque", "ds_quem", "ds_porque",
+                  "ds_onde", "ds_quando", "ds_como", "ds_quanto",)
         labels = {
+            "id_causa_consequencia": "Controle sobre:",
             "ds_status": "Status do controle",
-            "ds_controle": "Descrição do controle"
-        }
-        widgets = {
-            "ds_status": forms.Select(attrs={"class": "selectpicker form-control"}),
-            "ds_controle": forms.TextInput(
-                attrs={"class": "form-control", "placeholder": "Descreva o que será realizado"}
-            )
-        }
-
-
-class FormPlanoAcao(forms.ModelForm):
-    class Meta:
-        model = models.Plano_Acao
-        fields = ("id_causa_consequencia", "ds_oque", "ds_quem", "ds_porque", "ds_onde", "ds_quando", "ds_como", "ds_quanto")
-        labels = {
-            "id_causa_consequencia": "Alvo do controle",
+            "ds_controle": "Descrição do controle",
             "ds_oque": "O que?",
             "ds_quem": "Quem?",
             "ds_porque": "Por que?",
@@ -133,6 +120,12 @@ class FormPlanoAcao(forms.ModelForm):
         widgets = {
             "id_causa_consequencia": forms.Select(
                 attrs={"class": "selectpicker form-control"}
+            ),
+            "ds_status": forms.Select(
+                attrs={"class": "selectpicker form-control"}
+            ),
+            "ds_controle": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "Descreva o que será realizado"}
             ),
             "ds_oque": forms.TextInput(
                 attrs={"class": "form-control", "placeholder": "Descreva o que será realizado"}

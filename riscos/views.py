@@ -173,7 +173,7 @@ def detalhar_risco(request, target_id):
     observacao = get_object_or_404(models.Risco, pk=target_id)
     causas = models.CausaConsequencia.objects.filter(id_risco=target_id, ds_tipo="Causa")
     consequencias = models.CausaConsequencia.objects.filter(id_risco=target_id, ds_tipo="Consequência")
-    tratamentos = models.Tratamento.objects.filter(id_risco=target_id)
+    tratamentos = models.Tratamento.objects.filter(id_causa_consequencia=target_id)
     context = {
         'observacao': observacao,
         "causas": causas,
@@ -183,68 +183,38 @@ def detalhar_risco(request, target_id):
     }
     return render(request, 'riscos/detalhar_risco.html', context)
 
-def criar_risco_tratamento(request, target_id):
-    RiscoTratamentoFormset = modelformset_factory(
-        models.Tratamento,
-        form=forms.FormTratamento,
-        extra=5,
-        min_num=1
-    )
-    opcoes = models.Risco.objects.filter(pk=target_id)
-    queryset = models.Tratamento.objects.filter(id_risco=target_id)
-    formset = RiscoTratamentoFormset(request.POST or None, queryset=queryset)
-    if formset.is_valid():
-        instances = formset.save(commit=False)
-        for instance in instances:
-            instance.id_risco_id = target_id
-            instance.ds_usuario = 'usuario-teste'
-            instance.save()
-        return redirect(reverse("riscos:detalhar_risco", kwargs={"target_id":target_id}))
-    context = {
-        "formset": formset,
-        "opcoes": opcoes,
-        "active_bar": "risco",
-    }
-    return render(request, "riscos/criar_risco_tratamento.html", context)
-
-# --- PLANO DE ACAO ----
-def criar_plano_acao(request):    
-    form2 = forms.FormSelecionarPlanejamento()
-    form3 = forms.FormSelecionarCadeia()
-    form4 = forms.FormSelecionarMacroprocesso()
-    form = forms.FormPlanoAcao(request.POST or None)
+# ------- TRATAMENTO -------
+def criar_tratamento(request):
+    form = forms.FormTratamento(request.POST or None)
     if form.is_valid():
         instance = form.save(commit=False)
-        instance.ds_quanto = float(instance.ds_quanto) 
-        instance.ds_usuario = "usuario-teste"
+        instance.ds_usuario = 'usuario-teste'
         instance.save()
         saved_id = instance.pk
-        return redirect(reverse("riscos:detalhar_plano_acao", kwargs={"target_id":saved_id}))
-    
+        return redirect(reverse("riscos:detalhar_tratamento", kwargs={"target_id":saved_id}))
+
     context = {
         "form": form,
-        "form2": form2,
-        "form3": form3,
-        "form4": form4,
-        "active_bar": "plano_acao",
+        # "form2": form2,
+        "active_bar": "controle",
     }
-    return render(request, "riscos/criar_plano_acao.html", context)
+    return render(request, "riscos/criar_tratamento.html", context)
 
-def listar_plano_acao(request):
-    lista = models.Plano_Acao.objects.order_by("ds_oque")
+def listar_tratamento(request):
+    lista = models.Tratamento.objects.order_by("ds_oque")
     context = {
         'lista': lista,
-        "active_bar": "plano_acao",
+        "active_bar": "controle",
     }
-    return render(request, "riscos/listar_plano_acao.html", context)
+    return render(request, "riscos/listar_tratamento.html", context)
 
-def detalhar_plano_acao(request, target_id):
-    observacao = get_object_or_404(models.Plano_Acao, pk=target_id)
+def detalhar_tratamento(request, target_id):
+    observacao = get_object_or_404(models.Tratamento, pk=target_id)
     context = {
         'observacao': observacao,
-        "active_bar": "plano_acao",
+        "active_bar": "controle",
     }
-    return render(request, "riscos/detalhar_plano_acao.html", context)
+    return render(request, "riscos/detalhar_tratamento.html", context)
 
 # ------- AJAX -------
 def load_cadeia(request):

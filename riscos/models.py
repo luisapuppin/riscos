@@ -104,14 +104,6 @@ class Tratamento(models.Model):
     id_causa_consequencia = models.ForeignKey(CausaConsequencia, on_delete=models.PROTECT)
     ds_status = models.CharField(max_length=30, choices=STATUS_CHOICE, default="Inexistente",)
     ds_controle = models.CharField(max_length=500)
-    dt_cadastro = models.DateTimeField(auto_now_add=True)
-    ds_usuario = models.CharField(max_length=30)
-
-    def __str__(self):
-        return self.ds_controle
-
-class Plano_Acao(models.Model):
-    id_tratamento = models.ForeignKey(Tratamento, on_delete=models.PROTECT)
     ds_oque = models.CharField(max_length=500)
     ds_quem = models.CharField(max_length=500)
     ds_porque = models.CharField(max_length=500)
@@ -123,5 +115,6 @@ class Plano_Acao(models.Model):
     ds_usuario = models.CharField(max_length=30)
 
     def __str__(self):
-        return self.ds_oque
+        return self.ds_controle
+
 

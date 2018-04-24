@@ -32,17 +32,17 @@ urlpatterns = [
 
     # RISCO
     re_path(r'^risco/$', views.listar_risco, name="listar_risco"),
-    re_path(r'^risco/(?P<target_id>[0-9]+)/$', views.detalhar_risco,
+    re_path(r'^risco/(?P<target_id>[0-9]+)/$', views.detalhar_risco, 
             name="detalhar_risco"),
     re_path(r'^risco/criar/$', views.criar_risco, name="criar_risco"),
-    re_path(r'^risco/criar/(?P<target_id>[0-9]+)/tratamento/$', views.criar_risco_tratamento,
-            name="criar_risco_tratamento"),
 
-    # PLANO DE AÇÃO
-    re_path(r'^plano/$', views.listar_plano_acao, name="listar_plano_acao"),
-    re_path(r'^plano/(?P<target_id>[0-9]+)/$', views.detalhar_plano_acao,
-            name="detalhar_plano_acao"),
-    re_path(r'^plano/criar/$', views.criar_plano_acao, name="criar_plano_acao"),
+    # TRATAMENTO
+    re_path(r'^tratamento/$', views.listar_tratamento,
+            name="listar_tratamento"),
+    re_path(r'^tratamento/(?P<target_id>[0-9]+)/$', views.detalhar_tratamento, 
+            name="detalhar_tratamento"),
+    re_path(r'^tratamento/criar/$', views.criar_tratamento,
+            name="criar_tratamento"),
 
     # AJAX
     re_path(r'^ajax/cadeia/$', views.load_cadeia, name="ajax_load_cadeia"),
