@@ -5,21 +5,21 @@
     <form id="filtro-cadeia" data-cadeia-url="{% url 'riscos:ajax_load_cadeia' %}">
         {% for field in form2 %}
         <div class="form-group">
-            {{ field.errors }} {{ field.label_tag }} {{ field }}
+            {{ field.label_tag }} {{ field }} {{ field.errors }}
         </div>
         {% endfor %}
     </form>
     <form id="filtro-macroprocesso" data-macroprocesso-url="{% url 'riscos:ajax_load_macroprocesso' %}">
         {% for field in form3 %}
         <div class="form-group">
-            {{ field.errors }} {{ field.label_tag }} {{ field }}
+            {{ field.label_tag }} {{ field }} {{ field.errors }}
         </div>
         {% endfor %}
     </form>
     <form id="macroprocesso-form" class="macroprocesso-form" action="{% url 'riscos:criar_processo' %}" method="post">
         {% csrf_token %} {% for field in form %}
         <div class="form-group">
-            {{ field.errors }} {{ field.label_tag }} {{ field }}
+            {{ field.label_tag }} {{ field }} {{ field.errors }}
         </div>
         {% endfor %}
         <input type="submit" name="submit-macroprocesso" value="Criar processo" class="btn btn-success">

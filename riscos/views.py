@@ -148,7 +148,10 @@ def criar_risco(request):
             insta.id_risco_id = saved_id
             insta.ds_usuario = 'usuario-teste'
             insta.save()
-        return redirect(reverse("riscos:detalhar_risco", kwargs={"target_id":saved_id}))
+        if "submit-e-detalhar" in request.POST:
+            return redirect(reverse("riscos:detalhar_risco", kwargs={"target_id":saved_id}))
+        else:
+            return redirect(reverse("riscos:criar_risco"))
     context = {
         "form": form,
         "form2": form2,
