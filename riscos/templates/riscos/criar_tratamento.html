@@ -1,0 +1,64 @@
+{% extends 'riscos/base.html' %} {% block main_content %}
+
+<div class="container criar-macroprocesso">
+    <br><br><br>
+    <h2> Cadastrar tratamento (controles) </h2>
+    
+    <form id="filtro-cadeia" data-cadeia-url="{% url 'riscos:ajax_load_cadeia' %}">
+        {% for field in form2 %}
+        <div class="form-group">
+            {{ field.label_tag }} {{ field }} {{ field.errors }}
+        </div>
+        {% endfor %}
+    </form>
+    
+    <form id="filtro-macroprocesso" data-macroprocesso-url="{% url 'riscos:ajax_load_macroprocesso' %}">
+        {% for field in form3 %}
+        <div class="form-group">
+            {{ field.label_tag }} {{ field }} {{ field.errors }}
+        </div>
+        {% endfor %}
+    </form>
+    
+    <form id="filtro-processo" data-processo-url="{% url 'riscos:ajax_processo' %}">
+        {% for field in form4 %}
+        <div class="form-group">
+            {{ field.label_tag }} {{ field }} {{ field.errors }}
+        </div>
+        {% endfor %}
+    </form>
+
+    <form id="filtro-risco" data-risco-url="{% url 'riscos:ajax_risco' %}">
+        {% for field in form5 %}
+        <div class="form-group">
+            {{ field.label_tag }} {{ field }} {{ field.errors }}
+        </div>
+        {% endfor %}
+    </form>
+    
+    <form id="filtro-causa_consequencia" data-causa_consequencia-url="{% url 'riscos:ajax_causa_consequencia' %}">
+        {% for field in form6 %}
+        <div class="form-group">
+            {{ field.label_tag }} {{ field }} {{ field.errors }}
+        </div>
+        {% endfor %}
+    </form>
+    <hr>
+    <form method="POST" action="">
+        {{ form.management_form }}
+        {% csrf_token %}
+        <div> {{form}} <br> </div>
+        <br>
+        <input type="submit" name="submit-risco" value="Criar controle" class="btn btn-success">
+    </form> <br>
+</div>
+
+<script>
+    console.log("Cadastro de tratamentos aberto.")
+    ajaxForm("#id_cadeia", "#id_plan", ["#id_cadeia", "#id_macroprocesso", "#id_processo", "#id_risco", "#id_id_causa_consequencia"], "#filtro-cadeia", "data-cadeia-url");
+    ajaxForm("#id_macroprocesso", "#id_cadeia", ["#id_macroprocesso", "#id_processo", "#id_risco", "#id_id_causa_consequencia"], "#filtro-macroprocesso", "data-macroprocesso-url");
+    ajaxForm("#id_processo", "#id_macroprocesso", ["#id_processo", "#id_risco", "#id_id_causa_consequencia"], "#filtro-processo", "data-processo-url");
+    ajaxForm("#id_risco", "#id_processo", ["#id_risco", "#id_id_causa_consequencia"], "#filtro-risco", "data-risco-url");
+    ajaxForm("#id_id_causa_consequencia", "#id_risco", ["#id_id_causa_consequencia"], "#filtro-causa_consequencia", "data-causa_consequencia-url");
+</script>
+{% endblock %}

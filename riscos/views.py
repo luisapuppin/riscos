@@ -1,3 +1,5 @@
+from datetime import date
+
 from django.shortcuts import render, redirect, get_object_or_404, get_list_or_404
 from django.core import serializers
 from django.urls import reverse
@@ -173,7 +175,7 @@ def detalhar_risco(request, target_id):
     observacao = get_object_or_404(models.Risco, pk=target_id)
     causas = models.CausaConsequencia.objects.filter(id_risco=target_id, ds_tipo="Causa")
     consequencias = models.CausaConsequencia.objects.filter(id_risco=target_id, ds_tipo="Consequência")
-    tratamentos = models.Tratamento.objects.filter(id_risco=target_id)
+    tratamentos = models.Tratamento.objects.filter(id_causa_consequencia=target_id)
     context = {
         'observacao': observacao,
         "causas": causas,
@@ -183,29 +185,50 @@ def detalhar_risco(request, target_id):
     }
     return render(request, 'riscos/detalhar_risco.html', context)
 
-def criar_risco_tratamento(request, target_id):
-    RiscoTratamentoFormset = modelformset_factory(
-        models.Tratamento,
-        form=forms.FormTratamento,
-        extra=5,
-        min_num=1
-    )
-    opcoes = models.Risco.objects.filter(pk=target_id)
-    queryset = models.Tratamento.objects.filter(id_risco=target_id)
-    formset = RiscoTratamentoFormset(request.POST or None, queryset=queryset)
-    if formset.is_valid():
-        instances = formset.save(commit=False)
-        for instance in instances:
-            instance.id_risco_id = target_id
-            instance.ds_usuario = 'usuario-teste'
-            instance.save()
-        return redirect(reverse("riscos:detalhar_risco", kwargs={"target_id":target_id}))
+# ------- TRATAMENTO -------
+def criar_tratamento(request):
+    form2 = forms.FormSelecionarPlanejamento()
+    form3 = forms.FormSelecionarCadeia()
+    form4 = forms.FormSelecionarMacroprocesso()
+    form5 = forms.FormSelecionarProcesso()
+    form6 = forms.FormSelecionarRisco()
+    
+    form = forms.FormTratamento(request.POST or None)
+    if form.is_valid():
+        instance = form.save(commit=False)
+        instance.ds_usuario = 'usuario-teste'
+        instance.save()
+        saved_id = instance.pk
+        return redirect(reverse("riscos:detalhar_tratamento", kwargs={"target_id":saved_id}))
+
     context = {
-        "formset": formset,
-        "opcoes": opcoes,
-        "active_bar": "risco",
+        "form": form,
+        "form2": form2,
+        "form3": form3,
+        "form4": form4,
+        "form5": form5,
+        "form6": form6,
+        "active_bar": "controle",
     }
-    return render(request, "riscos/criar_risco_tratamento.html", context)
+    return render(request, "riscos/criar_tratamento.html", context)
+
+def listar_tratamento(request):
+    lista = models.Tratamento.objects.order_by("ds_oque")
+    context = {
+        'lista': lista,
+        "active_bar": "controle",
+    }
+    return render(request, "riscos/listar_tratamento.html", context)
+
+def detalhar_tratamento(request, target_id):
+    observacao = get_object_or_404(models.Tratamento, pk=target_id)
+    context = {
+        'observacao': observacao,
+        "hoje": date.today(),
+        # "cor": cor,
+        "active_bar": "controle",
+    }
+    return render(request, "riscos/detalhar_tratamento.html", context)
 
 # ------- AJAX -------
 def load_cadeia(request):
@@ -222,3 +245,13 @@ def load_processo(request):
     id_get = request.GET.get('targetId')
     opcoes = models.Processo.objects.filter(id_macroprocesso=id_get).order_by('ds_processo')
     return render(request, 'riscos/dropdown_processo.html', {'opcoes': opcoes})
+
+def load_risco(request):
+    id_get = request.GET.get('targetId')
+    opcoes = models.Risco.objects.filter(id_processo=id_get).order_by('ds_risco')
+    return render(request, 'riscos/dropdown_risco.html', {'opcoes': opcoes})
+
+def load_causa_consequencia(request):
+    id_get = request.GET.get('targetId')
+    opcoes = models.CausaConsequencia.objects.filter(id_risco=id_get).order_by('ds_causa_consequencia')
+    return render(request, 'riscos/dropdown_causa_consequencia.html', {'opcoes': opcoes})

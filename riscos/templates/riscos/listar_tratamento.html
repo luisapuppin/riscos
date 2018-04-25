@@ -1,0 +1,53 @@
+{% extends 'riscos/base.html' %} {% block main_content %}
+
+<div class="container listar-objeto">
+    <h2> Controles </h2> <br>
+
+    <table class="table table-striped table-hover">
+        <tr>
+            <th style="width: 17%">Planejamento Estratégico</th>
+            <th style="width: 17%">Cadeia</th>
+            <th style="width: 17%">Macroprocesso</th>
+            <th style="width: 17%">Processo</th>
+            <th style="width: 16%">Risco</th>
+            <th style="width: 16%">Plano de Ação</th>
+        </tr>
+        {% for item in lista %}
+        <tr>
+            <td style="width: 17%">
+                <a style="color: black;" href="#">
+                    {{item.id_causa_consequencia.id_risco.id_processo.id_macroprocesso.id_cadeia.id_planejamento}}
+                </a>
+            </td>
+            <td style="width: 17%">
+                <a style="color: black;" href="{% url 'riscos:detalhar_cadeia' target_id=item.id_causa_consequencia.id_risco.id_processo.id_macroprocesso.id_cadeia.pk %}">
+                    {{item.id_causa_consequencia.id_risco.id_processo.id_macroprocesso.id_cadeia}}
+                </a>
+            </td>
+            <td style="width: 17%">
+                <a style="color: black;" href="{% url 'riscos:detalhar_macroprocesso' target_id=item.id_causa_consequencia.id_risco.id_processo.id_macroprocesso.pk %}">
+                    {{item.id_causa_consequencia.id_risco.id_processo.id_macroprocesso}}
+                </a>
+            </td>
+            <td style="width: 17%">
+                <a style="color: black;" href="{% url 'riscos:detalhar_processo' target_id=item.id_causa_consequencia.id_risco.id_processo.pk %}">
+                    {{item.id_causa_consequencia.id_risco.id_processo}}
+                </a>
+            </td>
+            <td style="width: 16%">
+                <a style="color: black;" href="{% url 'riscos:detalhar_risco' target_id=item.id_causa_consequencia.id_risco.pk %}">
+                    {{item.id_causa_consequencia.id_risco}}
+                </a>
+            </td>
+            <td style="width: 16%">
+                <a style="color: black;" href="{% url 'riscos:detalhar_tratamento' target_id=item.pk %}">
+                    {{item.ds_oque}}
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    <br>
+    <a class="btn btn-info" href="{% url 'riscos:criar_tratamento' %}">Criar controle</a>
+</div>
+<br> {% endblock %}

@@ -24,6 +24,9 @@
             <li class="nav-item">
                 <a class="nav-link {% if active_bar == 'risco' %} active {% endif %}" href="{% url 'riscos:listar_risco' %}">Risco</a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link {% if active_bar == 'controle' %} active {% endif %}" href="{% url 'riscos:listar_tratamento' %}">Controle</a>
+            </li>
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Criar</a>
                 <div class="dropdown-menu" aria-labelledby="dropdown01">
@@ -32,6 +35,7 @@
                     <a class="dropdown-item" href="{% url 'riscos:criar_macroprocesso' %}">Macroprocesso</a>
                     <a class="dropdown-item" href="{% url 'riscos:criar_processo' %}">Processo</a>
                     <a class="dropdown-item" href="{% url 'riscos:criar_risco' %}">Risco</a>
+                    <a class="dropdown-item" href="{% url 'riscos:criar_tratamento' %}">Controle</a>
                 </div>
             </li>
         </ul>
