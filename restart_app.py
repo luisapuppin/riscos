@@ -1,8 +1,19 @@
+""" Rotina para deletar e criar o banco de dados.
+    Chamadas:
+        python restart_app.py
+        python restart_app.py del
+        python restart_app.py create
+"""
+
 import os
 import sys
 from shutil import rmtree
 
 def limpar_dados_aplicacao():
+    """ Rotina que deleta o arquivo de banco db.sqlite3, as pastas
+        __pycache__, e todos os arquivos da pasta migrations
+        (exceto __init__.py)
+    """
     print("[DELETE-DATABASE] Initializing...")
     origin = "\\".join(os.path.realpath(__file__).split("\\")[:-1])
     if os.path.exists(os.path.join(origin, "db.sqlite3")):
@@ -20,6 +31,10 @@ def limpar_dados_aplicacao():
     print("[DELETE-DATABASE] Done!")
 
 def redo_data_base():
+    """ Rotina para recriar o banco de dados. É composta de 4 etapas:
+        I) makemigrations; II) migrate; III) create_admin.py, e;
+        IV) create_db.py.
+    """
     print("[CREATE-DATABASE] Initializing...")
     os.system("python manage.py makemigrations")
     os.system("python manage.py migrate")
