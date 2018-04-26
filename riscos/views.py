@@ -26,17 +26,17 @@ def criar_planejamento(request):
             return redirect(reverse("riscos:listar_planejamento"))
     else:
         form = forms.FormPlanejamento()
-    context = {"form": form, "active_bar": "planejamento"}
+    context = {"form": form, "active_bar": "admin"}
     return render(request, 'riscos/criar_planejamento.html', context)
 
 def listar_planejamento(request):
     lista = models.Planejamento.objects.order_by("ds_planejamento")
-    context = {'lista': lista, "active_bar": "planejamento",}
+    context = {'lista': lista, "active_bar": "admin",}
     return render(request, 'riscos/listar_planejamento.html', context)
 
 def detalhar_planejamento(request, target_id):
     observacao = get_object_or_404(models.Planejamento, pk=target_id)
-    context = {'observacao': observacao, "active_bar": "planejamento",}
+    context = {'observacao': observacao, "active_bar": "admin",}
     return render(request, 'riscos/detalhar_planejamento.html', context)
 
 # ------- CADEIA -------
@@ -50,17 +50,17 @@ def criar_cadeia(request):
             return redirect(reverse("riscos:listar_cadeia"))
     else:
         form = forms.FormCadeia()
-    context = {"form": form, "active_bar": "cadeia",}
+    context = {"form": form, "active_bar": "admin",}
     return render(request, 'riscos/criar_cadeia.html', context)
 
 def listar_cadeia(request):
     lista = models.Cadeia.objects.order_by("id_planejamento")
-    context = {'lista': lista, "active_bar": "cadeia",}
+    context = {'lista': lista, "active_bar": "admin",}
     return render(request, 'riscos/listar_cadeia.html', context)
 
 def detalhar_cadeia(request, target_id):
     observacao = get_object_or_404(models.Cadeia, pk=target_id)
-    context = {'observacao': observacao, "active_bar": "cadeia",}
+    context = {'observacao': observacao, "active_bar": "admin",}
     return render(request, 'riscos/detalhar_cadeia.html', context)
 
 # ------- MACROPROCESSO -------
@@ -79,7 +79,7 @@ def criar_macroprocesso(request):
     context = {
         "form": form,
         "form2": form2,
-        "active_bar": "macroprocesso",
+        "active_bar": "admin",
     }
     return render(request, 'riscos/criar_macroprocesso.html', context)
 
@@ -87,12 +87,12 @@ def listar_macroprocesso(request):
     lista = models.Macroprocesso.objects.order_by(
         "id_cadeia__id_planejamento", "id_cadeia__ds_cadeia", "ds_macroprocesso"
     )
-    context = {'lista': lista, "active_bar": "macroprocesso",}
+    context = {'lista': lista, "active_bar": "admin",}
     return render(request, 'riscos/listar_macroprocesso.html', context)
 
 def detalhar_macroprocesso(request, target_id):
     observacao = get_object_or_404(models.Macroprocesso, pk=target_id)
-    context = {'observacao': observacao, "active_bar": "macroprocesso",}
+    context = {'observacao': observacao, "active_bar": "admin",}
     return render(request, 'riscos/detalhar_macroprocesso.html', context)
 
 # ------- PROCESSO -------
