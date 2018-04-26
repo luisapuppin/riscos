@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 """
 
 import os
+import platform
+
 import django_heroku
 import dj_database_url
 
@@ -81,7 +83,13 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
 
-db_from_env = dj_database_url.config()
+if platform.system() == "Windows":
+    db_from_env = {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    }
+else:
+    db_from_env = dj_database_url.config()
 
 DATABASES = {
     'default': db_from_env
