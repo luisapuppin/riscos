@@ -82,7 +82,6 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
 
 db_from_env = dj_database_url.config()
-print(db_from_env)
 
 DATABASES = {
     'default': db_from_env
