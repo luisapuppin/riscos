@@ -114,7 +114,7 @@ class FormTratamento(forms.ModelForm):
         }
         widgets = {
             "id_causa_consequencia": forms.Select(
-                attrs={"class": "selectpicker form-control"}
+                attrs={"class": "selectpicker form-control"},
             ),
             "ds_status": forms.Select(
                 attrs={"class": "selectpicker form-control"}
