@@ -32,14 +32,22 @@ urlpatterns = [
 
     # RISCO
     re_path(r'^risco/$', views.listar_risco, name="listar_risco"),
-    re_path(r'^risco/(?P<target_id>[0-9]+)/$', views.detalhar_risco,
+    re_path(r'^risco/(?P<target_id>[0-9]+)/$', views.detalhar_risco, 
             name="detalhar_risco"),
     re_path(r'^risco/criar/$', views.criar_risco, name="criar_risco"),
-    re_path(r'^risco/criar/(?P<target_id>[0-9]+)/causas/$', views.criar_risco_causa,
-            name="criar_risco_causa"),
+
+    # TRATAMENTO
+    re_path(r'^tratamento/$', views.listar_tratamento,
+            name="listar_tratamento"),
+    re_path(r'^tratamento/(?P<target_id>[0-9]+)/$', views.detalhar_tratamento, 
+            name="detalhar_tratamento"),
+    re_path(r'^tratamento/criar/$', views.criar_tratamento,
+            name="criar_tratamento"),
 
     # AJAX
     re_path(r'^ajax/cadeia/$', views.load_cadeia, name="ajax_load_cadeia"),
     re_path(r'^ajax/macroprocesso/$', views.load_macroprocesso, name="ajax_load_macroprocesso"),
     re_path(r'^ajax/processo/$', views.load_processo, name="ajax_processo"),
+    re_path(r'^ajax/risco/$', views.load_risco, name="ajax_risco"),
+    re_path(r'^ajax/causa_consequencia/$', views.load_causa_consequencia, name="ajax_causa_consequencia"),
 ]

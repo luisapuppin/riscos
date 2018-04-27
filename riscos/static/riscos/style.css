@@ -1,3 +1,7 @@
 .errorlist {
     color: #ff0000;
 }
+
+.campo {
+    font-weight: 500;
+}

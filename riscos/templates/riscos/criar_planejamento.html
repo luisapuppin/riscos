@@ -6,7 +6,7 @@
     <form class="projeto-form" action="{% url 'riscos:criar_planejamento' %}" method="post">
         {% csrf_token %} {% for field in form %}
         <div class="form-group">
-            {{ field.errors }} {{ field.label_tag }} {{ field }}
+            {{ field.label_tag }} {{ field }} {{ field.errors }}
         </div>
         {% endfor %}
         <input type="submit" name="submit-planejamento" value="Criar plano estratégico" class="btn btn-success">

@@ -1,7 +1,12 @@
 {% extends 'riscos/base.html' %} {% block main_content %}
-
+<div class="jumbotron">
+    <div class="container">
+        <h1>Criar risco</h1>
+    </div>
+</div>
 <div class="container criar-macroprocesso">
-    <h2> Criar Risco </h2> <br>
+    <h5> Dados Gerais </h5>
+    <hr>
     <form id="filtro-cadeia" data-cadeia-url="{% url 'riscos:ajax_load_cadeia' %}">
         {% for field in form2 %}
         <div class="form-group">
@@ -24,20 +29,84 @@
         {% endfor %}
     </form>
     <form id="risco-form" class="risco-form" action="{% url 'riscos:criar_risco' %}" method="post">
-        {% csrf_token %} {% for field in form %}
+        {% csrf_token %} {% for field in form %} {% if field.label == "Descrição do risco" %}
+        <br>
+        <h5> Dados do Risco </h5>
+        <hr>
         <div class="form-group">
             {{ field.label_tag }} {{ field }} {{ field.errors }}
         </div>
-        {% endfor %}
-        <input type="submit" name="submit-macroprocesso" value="Criar risco" class="btn btn-success">
-        <a class="btn btn-danger" href="{% url 'riscos:listar_risco' %}">Cancelar</a>
-    </form> <br>
+        {% else %}
+        <div class="form-group">
+            {{ field.label_tag }} {{ field }} {{ field.errors }}
+        </div>
+        {% endif %} {% endfor %}<br>
+        <div id="form-causa">
+            <h5> Causas do Risco </h5>
+            <hr> {{ formset.management_form }} {% for form in formset|slice:causa %} {% csrf_token %}
+            <div> {{form}} <br> </div>
+            {% endfor %}
+            <div style="text-align: end">
+                <button type="button" class="btn btn-success" id="add-causa">+</button>
+                <button type="button" class="btn btn-danger" id="remove-causa">-</button> <br>
+            </div>
+        </div><br>
+        <div id="form-consequencia">
+            <h5> Consequências do Risco </h5>
+            <hr> {{ formset2.management_form }} {% for form in formset|slice:conseq %} {% csrf_token %}
+            <div> {{form}} <br> </div>
+            {% endfor %}
+            <div style="text-align: end">
+                <button type="button" class="btn btn-success" id="add-consequencia">+</button>
+                <button type="button" class="btn btn-danger" id="remove-consequencia">-</button> <br>
+            </div>
+        </div><br>
+        <div class="float-right">
+            <input type="submit" name="submit-e-detalhar" value="Criar e detalhar risco" class="btn btn-success">
+            <input type="submit" name="submit-e-cadastrar" value="Criar e cadastrar novo risco" class="btn btn-primary">
+            <a class="btn btn-danger" href="{% url 'riscos:listar_risco' %}">Cancelar</a>
+        </div><br>
+    </form>
 </div>
 
 <script>
     ajaxForm("#id_cadeia", "#id_plan", ["#id_cadeia", "#id_macroprocesso", "#id_id_processo"], "#filtro-cadeia", "data-cadeia-url");
     ajaxForm("#id_macroprocesso", "#id_cadeia", ["#id_id_processo", "#id_macroprocesso"], "#filtro-macroprocesso", "data-macroprocesso-url");
     ajaxForm("#id_id_processo", "#id_macroprocesso", ["#id_id_processo"], "#filtro-processo", "data-processo-url");
+    $("#form-causa>div:has(input[id$=ds_causa_consequencia]):gt(0)").hide();
+    $("#add-causa").on("click", function() {
+        $("#form-causa>div:has(input[id$=ds_causa_consequencia]):hidden:first").show();
+    })
+    $("#remove-causa").on("click", function() {
+        if ($("#form-causa>div:has(input[id$=ds_causa_consequencia]):not(:hidden)").length > 1) {
+            $("#form-causa>div:has(input[id$=ds_causa_consequencia]):not(:hidden):last>input[id$=ds_causa_consequencia]")[0].value = "";
+            $("#form-causa>div:has(input[id$=ds_causa_consequencia]):not(:hidden):last").hide();
+        }
+    })
+
+    $("#form-consequencia>div:has(input[id$=ds_causa_consequencia]):gt(0)").hide();
+    $("#add-consequencia").on("click", function() {
+        $("#form-consequencia>div:has(input[id$=ds_causa_consequencia]):hidden:first").show();
+    })
+    $("#remove-consequencia").on("click", function() {
+        if ($("#form-consequencia>div:has(input[id$=ds_causa_consequencia]):not(:hidden)").length > 1) {
+            $("#form-consequencia>div:has(input[id$=ds_causa_consequencia]):not(:hidden):last>input[id$=ds_causa_consequencia]")[0].value = "";
+            $("#form-consequencia>div:has(input[id$=ds_causa_consequencia]):not(:hidden):last").hide();
+        }
+    })
+    $("input[name^=submit-").click(function() {
+        $("#form-causa input[name$='ds_causa_consequencia']").each(function(i, elem) {
+            if (elem.value != "") {
+                $("#form-causa select option[value='Causa']:eq(" + i + ")").attr('selected', 'selected');
+            }
+        })
+
+        $("#form-consequencia input[name$='ds_causa_consequencia']").each(function(i, elem) {
+            if (elem.value != "") {
+                $("#form-consequencia select option[value='Consequência']:eq(" + i + ")").attr('selected', 'selected');
+            }
+        })
+    })
 </script>
 
 {% endblock %}

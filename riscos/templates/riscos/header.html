@@ -7,22 +7,25 @@
     <div class="collapse navbar-collapse" id="navbarsExampleDefault">
         <ul class="nav navbar-nav mr-auto" role="tablist">
             <li class="nav-item">
-                <a class="nav-link active" href="{% url 'riscos:index' %}">Home <span class="sr-only">(current)</span></a>
+                <a class="nav-link {% if active_bar == 'home' %} active {% endif %}" href="{% url 'riscos:index' %}">Home <span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{% url 'riscos:listar_planejamento' %}">Planejamento Estratégico</a>
+                <a class="nav-link {% if active_bar == 'planejamento' %} active {% endif %}" href="{% url 'riscos:listar_planejamento' %}">Planejamento Estratégico</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{% url 'riscos:listar_cadeia' %}">Cadeia</a>
+                <a class="nav-link {% if active_bar == 'cadeia' %} active {% endif %}" href="{% url 'riscos:listar_cadeia' %}">Cadeia</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{% url 'riscos:listar_macroprocesso' %}">Macroprocesso</a>
+                <a class="nav-link {% if active_bar == 'macroprocesso' %} active {% endif %}" href="{% url 'riscos:listar_macroprocesso' %}">Macroprocesso</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{% url 'riscos:listar_processo' %}">Processo</a>
+                <a class="nav-link {% if active_bar == 'processo' %} active {% endif %}" href="{% url 'riscos:listar_processo' %}">Processo</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{% url 'riscos:listar_risco' %}">Risco</a>
+                <a class="nav-link {% if active_bar == 'risco' %} active {% endif %}" href="{% url 'riscos:listar_risco' %}">Risco</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if active_bar == 'controle' %} active {% endif %}" href="{% url 'riscos:listar_tratamento' %}">Controle</a>
             </li>
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Criar</a>
@@ -32,6 +35,7 @@
                     <a class="dropdown-item" href="{% url 'riscos:criar_macroprocesso' %}">Macroprocesso</a>
                     <a class="dropdown-item" href="{% url 'riscos:criar_processo' %}">Processo</a>
                     <a class="dropdown-item" href="{% url 'riscos:criar_risco' %}">Risco</a>
+                    <a class="dropdown-item" href="{% url 'riscos:criar_tratamento' %}">Controle</a>
                 </div>
             </li>
         </ul>

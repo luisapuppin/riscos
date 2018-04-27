@@ -1,0 +1,79 @@
+{% extends 'riscos/base.html' %} {% block main_content %}
+
+<style>
+    p > span {
+       font-weight: bold;
+       font-size: 18px;
+       /*color:darkslategray*/
+    }
+    p > strong {
+        /*color: {{cor}}*/
+        color:forestgreen;
+    }
+    
+</style>
+
+<div class="container">
+    <h1> Detalhamento: {{observacao.ds_oque}} </h1>
+    <br><br>
+
+    <h4>Dados gerais</h4>
+    <hr>
+    <table class="table table-striped table-bordered table-hover">
+        <tr>
+            <td class="campo" style="width: 20%">Planejamento Estratégico</td>
+            <td class="valor">{{observacao.id_causa_consequencia.id_risco.id_processo.id_macroprocesso.id_cadeia.id_planejamento}}</td>
+        </tr>
+        <tr>
+            <td class="campo" style="width: 20%">Cadeia</td>
+            <td class="valor">{{observacao.id_causa_consequencia.id_risco.id_processo.id_macroprocesso.id_cadeia}}</td>
+        </tr>
+        <tr>
+            <td class="campo" style="width: 20%">Macroprocesso</td>
+            <td class="valor">{{observacao.id_causa_consequencia.id_risco.id_processo.id_macroprocesso}}</td>
+        </tr>
+        <tr>
+            <td class="campo" style="width: 20%">Processo</td>
+            <td class="valor">{{observacao.id_causa_consequencia.id_risco.id_processo}}</td>
+        </tr>
+        <tr>
+            <td class="campo">Risco</td>
+            <td class="valor">{{observacao.id_causa_consequencia.id_risco.ds_risco}}</td>
+        </tr>
+        <tr>
+            <td class="campo">{{observacao.id_causa_consequencia.ds_tipo}}</td>
+            <td class="valor">{{observacao.id_causa_consequencia.ds_causa_consequencia}}</td>
+        </tr>
+        <tr>
+            <td class="campo">Tratamento {% if observacao.id_causa_consequencia.ds_tipo == "Causa" %} preventivo {% else %} de contingência {% endif %}</td>
+            <td class="valor">{{observacao.ds_controle}} ({{observacao.ds_status}})</td>
+        </tr>
+    </table>
+    <br><br>
+    
+    <h4>Plano de Ação</h4>
+    <hr>
+    
+    <p><span>O que?</span> {{observacao.ds_oque}}</p>
+
+    <p><span>Quem?</span> {{observacao.ds_quem}}</p>
+
+    <p><span>Por que?</span> {{observacao.ds_porque}}</p>
+
+    <p><span>Onde?</span> {{observacao.ds_onde}}</p> 
+
+    <p><span>Quando?</span> {{observacao.dt_quando}} (<strong>{{observacao.dt_quando|timeuntil:hoje}}</strong>)</p> 
+
+    <p><span>Como?</span> {{observacao.ds_como}}</p> 
+
+    <p><span>Quanto?</span> R$ {{observacao.ds_quanto}}</p> 
+
+    <br><br>
+
+    <div class="float-right">
+        <a class="btn btn-primary" href="#">Editar controle</a>
+        <a class="btn btn-dark" href="{{request.META.HTTP_REFERER}}">Voltar</a>
+    </div>
+    <br>
+</div>
+<br> {% endblock %}

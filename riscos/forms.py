@@ -71,46 +71,87 @@ class FormProcesso(forms.ModelForm):
 class FormRisco(forms.ModelForm):
     class Meta:
         model = models.Risco
-        fields = ("id_processo", "ds_risco", "id_dimensao", "id_tipo_risco",
+        fields = ("id_processo", "ds_risco", "id_tipo_risco",
                   "id_impacto", "id_probabilidade",)
         labels = {
             "id_processo": 'Nome do processo',
-            "id_dimensao": 'Dimensão do risco',
             "id_tipo_risco": "Tipo do risco",
-            "ds_risco": "Nome do risco",
+            "ds_risco": "Descrição do risco",
             "id_impacto": "Impacto",
             "id_probabilidade": "Probabilidade"
         }
         widgets = {
             "id_processo": forms.Select(attrs={"class": "selectpicker form-control"}),
-            "id_dimensao": forms.Select(attrs={"class": "selectpicker form-control"}),
             "id_tipo_risco": forms.Select(attrs={"class": "selectpicker form-control"}),
-            "ds_risco": forms.TextInput(attrs={"class": "form-control", "placeholder": "Nome do risco"}),
+            "ds_risco": forms.TextInput(attrs={"class": "form-control", "placeholder": "Descrição do risco"}),
             "id_impacto": forms.Select(attrs={"class": "form-control"}),
             "id_probabilidade": forms.Select(attrs={"class": "form-control"})
         }
 
-class FormCausa(forms.ModelForm):
+class FormCausaConsequencia(forms.ModelForm):
     class Meta:
-        model = models.Causa
-        fields = ("ds_causa",)
-        labels = {"ds_causa": ""}
+        model = models.CausaConsequencia
+        fields = ("ds_causa_consequencia", "ds_tipo", )
+        labels = {"ds_causa_consequencia": "", "ds_tipo": ""}
         widgets = {
-            "ds_causa": forms.TextInput(
-                attrs={"class": "form-control", "placeholder": "Descrição da causa"}
+            "ds_causa_consequencia": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "Descrição"}
+            ),
+            "ds_tipo": forms.Select(attrs={"class": "selectpicker form-control", "style":"display:none"}),
+        }
+
+class FormTratamento(forms.ModelForm):
+    class Meta:
+        model = models.Tratamento
+        fields = ("id_causa_consequencia", "ds_controle", "ds_status", "ds_oque", "ds_quem", "ds_porque",
+                  "ds_onde", "dt_quando", "ds_como", "ds_quanto",)
+        labels = {
+            "id_causa_consequencia": "Controle sobre:",
+            "ds_status": "Status do controle",
+            "ds_controle": "Descrição do controle",
+            "ds_oque": "O que?",
+            "ds_quem": "Quem?",
+            "ds_porque": "Por que?",
+            "ds_onde": "Onde?",
+            "dt_quando": "Quando?",
+            "ds_como": "Como?",
+            "ds_quanto": "Quanto?",
+        }
+        widgets = {
+            "id_causa_consequencia": forms.Select(
+                attrs={"class": "selectpicker form-control"}
+            ),
+            "ds_status": forms.Select(
+                attrs={"class": "selectpicker form-control"}
+            ),
+            "ds_controle": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "Descreva o que será realizado"}
+            ),
+            "ds_oque": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "Descreva o que será realizado"}
+            ),
+            "ds_quem": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "Quem será o responsável?"}
+            ),
+            "ds_porque": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "Por que isso será feito?"}
+            ),
+            "ds_onde": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "Onde isso será feito?"}
+            ),
+            "dt_quando": forms.DateInput(
+                attrs={"class": "form-control"}, format="%d/%m/%Y", 
+            ),
+            "ds_como": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "Como isso ocorrerá?"}
+            ),
+            "ds_quanto": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "Quanto isso custará (R$) ?"}
             )
         }
 
-class FormConsequencia(forms.ModelForm):
-    class Meta:
-        model = models.Consequencia
-        fields = ("ds_consequencia",)
-        labels = {"ds_consequencia": ""}
-        widgets = {
-            "ds_consequencia": forms.TextInput(
-                attrs={"class": "form-control", "placeholder": "Descrição da consequência"}
-            )
-        }
+
+# ----- FORMS AJAX ----- #
 
 class FormSelecionarPlanejamento(forms.Form):
     plan = forms.ModelChoiceField(
@@ -133,5 +174,21 @@ class FormSelecionarMacroprocesso(forms.Form):
         label="Macroprocesso",
         queryset=models.Macroprocesso.objects.none(),
         empty_label="Selecione o Macroprocesso",
+        widget=forms.Select(attrs={'class':'form-control', 'readonly': "True"})
+    )
+
+class FormSelecionarProcesso(forms.Form):
+    processo = forms.ModelChoiceField(
+        label="Processo",
+        queryset=models.Processo.objects.none(),
+        empty_label="Selecione o Processo",
+        widget=forms.Select(attrs={'class':'form-control', 'readonly': "True"})
+    )
+
+class FormSelecionarRisco(forms.Form):
+    risco = forms.ModelChoiceField(
+        label="Risco",
+        queryset=models.Risco.objects.none(),
+        empty_label="Selecione o Risco",
         widget=forms.Select(attrs={'class':'form-control', 'readonly': "True"})
     )

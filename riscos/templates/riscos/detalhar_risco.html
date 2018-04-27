@@ -61,7 +61,7 @@
             {% for item in causas %}
             <tr>
                 <td style="width: 10%">{{ forloop.counter }}</td>
-                <td>{{ item.ds_causa }}</td>
+                <td>{{ item.ds_causa_consequencia }}</td>
             </tr>{% endfor %}
 
         </tbody>
@@ -84,13 +84,38 @@
             {% for item in consequencias %}
             <tr>
                 <td style="width: 10%">{{ forloop.counter }}</td>
-                <td>{{item.ds_consequencia}}</td>
+                <td>{{item.ds_causa_consequencia}}</td>
             </tr>{% endfor %}
 
         </tbody>
     </table>
     {% else %}
     <p> Nenhuma consequência registrada </p>
+    {% endif %}
+    <br><br>
+
+    <h4>Tratamento (controle)</h4>
+    <hr> {% if tratamentos %}
+    <table class="table table-bordered table-hover">
+        <thead class="thead-light">
+            <tr>
+                <th style="width: 10%">Item</th>
+                <th>Descrição do controle</th>
+                <th>Status do controle</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in tratamentos %}
+            <tr>
+                <td style="width: 10%">{{ forloop.counter }}</td>
+                <td>{{item.ds_controle}}</td>
+                <td>{{item.ds_status}}</td>
+            </tr>{% endfor %}
+
+        </tbody>
+    </table>
+    {% else %}
+    <p> Nenhum tratamento registrado </p>
     {% endif %}
     <br><br>
 
