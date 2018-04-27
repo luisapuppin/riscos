@@ -25,6 +25,7 @@
             <td class="valor">{{observacao.ds_usuario}}</td>
         </tr>
     </table>
+    <a class="btn btn-success" href="{% url 'riscos:criar_risco' parent_id=observacao.pk %}">Criar risco</a>
     <a class="btn btn-primary" href="{{request.META.HTTP_REFERER}}">Voltar</a>
 </div>
 <br> {% endblock %}
