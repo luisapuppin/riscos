@@ -126,19 +126,18 @@ def detalhar_processo(request, target_id):
     return render(request, 'riscos/detalhar_processo.html', context)
 
 # ------- RISCO -------
-def criar_risco(request):
+def criar_risco(request, parent_id):
     N_EXTRA = 5
     RiscoCausaFormset = modelformset_factory(   
         models.CausaConsequencia, form=forms.FormCausaConsequencia, extra=(N_EXTRA * 2 ) + 1, min_num=1, 
     )
     queryset = models.CausaConsequencia.objects.none()
     formset = RiscoCausaFormset(request.POST or None, queryset=queryset)
-    form2 = forms.FormSelecionarPlanejamento()
-    form3 = forms.FormSelecionarCadeia()
-    form4 = forms.FormSelecionarMacroprocesso()
+    parent = get_object_or_404(models.Processo, pk=parent_id)
     form = forms.FormRisco(request.POST or None)
     if form.is_valid() and formset.is_valid():
         instance = form.save(commit=False)
+        instance.id_processo = parent
         instance.ds_usuario = "usuario-teste"
         instance.save()
         saved_id = instance.pk
@@ -150,12 +149,10 @@ def criar_risco(request):
         if "submit-e-detalhar" in request.POST:
             return redirect(reverse("riscos:detalhar_risco", kwargs={"target_id":saved_id}))
         else:
-            return redirect(reverse("riscos:criar_risco"))
+            return redirect(reverse("riscos:criar_risco", kwargs={"parent_id":parent_id}))
     context = {
         "form": form,
-        "form2": form2,
-        "form3": form3,
-        "form4": form4,
+        "parent": parent,
         "formset": formset,
         "active_bar": "risco",
         "causa": ":" + str(N_EXTRA + 1),
