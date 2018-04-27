@@ -92,7 +92,12 @@ def listar_macroprocesso(request):
 
 def detalhar_macroprocesso(request, target_id):
     observacao = get_object_or_404(models.Macroprocesso, pk=target_id)
-    context = {'observacao': observacao, "active_bar": "macroprocesso",}
+    processos = models.Processo.objects.filter(id_macroprocesso=target_id)
+    context = {
+        "observacao": observacao,
+        "processos": processos,
+        "active_bar": "macroprocesso",
+    }
     return render(request, 'riscos/detalhar_macroprocesso.html', context)
 
 # ------- PROCESSO -------
@@ -125,7 +130,12 @@ def listar_processo(request):
 
 def detalhar_processo(request, target_id):
     observacao = get_object_or_404(models.Processo, pk=target_id)
-    context = {'observacao': observacao,"active_bar": "processo",}
+    riscos = models.Risco.objects.filter(id_processo=target_id)
+    context = {
+        "observacao": observacao,
+        "riscos": riscos,
+        "active_bar": "processo",
+    }
     return render(request, 'riscos/detalhar_processo.html', context)
 
 # ------- RISCO -------
