@@ -169,7 +169,7 @@ def detalhar_risco(request, target_id):
     observacao = get_object_or_404(models.Risco, pk=target_id)
     causas = models.CausaConsequencia.objects.filter(id_risco=target_id, ds_tipo="Causa")
     consequencias = models.CausaConsequencia.objects.filter(id_risco=target_id, ds_tipo="Consequência")
-    tratamentos = models.Tratamento.objects.filter(id_causa_consequencia=target_id)
+    tratamentos = models.Tratamento.objects.filter(id_causa_consequencia__id_risco=target_id)
     context = {
         'observacao': observacao,
         "causas": causas,
@@ -180,14 +180,9 @@ def detalhar_risco(request, target_id):
     return render(request, 'riscos/detalhar_risco.html', context)
 
 # ------- TRATAMENTO -------
-def criar_tratamento(request):
-    form2 = forms.FormSelecionarPlanejamento()
-    form3 = forms.FormSelecionarCadeia()
-    form4 = forms.FormSelecionarMacroprocesso()
-    form5 = forms.FormSelecionarProcesso()
-    form6 = forms.FormSelecionarRisco()
-    
+def criar_tratamento(request, parent_id): 
     form = forms.FormTratamento(request.POST or None)
+    parent = get_object_or_404(models.Risco, pk=parent_id)
     if form.is_valid():
         instance = form.save(commit=False)
         instance.ds_usuario = 'usuario-teste'
@@ -197,11 +192,7 @@ def criar_tratamento(request):
 
     context = {
         "form": form,
-        "form2": form2,
-        "form3": form3,
-        "form4": form4,
-        "form5": form5,
-        "form6": form6,
+        "parent": parent,
         "active_bar": "controle",
     }
     return render(request, "riscos/criar_tratamento.html", context)
