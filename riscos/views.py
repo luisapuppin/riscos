@@ -96,24 +96,21 @@ def detalhar_macroprocesso(request, target_id):
     return render(request, 'riscos/detalhar_macroprocesso.html', context)
 
 # ------- PROCESSO -------
-def criar_processo(request):
+def criar_processo(request, parent_id):
+    parent = get_object_or_404(models.Macroprocesso, pk=parent_id)
     if request.method == 'POST':
-        form2 = forms.FormSelecionarPlanejamento()
-        form3 = forms.FormSelecionarCadeia()
         form = forms.FormProcesso(request.POST)
         if form.is_valid():
             instance = form.save(commit=False)
+            instance.id_macroprocesso = parent
             instance.ds_usuario = "usuario-teste"
             instance.save()
             return redirect(reverse("riscos:listar_processo"))
     else:
-        form2 = forms.FormSelecionarPlanejamento()
-        form3 = forms.FormSelecionarCadeia()
         form = forms.FormProcesso()
     context = {
         "form": form,
-        "form2": form2,
-        "form3": form3,
+        "parent": parent,
         "active_bar": "processo",
     }
     return render(request, 'riscos/criar_processo.html', context)

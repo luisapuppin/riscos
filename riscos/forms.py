@@ -58,13 +58,11 @@ class FormMacroprocesso(forms.ModelForm):
 class FormProcesso(forms.ModelForm):
     class Meta:
         model = models.Processo
-        fields = ("id_macroprocesso", "ds_processo",)
+        fields = ("ds_processo",)
         labels = {
-            "id_macroprocesso": 'Nome do Macroprocesso',
             "ds_processo": 'Nome do processo'
         }
         widgets = {
-            'id_macroprocesso': forms.Select(attrs={"class": "selectpicker form-control"}),
             "ds_processo": forms.TextInput(attrs={"class": "form-control", "placeholder": "Nome do processo"})
         }
 

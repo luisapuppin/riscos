@@ -1,22 +1,23 @@
 {% extends 'riscos/base.html' %} {% block main_content %}
+<style>
+    .criar-processo > p > span {
+        font-weight: bold;
+        color:black;
+    }
+</style>
 
-<div class="container criar-macroprocesso">
+<div class="container criar-processo">
     <h2> Criar Processo </h2> <br>
-    <form id="filtro-cadeia" data-cadeia-url="{% url 'riscos:ajax_load_cadeia' %}">
-        {% for field in form2 %}
-        <div class="form-group">
-            {{ field.label_tag }} {{ field }} {{ field.errors }}
-        </div>
-        {% endfor %}
-    </form>
-    <form id="filtro-macroprocesso" data-macroprocesso-url="{% url 'riscos:ajax_load_macroprocesso' %}">
-        {% for field in form3 %}
-        <div class="form-group">
-            {{ field.label_tag }} {{ field }} {{ field.errors }}
-        </div>
-        {% endfor %}
-    </form>
-    <form id="macroprocesso-form" class="macroprocesso-form" action="{% url 'riscos:criar_processo' %}" method="post">
+    <h5> Dados Gerais </h5>
+    <hr>
+    <p><span>Planejamento estratégico:</span> {{parent.id_cadeia.id_planejamento}}</p>
+    <p><span>Cadeia:</span> {{parent.id_cadeia}}</p>
+    <p><span>Macroprcesso:</span> {{parent}}</p>
+    
+    <br>
+    <h5> Dados do Processo </h5>
+    <hr>
+    <form id="macroprocesso-form" class="macroprocesso-form" action="{% url 'riscos:criar_processo' parent_id=parent.pk %}" method="post">
         {% csrf_token %} {% for field in form %}
         <div class="form-group">
             {{ field.label_tag }} {{ field }} {{ field.errors }}
@@ -28,8 +29,6 @@
 </div>
 
 <script>
-    ajaxForm("#id_cadeia", "#id_plan", ["#id_cadeia", "#id_id_macroprocesso"], "#filtro-cadeia", "data-cadeia-url");
-    ajaxForm("#id_id_macroprocesso", "#id_cadeia", ["#id_id_macroprocesso"], "#filtro-macroprocesso", "data-macroprocesso-url");
 </script>
 
 {% endblock %}
