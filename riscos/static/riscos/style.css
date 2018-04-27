@@ -5,3 +5,7 @@
 .campo {
     font-weight: 500;
 }
+
+.circle {
+    border-radius: 50% !important;
+}
