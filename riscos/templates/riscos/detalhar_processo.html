@@ -2,7 +2,11 @@
 
 <div class="jumbotron">
     <div class="container">
-        <p style="font-size:xx-small; color:grey">{{observacao.id_macroprocesso.id_cadeia.id_planejamento}} > {{observacao.id_macroprocesso.id_cadeia}} > {{observacao.id_macroprocesso}} > {{observacao.ds_processo}} > Detalhar</p>
+        <p style="font-size:xx-small; color:grey">
+            {{observacao.id_macroprocesso.id_cadeia.id_planejamento}} > {{observacao.id_macroprocesso.id_cadeia}} >
+            <a href="{% url 'riscos:detalhar_macroprocesso' target_id=observacao.id_macroprocesso.pk %}" style="color:unset;">{{observacao.id_macroprocesso}}</a> >
+            <a href="{% url 'riscos:detalhar_processo' target_id=observacao.pk %}" style="color:unset;">{{observacao.ds_processo}}</a> > Detalhar
+        </p>
         <h1 class="display-4" style="text-align: center"> {{observacao.ds_processo}} </h1>
         <hr>
         <h6 style="text-align: center">Macroprocesso - {{observacao.id_macroprocesso}}</h6>
@@ -27,11 +31,21 @@
         </tr>
         <tr>
             <td class="campo table-active" style="width: 20%">Macroprocesso</td>
-            <td class="valor">{{observacao.id_macroprocesso}}</td>
+            <td class="valor">
+                {{observacao.id_macroprocesso}}
+                <a title="Detalhar" href="{% url 'riscos:detalhar_macroprocesso' target_id=observacao.id_macroprocesso.pk %}">
+                    <i class="fas fa-search"></i>
+                </a>
+            </td>
         </tr>
         <tr>
             <td class="campo table-active" style="width: 20%">Processo</td>
-            <td class="valor">{{observacao.ds_processo}}</td>
+            <td class="valor">
+                {{observacao.ds_processo}}
+                <a title="Detalhar" href="{% url 'riscos:detalhar_processo' target_id=observacao.pk %}">
+                    <i class="fas fa-search"></i>
+                </a>
+            </td>
         </tr>
     </table>
     <br><br>

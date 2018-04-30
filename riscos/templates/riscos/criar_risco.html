@@ -8,7 +8,10 @@
 
 <div class="jumbotron">
     <div class="container">
-        <p style="font-size:xx-small; color:grey">{{parent.id_macroprocesso.id_cadeia.id_planejamento}} > {{parent.id_macroprocesso.id_cadeia}} > {{parent.id_macroprocesso}} > {{parent.ds_processo}} > Criar risco</p>
+        <p style="font-size:xx-small; color:grey">
+            {{parent.id_macroprocesso.id_cadeia.id_planejamento}} > {{parent.id_macroprocesso.id_cadeia}} >
+            <a href="{% url 'riscos:detalhar_macroprocesso' target_id=parent.id_macroprocesso.pk %}" style="color:unset;">{{parent.id_macroprocesso}}</a> >
+            <a href="{% url 'riscos:detalhar_processo' target_id=parent.pk %}" style="color:unset;">{{parent.ds_processo}}</a> > Criar risco</p>
         <h1 class="display-4" style="text-align: center"> {{parent.ds_processo}} </h1>
         <hr>
         <h6 style="text-align: center">Criar risco</h6>

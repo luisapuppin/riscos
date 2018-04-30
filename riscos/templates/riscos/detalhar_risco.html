@@ -3,7 +3,10 @@
 <div class="jumbotron">
     <div class="container">
         <p style="font-size:xx-small; color:grey">
-            {{observacao.id_processo.id_macroprocesso.id_cadeia.id_planejamento}} > {{observacao.id_processo.id_macroprocesso.id_cadeia}} > {{observacao.id_processo.id_macroprocesso}} > {{observacao.id_processo}} > {{observacao.ds_risco}} > Detalhar
+            {{observacao.id_processo.id_macroprocesso.id_cadeia.id_planejamento}} > {{observacao.id_processo.id_macroprocesso.id_cadeia}} >
+            <a href="{% url 'riscos:detalhar_macroprocesso' target_id=observacao.id_processo.id_macroprocesso.pk %}" style="color:unset;"> {{observacao.id_processo.id_macroprocesso}}</a> >
+            <a href="{% url 'riscos:detalhar_processo' target_id=observacao.id_processo.pk %}" style="color:unset;">{{observacao.id_processo}}</a> >
+            <a href="{% url 'riscos:detalhar_risco' target_id=observacao.pk %}" style="color:unset;">{{observacao.ds_risco}}</a> > Detalhar
         </p>
         <h1 class="display-4" style="text-align: center"> {{observacao.ds_risco}} </h1>
         <hr>
@@ -32,11 +35,21 @@
         </tr>
         <tr>
             <td class="campo table-active" style="width: 20%">Macroprocesso</td>
-            <td class="valor">{{observacao.id_processo.id_macroprocesso}}</td>
+            <td class="valor">
+                {{observacao.id_processo.id_macroprocesso}}
+                <a title="Detalhar" href="{% url 'riscos:detalhar_macroprocesso' target_id=observacao.id_processo.id_macroprocesso.pk %}">
+                    <i class="fas fa-search"></i>
+                </a>
+            </td>
         </tr>
         <tr>
             <td class="campo table-active" style="width: 20%">Processo</td>
-            <td class="valor">{{observacao.id_processo}}</td>
+            <td class="valor">
+                {{observacao.id_processo}}
+                <a title="Detalhar" href="{% url 'riscos:detalhar_processo' target_id=observacao.id_processo.pk %}">
+                    <i class="fas fa-search"></i>
+                </a>
+            </td>
         </tr>
     </table>
     <br><br>
