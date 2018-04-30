@@ -5,12 +5,12 @@
         <p style="font-size:xx-small; color:grey">{{observacao.id_cadeia.id_planejamento}} > {{observacao.id_cadeia}} > {{observacao.ds_macroprocesso}} > Detalhar</p>
         <h1 class="display-4" style="text-align: center"> {{observacao.ds_macroprocesso}} </h1>
         <hr>
-        <h6 style="text-align: center">Cadeia: {{observacao.id_cadeia}}</h6>
+        <h6 style="text-align: center">Cadeia - {{observacao.id_cadeia}}</h6>
     </div>
 </div>
 
-<div class=" container ">
-    <h4>Dados gerais</h4>
+<div class="container" style="font-size:small;">
+    <h5>Dados gerais</h5>
     <hr>
     <table class="table table-bordered table-hover">
         <tr>
@@ -26,11 +26,9 @@
             <td class="valor">{{observacao.ds_macroprocesso}}</td>
         </tr>
     </table>
-    <a class="btn btn-success" href="{% url 'riscos:criar_processo' parent_id=observacao.pk %}">Criar processo</a>
-    <a class="btn btn-primary" href="{{request.META.HTTP_REFERER}}">Voltar</a>
     <br><br>
 
-    <h4>Processos</h4>
+    <h5>Processos</h5>
     <hr> {% if processos %}
     <table class="table table-bordered table-hover">
         <thead class="thead-light">
@@ -57,13 +55,14 @@
     <p> Nenhum processo registrado </p>
     {% endif %}
     <div style="text-align: right; line-height:0">
-        <a title="Adicionar atividade" href="#" style="color:green; font-size:1.5em">
+        <a title="Adicionar atividade" href="{% url 'riscos:criar_processo' parent_id=observacao.pk %}" style="color:green; font-size:1.5em">
             <i class="fas fa-plus-circle"></i>
         </a>
     </div>
     <br><br>
 
-
-    <a class="btn btn-primary " href="{{request.META.HTTP_REFERER}} ">Voltar</a>
+    <div style="text-align:right;">
+        <a class="btn btn-primary " href="{{request.META.HTTP_REFERER}}">Voltar</a>
+    </div>
 </div>
 <br> {% endblock %}

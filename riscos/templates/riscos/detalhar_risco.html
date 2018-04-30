@@ -7,19 +7,19 @@
         </p>
         <h1 class="display-4" style="text-align: center"> {{observacao.ds_risco}} </h1>
         <hr>
-        <h6 style="text-align: center">Processo: {{observacao.id_processo}}</h6>
+        <h6 style="text-align: center">Processo - {{observacao.id_processo}}</h6>
         {% if observacao.id_atividade %}
-        <h6 style="text-align: center">Atividade: {{observacao.id_atividade}}</h6>
+        <h6 style="text-align: center">Atividade - {{observacao.id_atividade}}</h6>
         {% endif %}
     </div>
 </div>
 
-<div class="container">
-    <h4>Localização na matriz de riscos</h4>
+<div class="container" style="font-size:small;">
+    <h5>Localização na matriz de riscos</h5>
     <hr>
     <br><br>
 
-    <h4>Dados gerais</h4>
+    <h5>Dados gerais</h5>
     <hr>
     <table class="table table-bordered table-hover">
         <tr>
@@ -41,7 +41,7 @@
     </table>
     <br><br>
 
-    <h4>Dados do risco</h4>
+    <h5>Dados do risco</h5>
     <hr>
     <table class="table table-bordered table-hover">
         <tr>
@@ -63,7 +63,7 @@
     </table>
     <br><br>
 
-    <h4>Causas</h4>
+    <h5>Causas</h5>
     <hr> {% if causas %}
     <table class="table table-bordered table-hover">
         <thead class="thead-light">
@@ -86,7 +86,7 @@
     {% endif %}
     <br><br>
 
-    <h4>Consequências</h4>
+    <h5>Consequências</h5>
     <hr> {% if consequencias %}
     <table class="table table-bordered table-hover">
         <thead class="thead-light">
@@ -109,7 +109,7 @@
     {% endif %}
     <br><br>
 
-    <h4>Tratamento</h4>
+    <h5>Tratamento</h5>
     <hr> {% if tratamentos %}
     <table class="table table-bordered table-hover">
         <thead class="thead-light">
@@ -132,9 +132,8 @@
     {% else %}
     <p> Nenhum tratamento registrado </p>
     {% endif %}
-    <a class="btn btn-success pull-right" href="{% url 'riscos:criar_tratamento' parent_id=observacao.pk %}">Criar controle</a>
     <div style="text-align: right; line-height:0">
-        <a title="Adicionar tratamento" href="#" style="color:green; font-size:1.5em">
+        <a title="Adicionar tratamento" href="{% url 'riscos:criar_tratamento' parent_id=observacao.pk %}" style="color:green; font-size:1.5em">
             <i class="fas fa-plus-circle"></i>
         </a>
     </div>

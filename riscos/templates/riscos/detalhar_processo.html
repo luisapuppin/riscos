@@ -5,16 +5,16 @@
         <p style="font-size:xx-small; color:grey">{{observacao.id_macroprocesso.id_cadeia.id_planejamento}} > {{observacao.id_macroprocesso.id_cadeia}} > {{observacao.id_macroprocesso}} > {{observacao.ds_processo}} > Detalhar</p>
         <h1 class="display-4" style="text-align: center"> {{observacao.ds_processo}} </h1>
         <hr>
-        <h6 style="text-align: center">{{observacao.id_macroprocesso}}</h6>
+        <h6 style="text-align: center">Macroprocesso - {{observacao.id_macroprocesso}}</h6>
     </div>
 </div>
 
-<div class="container">
-    <h4>Matriz de riscos</h4>
+<div class="container" style="font-size:small;">
+    <h5>Matriz de riscos</h5>
     <hr>
     <br><br>
 
-    <h4>Dados gerais</h4>
+    <h5>Dados gerais</h5>
     <hr>
     <table class="table table-bordered table-hover">
         <tr>
@@ -36,7 +36,7 @@
     </table>
     <br><br>
 
-    <h4>Atividades</h4>
+    <h5>Atividades</h5>
     <hr> {% if atividades %}
     <table class="table table-bordered table-hover">
         <thead class="thead-light">
@@ -64,7 +64,7 @@
     </div>
     <br><br>
 
-    <h4>Riscos</h4>
+    <h5>Riscos</h5>
     <hr> {% if riscos %}
     <table class="table table-bordered table-hover">
         <thead class="thead-light">
@@ -92,18 +92,16 @@
     <p> Nenhum risco registrada </p>
     {% endif %}
     <div style="text-align: right; line-height:0">
-        <a title="Adicionar risco" href="#" style="color:green; font-size:1.5em">
+        <a title="Adicionar risco" href="{% url 'riscos:criar_risco' parent_id=observacao.pk %}" style="color:green; font-size:1.5em">
             <i class="fas fa-plus-circle"></i>
         </a>
     </div>
     <br><br>
 
-    <div class="float-right">
+    <div style="text-align:right;">
         <a class="btn btn-primary" href="#">Editar processo</a>
         <a class="btn btn-dark" href="{{request.META.HTTP_REFERER}}">Voltar</a>
     </div>
     <br>
-    <a class="btn btn-success" href="{% url 'riscos:criar_risco' parent_id=observacao.pk %}">Criar risco</a>
-    <a class="btn btn-primary" href="{{request.META.HTTP_REFERER}}">Voltar</a>
 </div>
 <br> {% endblock %}
