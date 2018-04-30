@@ -132,6 +132,7 @@
     {% else %}
     <p> Nenhum tratamento registrado </p>
     {% endif %}
+    <a class="btn btn-success pull-right" href="{% url 'riscos:criar_tratamento' parent_id=observacao.pk %}">Criar controle</a>
     <div style="text-align: right; line-height:0">
         <a title="Adicionar tratamento" href="#" style="color:green; font-size:1.5em">
             <i class="fas fa-plus-circle"></i>
