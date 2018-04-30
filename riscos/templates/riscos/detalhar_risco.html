@@ -133,7 +133,7 @@
     <p> Nenhum tratamento registrado </p>
     {% endif %}
     <div style="text-align: right; line-height:0">
-        <a title="Adicionar tratamento" href="{% url 'riscos:criar_tratamento' parent_id=observacao.pk %}" style="color:green; font-size:1.5em">
+        <a title="Adicionar tratamento" href="{% url 'riscos:criar_tratamento' parent_id=observacao.pk %}" style="color:green;font-size:1.5em;cursor:pointer;">
             <i class="fas fa-plus-circle"></i>
         </a>
     </div>

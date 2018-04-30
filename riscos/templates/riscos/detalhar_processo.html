@@ -92,7 +92,7 @@
     <p> Nenhum risco registrada </p>
     {% endif %}
     <div style="text-align: right; line-height:0">
-        <a title="Adicionar risco" href="{% url 'riscos:criar_risco' parent_id=observacao.pk %}" style="color:green; font-size:1.5em">
+        <a title="Adicionar risco" href="{% url 'riscos:criar_risco' parent_id=observacao.pk %}" style="color:green;font-size:1.5em;cursor:pointer;">
             <i class="fas fa-plus-circle"></i>
         </a>
     </div>
