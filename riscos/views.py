@@ -1,14 +1,14 @@
 from datetime import date
+import random
 
 from django.shortcuts import render, redirect, get_object_or_404, get_list_or_404
 from django.core import serializers
 from django.urls import reverse
+from django.http import JsonResponse
 from django.forms.models import modelformset_factory
 from django import forms
 from . import forms
 from . import models
-
-# Create your views here.
 
 # ------- INDEX -------
 def index(request):
@@ -128,10 +128,23 @@ def listar_processo(request):
 def detalhar_processo(request, target_id):
     observacao = get_object_or_404(models.Processo, pk=target_id)
     riscos = models.Risco.objects.filter(id_processo=target_id)
+    x = [( x.id_impacto.nr_valor - (random.randint(10, 60) / 100) ) for x in riscos]
+    y = [( y.id_probabilidade.nr_valor - (random.randint(10, 60) / 100) ) for y in riscos]
+    texto = [z.ds_risco for z in riscos]
+    data = {
+        "x": x,
+        "y": y,
+        "mode": 'markers+text',
+        "type": 'scatter',
+        "text": texto,
+        "textposition": 'bottom center',
+        "marker": {"size": 12},
+    }
     atividades = models.Atividade.objects.filter(id_processo=target_id).order_by("nr_atividade")
     context = {
         "observacao": observacao,
         "riscos": riscos,
+        "data": data,
         "atividades": atividades,
         "active_bar": "processo",
     }
