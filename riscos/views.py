@@ -128,9 +128,11 @@ def listar_processo(request):
 def detalhar_processo(request, target_id):
     observacao = get_object_or_404(models.Processo, pk=target_id)
     riscos = models.Risco.objects.filter(id_processo=target_id)
+    atividades = models.Atividade.objects.filter(id_processo=target_id).order_by("nr_atividade")
     context = {
         "observacao": observacao,
         "riscos": riscos,
+        "atividades": atividades,
         "active_bar": "processo",
     }
     return render(request, 'riscos/detalhar_processo.html', context)
