@@ -1,17 +1,24 @@
 {% extends 'riscos/base.html' %} {% block main_content %}
 <style>
-    .criar-risco > p > span {
+    .criar-risco>p>span {
         font-weight: bold;
-        color:black;
+        color: black;
     }
 </style>
 
 <div class="jumbotron">
     <div class="container">
-        <h1>Criar risco</h1>
+        <p style="font-size:xx-small; color:grey">
+            {{parent.id_macroprocesso.id_cadeia.id_planejamento}} > {{parent.id_macroprocesso.id_cadeia}} >
+            <a href="{% url 'riscos:detalhar_macroprocesso' target_id=parent.id_macroprocesso.pk %}" style="color:unset;">{{parent.id_macroprocesso}}</a> >
+            <a href="{% url 'riscos:detalhar_processo' target_id=parent.pk %}" style="color:unset;">{{parent.ds_processo}}</a> > Criar risco</p>
+        <h1 class="display-4" style="text-align: center"> {{parent.ds_processo}} </h1>
+        <hr>
+        <h6 style="text-align: center">Criar risco</h6>
     </div>
 </div>
-<div class="container criar-risco">
+
+<div class="container criar-risco" style="font-size:small;">
     <h5> Dados Gerais </h5>
     <hr>
     <p><span>Planejamento estratégico:</span> {{parent.id_macroprocesso.id_cadeia.id_planejamento}}</p>
@@ -36,9 +43,13 @@
             <hr> {{ formset.management_form }} {% for form in formset|slice:causa %} {% csrf_token %}
             <div> {{form}} <br> </div>
             {% endfor %}
-            <div style="text-align: end">
-                <button type="button" class="btn btn-success" id="add-causa">+</button>
-                <button type="button" class="btn btn-danger" id="remove-causa">-</button> <br>
+            <div style="text-align: right; line-height:0">
+                <a id="add-causa" title="Adicionar causa" style="color:#008000;font-size:1.5em;cursor:pointer;">
+                    <i class="fas fa-plus-circle"></i>
+                </a>
+                <a id="remove-causa" title="Remover causa" style="color:#bb0000;font-size:1.5em;cursor:pointer;">
+                    <i class="fas fa-minus-circle"></i>
+                </a>
             </div>
         </div><br>
         <div id="form-consequencia">
@@ -46,15 +57,19 @@
             <hr> {{ formset2.management_form }} {% for form in formset|slice:conseq %} {% csrf_token %}
             <div> {{form}} <br> </div>
             {% endfor %}
-            <div style="text-align: end">
-                <button type="button" class="btn btn-success" id="add-consequencia">+</button>
-                <button type="button" class="btn btn-danger" id="remove-consequencia">-</button> <br>
+            <div style="text-align: right; line-height:0">
+                <a id="add-consequencia" title="Adicionar consequência" style="color:#008000;font-size:1.5em;cursor:pointer;">
+                    <i class="fas fa-plus-circle"></i>
+                </a>
+                <a id="remove-consequencia" title="Remover consequência" style="color:#bb0000;font-size:1.5em;cursor:pointer;">
+                    <i class="fas fa-minus-circle"></i>
+                </a>
             </div>
-        </div><br>
-        <div class="float-right">
+        </div><br><br>
+        <div style="text-align:right;">
             <input type="submit" name="submit-e-detalhar" value="Criar e detalhar risco" class="btn btn-success">
             <input type="submit" name="submit-e-cadastrar" value="Criar e cadastrar novo risco" class="btn btn-primary">
-            <a class="btn btn-danger" href="{% url 'riscos:listar_risco' %}">Cancelar</a>
+            <a class="btn btn-danger" href="{% url 'riscos:detalhar_processo' target_id=parent.pk %}">Cancelar</a>
         </div><br>
     </form>
 </div>

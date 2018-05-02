@@ -1,15 +1,25 @@
 {% extends 'riscos/base.html' %} {% block main_content %}
 <style>
-    .criar-controle > p > span {
+    .criar-controle>p>span {
         font-weight: bold;
-        color:black;
+        color: black;
     }
 </style>
 
-<div class="container criar-controle">
-    <br><br><br>
-    <h2> Cadastrar tratamento (controles) </h2>
-    <br>
+<div class="jumbotron">
+    <div class="container">
+        <p style="font-size:xx-small; color:grey">
+            {{parent.id_processo.id_macroprocesso.id_cadeia.id_planejamento}} > {{parent.id_processo.id_macroprocesso.id_cadeia}} >
+            <a href="{% url 'riscos:detalhar_macroprocesso' target_id=parent.id_processo.id_macroprocesso.pk %}" style="color:unset;">{{parent.id_processo.id_macroprocesso}}</a> >
+            <a href="{% url 'riscos:detalhar_processo' target_id=parent.id_processo.pk %}" style="color:unset;">{{parent.id_processo}}</a> >
+            <a href="{% url 'riscos:detalhar_risco' target_id=parent.pk %}" style="color:unset;">{{parent.ds_risco}}</a> > Criar tratamento</p>
+        <h1 class="display-4" style="text-align: center"> {{parent.ds_risco}} </h1>
+        <hr>
+        <h6 style="text-align: center">Criar tratamento</h6>
+    </div>
+</div>
+
+<div class="container criar-controle" style="font-size:small;">
     <h5> Dados Gerais </h5>
     <hr>
     <p><span>Planejamento estratégico:</span> {{parent.id_processo.id_macroprocesso.id_cadeia.id_planejamento}}</p>
@@ -21,15 +31,13 @@
     <h5>Dados do controle</h5>
     <hr>
     <form method="POST" action="">
-        {{ form.management_form }}
-        {% csrf_token %}
+        {{ form.management_form }} {% csrf_token %}
         <div> {{form}} <br> </div>
         <br>
+    </form>
+    <div style="text-align:right;">
         <input type="submit" name="submit-risco" value="Criar controle" class="btn btn-success">
-    </form> <br>
+        <a class="btn btn-danger" href="{% url 'riscos:detalhar_risco' target_id=parent.pk %}">Cancelar</a>
+    </div> <br>
 </div>
-
-<script>
-    console.log("Cadastro de tratamentos aberto.")
-</script>
 {% endblock %}
