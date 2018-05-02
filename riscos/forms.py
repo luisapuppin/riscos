@@ -66,19 +66,42 @@ class FormProcesso(forms.ModelForm):
             "ds_processo": forms.TextInput(attrs={"class": "form-control", "placeholder": "Nome do processo"})
         }
 
+class FormAtividade(forms.ModelForm): 
+    class Meta: 
+        model = models.Atividade 
+        fields = ("nr_atividade", "ds_atividade", "ds_responsavel",) 
+        labels = {
+            "nr_atividade": "Ordem da atividade no fluxo", 
+            "ds_atividade": 'Nome da atividade', 
+            "ds_responsavel": "Área responsável" 
+        } 
+        widgets = { 
+            "nr_atividade": forms.NumberInput(attrs={
+                "class": "form-control"}
+            ), 
+            "ds_atividade": forms.TextInput(attrs={
+                "class": "form-control", "placeholder": "Atividade"
+            }), 
+            "ds_responsavel": forms.TextInput(attrs={
+                "class": "form-control", "placeholder": "Área"
+            }) 
+        } 
+ 
 class FormRisco(forms.ModelForm):
     class Meta:
         model = models.Risco
-        fields = ("ds_risco", "id_tipo_risco", "id_impacto", "id_probabilidade",)
+        fields = ("id_atividade", "ds_risco", "id_tipo_risco", "id_impacto", "id_probabilidade",)
         labels = {
-            "id_tipo_risco": "Tipo do risco",
+            "id_atividade": "Atividade",
             "ds_risco": "Descrição do risco",
+            "id_tipo_risco": "Tipo do risco",
             "id_impacto": "Impacto",
             "id_probabilidade": "Probabilidade"
         }
         widgets = {
-            "id_tipo_risco": forms.Select(attrs={"class": "selectpicker form-control"}),
+            "id_atividade": forms.Select(attrs={"class": "selectpicker form-control"}),
             "ds_risco": forms.TextInput(attrs={"class": "form-control", "placeholder": "Descrição do risco"}),
+            "id_tipo_risco": forms.Select(attrs={"class": "selectpicker form-control"}),
             "id_impacto": forms.Select(attrs={"class": "form-control"}),
             "id_probabilidade": forms.Select(attrs={"class": "form-control"})
         }

@@ -34,14 +34,13 @@
         </div>
         {% endfor %}
 
-    </form> <br>
+    <br>
     <div style="text-align:right;">
         <input type="submit" name="submit-macroprocesso" value="Criar processo" class="btn btn-success">
         <a class="btn btn-danger" href="{% url 'riscos:detalhar_macroprocesso' target_id=parent.pk %}">Cancelar</a>
     </div>
+    </form>
+    <br>
 </div>
-
-<script>
-</script>
 
 {% endblock %}
