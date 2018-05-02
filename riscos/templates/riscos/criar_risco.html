@@ -25,19 +25,15 @@
     <p><span>Cadeia:</span> {{parent.id_macroprocesso.id_cadeia}}</p>
     <p><span>Macroprcesso:</span> {{parent.id_macroprocesso}}</p>
     <p><span>Processo:</span> {{parent}}</p>
+    <br>
+    <h5> Dados do Risco </h5>
+    <hr>
     <form id="risco-form" class="risco-form" action="{% url 'riscos:criar_risco' parent_id=parent.pk %}" method="post">
-        {% csrf_token %} {% for field in form %} {% if field.label == "Descrição do risco" %}
-        <br>
-        <h5> Dados do Risco </h5>
-        <hr>
+        {% csrf_token %} {% for field in form %}
         <div class="form-group">
             {{ field.label_tag }} {{ field }} {{ field.errors }}
         </div>
-        {% else %}
-        <div class="form-group">
-            {{ field.label_tag }} {{ field }} {{ field.errors }}
-        </div>
-        {% endif %} {% endfor %}<br>
+        {% endfor %}<br>
         <div id="form-causa">
             <h5> Causas do Risco </h5>
             <hr> {{ formset.management_form }} {% for form in formset|slice:causa %} {% csrf_token %}

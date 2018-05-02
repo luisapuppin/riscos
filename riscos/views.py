@@ -128,13 +128,41 @@ def listar_processo(request):
 def detalhar_processo(request, target_id):
     observacao = get_object_or_404(models.Processo, pk=target_id)
     riscos = models.Risco.objects.filter(id_processo=target_id)
+    atividades = models.Atividade.objects.filter(id_processo=target_id).order_by("nr_atividade")
     context = {
         "observacao": observacao,
         "riscos": riscos,
+        "atividades": atividades,
         "active_bar": "processo",
     }
     return render(request, 'riscos/detalhar_processo.html', context)
 
+# ------- ATIVIDADE ------- 
+def criar_atividade(request, parent_id): 
+    N_EXTRA = 50
+    parent = get_object_or_404(models.Processo, pk=parent_id)
+    AtividadeFormset = modelformset_factory(    
+        models.Atividade, form=forms.FormAtividade, extra=N_EXTRA, min_num=1,  
+    )
+    queryset = models.Atividade.objects.none()
+    formset = AtividadeFormset(request.POST or None, queryset=queryset) 
+    if formset.is_valid(): 
+        instances = formset.save(commit=False) 
+        for insta in instances: 
+            insta.id_processo = parent
+            insta.ds_usuario = 'usuario-teste' 
+            insta.save() 
+        if "submit-e-detalhar" in request.POST: 
+            return redirect(reverse("riscos:detalhar_processo", kwargs={"target_id":parent_id}))
+        else: 
+            return redirect(reverse("riscos:criar_atividade", kwargs={"parent_id":parent_id}))
+    context = { 
+        "formset": formset,
+        "parent": parent, 
+        "active_bar": "processo", 
+    } 
+    return render(request, 'riscos/criar_atividade.html', context) 
+ 
 # ------- RISCO -------
 def criar_risco(request, parent_id):
     N_EXTRA = 5

@@ -34,10 +34,10 @@
         {{ form.management_form }} {% csrf_token %}
         <div> {{form}} <br> </div>
         <br>
-    </form>
     <div style="text-align:right;">
         <input type="submit" name="submit-risco" value="Criar controle" class="btn btn-success">
         <a class="btn btn-danger" href="{% url 'riscos:detalhar_risco' target_id=parent.pk %}">Cancelar</a>
-    </div> <br>
+    </div>
+    </form> <br>
 </div>
 {% endblock %}

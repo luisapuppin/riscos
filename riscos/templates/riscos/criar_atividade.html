@@ -1,0 +1,59 @@
+{% extends 'riscos/base.html' %} {% block main_content %} 
+<style>
+    .criar-atividade>p>span {
+        font-weight: bold;
+        color: black;
+    }
+</style>
+<div class="jumbotron">
+    <div class="container">
+        <p style="font-size:xx-small; color:grey">
+            {{parent.id_macroprocesso.id_cadeia.id_planejamento}} > {{parent.id_macroprocesso.id_cadeia}} >
+            <a href="{% url 'riscos:detalhar_macroprocesso' target_id=parent.id_macroprocesso.pk %}" style="color:unset;">{{parent.id_macroprocesso}}</a> >
+            <a href="{% url 'riscos:detalhar_processo' target_id=parent.pk %}" style="color:unset;">{{parent.ds_processo}}</a> > Criar risco</p>
+        <h1 class="display-4" style="text-align: center"> {{parent.ds_processo}} </h1>
+        <hr>
+        <h6 style="text-align: center">Criar risco</h6>
+    </div>
+</div>
+<div class="container criar-atividade"> 
+    <h5> Dados Gerais </h5>
+    <hr>
+    <p><span>Planejamento estratégico:</span> {{parent.id_macroprocesso.id_cadeia.id_planejamento}}</p>
+    <p><span>Cadeia:</span> {{parent.id_macroprocesso.id_cadeia}}</p>
+    <p><span>Macroprcesso:</span> {{parent.id_macroprocesso}}</p>
+    <p><span>Processo:</span> {{parent}}</p>
+    <form id="atividade-form" class="atividade-form" action="{% url 'riscos:criar_atividade' parent_id=parent.pk %}" method="post"> 
+        <div id="form-atividade"> 
+            <h5> Atividades </h5> 
+            <hr> 
+            {{ formset.management_form }} {% for form in formset %} {% csrf_token %} 
+            <div> {{form}} <br> </div> 
+            {% endfor %} 
+            <div style="text-align: end"> 
+                <button type="button" class="btn btn-success" id="add-atividade">+</button> 
+                <button type="button" class="btn btn-danger" id="remove-atividade">-</button> <br> 
+            </div> 
+        </div><br> 
+        <div class="float-right"> 
+            <input type="submit" name="submit-e-detalhar" value="Criar atividade e detalhar processo" class="btn btn-success"> 
+            <input type="submit" name="submit-e-cadastrar" value="Criar e cadastrar nova atividade" class="btn btn-primary"> 
+            <a class="btn btn-danger" href="{% url 'riscos:detalhar_processo' target_id=parent.pk %}">Cancelar</a>
+        </div><br> 
+    </form> 
+</div> 
+ 
+<script> 
+    $("#form-atividade>div:has(input[id$=ds_atividade]):gt(0)").hide(); 
+    $("#add-atividade").on("click", function() { 
+        $("#form-atividade>div:has(input[id$=ds_atividade]):hidden:first").show(); 
+    }) 
+    $("#remove-atividade").on("click", function() { 
+        if ($("#form-atividade>div:has(input[id$=ds_atividade]):not(:hidden)").length > 1) { 
+            $("#form-atividade>div:has(input[id$=ds_atividade]):not(:hidden):last>input[id$=ds_atividade]")[0].value = ""; 
+            $("#form-atividade>div:has(input[id$=ds_atividade]):not(:hidden):last").hide(); 
+        } 
+    }) 
+</script> 
+ 
+{% endblock %}
