@@ -66,6 +66,27 @@ class FormProcesso(forms.ModelForm):
             "ds_processo": forms.TextInput(attrs={"class": "form-control", "placeholder": "Nome do processo"})
         }
 
+class FormAtividade(forms.ModelForm): 
+    class Meta: 
+        model = models.Atividade 
+        fields = ("nr_atividade", "ds_atividade", "ds_responsavel",) 
+        labels = {
+            "nr_atividade": "Ordem da atividade no fluxo", 
+            "ds_atividade": 'Nome da atividade', 
+            "ds_responsavel": "Área responsável" 
+        } 
+        widgets = { 
+            "nr_atividade": forms.NumberInput(attrs={
+                "class": "form-control"}
+            ), 
+            "ds_atividade": forms.TextInput(attrs={
+                "class": "form-control", "placeholder": "Atividade"
+            }), 
+            "ds_responsavel": forms.TextInput(attrs={
+                "class": "form-control", "placeholder": "Área"
+            }) 
+        } 
+ 
 class FormRisco(forms.ModelForm):
     class Meta:
         model = models.Risco
