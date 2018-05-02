@@ -30,6 +30,9 @@ urlpatterns = [
             name="detalhar_processo"),
     re_path(r'^macroprocesso/(?P<parent_id>[0-9]+)/criar/processo/$', views.criar_processo, name="criar_processo"),
 
+    # ATIVIDADE 
+    re_path(r'^macroprocesso/(?P<parent_id>[0-9]+)/atividade/criar/$', views.criar_atividade, name="criar_atividade"),  
+
     # RISCO
     re_path(r'^risco/listar/$', views.listar_risco, name="listar_risco"),
     re_path(r'^risco/(?P<target_id>[0-9]+)/detalhar/$', views.detalhar_risco, 
