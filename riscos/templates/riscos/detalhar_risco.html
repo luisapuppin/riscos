@@ -20,7 +20,11 @@
 <div class="container" style="font-size:small;">
     <h5>Localização na matriz de riscos</h5>
     <hr>
-    <br><br>
+    <br>
+    <div style="width:600;height:400">
+        <div id="myDiv"></div>
+    </div>
+    <br>
 
     <h5>Dados gerais</h5>
     <hr>
@@ -158,4 +162,24 @@
     </div>
     <br>
 </div>
-<br> {% endblock %}
+<br>
+<script>
+    const trace = "{{data|safe}}";
+    const ponto = "{{ponto|safe}}";
+    var data = [ JSON.parse(trace.replace(/'/g, "\"")),  JSON.parse(ponto.replace(/'/g, "\""))];
+    var layout = {
+        xaxis: {
+            range: [0, 5.5],
+            title: 'Impacto'
+        },
+        yaxis: {
+            range: [0, 5.5],
+            title: 'Probabilidade'
+        },
+        title: 'Matriz de risco'
+    };
+
+    Plotly.newPlot('myDiv', data, layout);
+    
+</script>
+{% endblock %}
