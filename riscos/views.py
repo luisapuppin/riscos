@@ -6,6 +6,7 @@ from django.core import serializers
 from django.urls import reverse
 from django.http import JsonResponse
 from django.forms.models import modelformset_factory
+from django.db.models import F
 from django import forms
 from . import forms
 from . import models
@@ -128,6 +129,7 @@ def listar_processo(request):
 def detalhar_processo(request, target_id):
     observacao = get_object_or_404(models.Processo, pk=target_id)
     riscos = models.Risco.objects.filter(id_processo=target_id)
+    sem_tratamento = models.Risco.objects.filter(id_probabilidade__gte=12/F('id_impacto'))
     x = [( x.id_impacto.nr_valor - (random.randint(10, 60) / 100) ) for x in riscos]
     y = [( y.id_probabilidade.nr_valor - (random.randint(10, 60) / 100) ) for y in riscos]
     texto = [z.ds_risco for z in riscos]
@@ -146,6 +148,7 @@ def detalhar_processo(request, target_id):
         "riscos": riscos,
         "data": data,
         "atividades": atividades,
+        "sem_tratamento": sem_tratamento,
         "active_bar": "processo",
     }
     return render(request, 'riscos/detalhar_processo.html', context)
@@ -229,6 +232,8 @@ def detalhar_risco(request, target_id):
     x = [( x.id_impacto.nr_valor - (random.randint(20, 80) / 100) ) for x in riscos]
     y = [( y.id_probabilidade.nr_valor - (random.randint(20, 80) / 100) ) for y in riscos]
     texto = [z.ds_risco for z in riscos]
+    fator = observacao.id_impacto.nr_valor * observacao.id_probabilidade.nr_valor
+    sem_tratamento = fator >= 12
     data = {
         "x": x,
         "y": y,
@@ -254,6 +259,7 @@ def detalhar_risco(request, target_id):
         "causas": causas,
         "consequencias": consequencias,
         "tratamentos": tratamentos,
+        "sem_tratamento": sem_tratamento,
         "data": data,
         "ponto": ponto,
         "active_bar": "risco",
