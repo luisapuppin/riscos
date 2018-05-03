@@ -1,30 +1,165 @@
-{% extends 'riscos/base.html' %} {% block main_content %}
+﻿{% extends 'riscos/base.html' %} {% block main_content %}
 
-<div class="container">
-    <h2> Detalhar processo </h2> <br>
-    <h4> {{observacao.ds_processo}} </h4> <br>
-    <table class="table table-striped table-hover">
+<div class="jumbotron">
+    <div class="container">
+        <p style="font-size:xx-small; color:grey">
+            {{observacao.id_macroprocesso.id_cadeia.id_planejamento}} > {{observacao.id_macroprocesso.id_cadeia}} >
+            <a href="{% url 'riscos:detalhar_macroprocesso' target_id=observacao.id_macroprocesso.pk %}" style="color:unset;">{{observacao.id_macroprocesso}}</a> >
+            <a href="{% url 'riscos:detalhar_processo' target_id=observacao.pk %}" style="color:unset;">{{observacao.ds_processo}}</a> > Detalhar
+        </p>
+        <h1 class="display-4" style="text-align: center"> {{observacao.ds_processo}} </h1>
+        <hr>
+        <h6 style="text-align: center">Macroprocesso - {{observacao.id_macroprocesso}}</h6>
+    </div>
+</div>
+
+<div class="container" style="font-size:small;">
+    {% if sem_tratamento %}
+    <div class="alert alert-danger">
+        <p style="font-weight:bold;">
+            Atenção! {% if sem_tratamento.count > 1 %} Existem {{sem_tratamento.count}} riscos graves e sem controle! {% else %} Existe 1 risco grave e sem controle! {% endif %}
+        </p>
+        <ol>{% for item in sem_tratamento %}
+            <li> {{item}}
+                <a title="Criar tratamento" href="{% url 'riscos:criar_tratamento' parent_id=item.pk %}" style="color:unset;cursor:pointer;">
+                    <i class="fas fa-fire-extinguisher"></i></a>
+            </li>
+            {% endfor %}</ol>
+    </div>
+    {% endif %}
+    <h5>Matriz de riscos</h5>
+    <hr>
+    <br> {% if riscos %}
+    <div style="width:600;height:400">
+        <div id="myDiv"></div>
+    </div>
+    {% else %}
+    <p> Nenhum risco registrado </p>
+    {% endif %}
+    <br>
+
+    <h5>Dados gerais</h5>
+    <hr>
+    <table class="table table-bordered table-hover">
         <tr>
-            <td class="campo">ID</td>
-            <td class="valor">{{observacao.id}}</td>
+            <td class="campo table-active" style="width: 20%">Planejamento Estratégico</td>
+            <td class="valor">{{observacao.id_macroprocesso.id_cadeia.id_planejamento}}</td>
         </tr>
         <tr>
-            <td class="campo">Nome do Processo</td>
-            <td class="valor">{{observacao.ds_processo}}</td>
+            <td class="campo table-active" style="width: 20%">Cadeia</td>
+            <td class="valor">{{observacao.id_macroprocesso.id_cadeia}}</td>
         </tr>
         <tr>
-            <td class="campo">Macroprocesso</td>
-            <td class="valor">{{observacao.id_macroprocesso}}</td>
+            <td class="campo table-active" style="width: 20%">Macroprocesso</td>
+            <td class="valor">
+                {{observacao.id_macroprocesso}}
+                <a title="Detalhar" href="{% url 'riscos:detalhar_macroprocesso' target_id=observacao.id_macroprocesso.pk %}">
+                    <i class="fas fa-search"></i>
+                </a>
+            </td>
         </tr>
         <tr>
-            <td class="campo">Data de cadastro</td>
-            <td class="valor">{{observacao.dt_cadastro}}</td>
-        </tr>
-        <tr>
-            <td class="campo">Cadastrado por</td>
-            <td class="valor">{{observacao.ds_usuario}}</td>
+            <td class="campo table-active" style="width: 20%">Processo</td>
+            <td class="valor">
+                {{observacao.ds_processo}}
+                <a title="Detalhar" href="{% url 'riscos:detalhar_processo' target_id=observacao.pk %}">
+                    <i class="fas fa-search"></i>
+                </a>
+            </td>
         </tr>
     </table>
-    <a class="btn btn-primary" href="{{request.META.HTTP_REFERER}}">Voltar</a>
+    <br><br>
+
+    <h5>Atividades</h5>
+    <hr> {% if atividades %}
+    <table class="table table-bordered table-hover">
+        <thead class="thead-light">
+            <tr>
+                <th style="width: 10%">Item</th>
+                <th>Descrição da atividade</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in atividades %}
+            <tr>
+                <td style="width: 10%">{{ forloop.counter }}</td>
+                <td>{{ item.ds_atividade }}</td>
+            </tr>{% endfor %}
+
+        </tbody>
+    </table>
+    {% else %}
+    <p> Nenhuma atividade registrada </p>
+    {% endif %}
+    <div style="text-align: right; line-height:0">
+        <a title="Adicionar atividade" href="{% url 'riscos:criar_atividade' parent_id=observacao.pk %}" style="color:green; font-size:1.5em">
+            <i class="fas fa-plus-circle"></i>
+        </a>
+    </div>
+    <br><br>
+
+    <h5>Riscos</h5>
+    <hr> {% if riscos %}
+    <table class="table table-bordered table-hover">
+        <thead class="thead-light">
+            <tr>
+                <th style="width: 10%">Item</th>
+                <th>Descrição do risco</th>
+                <th style="width: 5%"></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in riscos %}
+            <tr>
+                <td style="width: 10%">{{ forloop.counter }}</td>
+                <td>{{ item.ds_risco }}</td>
+                <td style="width:5%;text-align:center;">
+                    <a title="Detalhar risco" href="{% url 'riscos:detalhar_risco' target_id=item.pk %}">
+                        <i class="far fa-list-alt"></i>
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p> Nenhum risco registrado </p>
+    {% endif %}
+    <div style="text-align: right; line-height:0">
+        <a title="Adicionar risco" href="{% url 'riscos:criar_risco' parent_id=observacao.pk %}" style="color:green;font-size:1.5em;cursor:pointer;">
+            <i class="fas fa-plus-circle"></i>
+        </a>
+    </div>
+    <br><br>
+
+    <div style="text-align:right;">
+        <a class="btn btn-primary" href="#">Editar processo</a>
+        <a class="btn btn-dark" href="{{request.META.HTTP_REFERER}}">Voltar</a>
+    </div>
+    <br>
 </div>
-<br> {% endblock %}
+<br>
+
+<script>
+    const trace = "{{data|safe}}";
+    var data = [JSON.parse(trace.replace(/'/g, "\""))];
+    var layout = {
+        xaxis: {
+            range: [0, 5.5],
+            title: 'Impacto'
+        },
+        yaxis: {
+            range: [0, 5.5],
+            title: 'Probabilidade'
+        },
+        title: 'Matriz de risco'
+    };
+
+    {% if riscos %}
+    Plotly.newPlot('myDiv', data, layout);
+    console.log("Matriz de riscos plotada.");
+    {% else %}
+    console.log("Processo sem riscos.");
+    {% endif %}
+</script>
+{% endblock %}

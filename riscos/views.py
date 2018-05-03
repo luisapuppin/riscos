@@ -1,14 +1,15 @@
 from datetime import date
+import random
 
 from django.shortcuts import render, redirect, get_object_or_404, get_list_or_404
 from django.core import serializers
 from django.urls import reverse
+from django.http import JsonResponse
 from django.forms.models import modelformset_factory
+from django.db.models import F
 from django import forms
 from . import forms
 from . import models
-
-# Create your views here.
 
 # ------- INDEX -------
 def index(request):
@@ -26,17 +27,17 @@ def criar_planejamento(request):
             return redirect(reverse("riscos:listar_planejamento"))
     else:
         form = forms.FormPlanejamento()
-    context = {"form": form, "active_bar": "planejamento"}
+    context = {"form": form, "active_bar": "macroprocesso"}
     return render(request, 'riscos/criar_planejamento.html', context)
 
 def listar_planejamento(request):
     lista = models.Planejamento.objects.order_by("ds_planejamento")
-    context = {'lista': lista, "active_bar": "planejamento",}
+    context = {'lista': lista, "active_bar": "macroprocesso",}
     return render(request, 'riscos/listar_planejamento.html', context)
 
 def detalhar_planejamento(request, target_id):
     observacao = get_object_or_404(models.Planejamento, pk=target_id)
-    context = {'observacao': observacao, "active_bar": "planejamento",}
+    context = {'observacao': observacao, "active_bar": "macroprocesso",}
     return render(request, 'riscos/detalhar_planejamento.html', context)
 
 # ------- CADEIA -------
@@ -50,17 +51,17 @@ def criar_cadeia(request):
             return redirect(reverse("riscos:listar_cadeia"))
     else:
         form = forms.FormCadeia()
-    context = {"form": form, "active_bar": "cadeia",}
+    context = {"form": form, "active_bar": "macroprocesso",}
     return render(request, 'riscos/criar_cadeia.html', context)
 
 def listar_cadeia(request):
     lista = models.Cadeia.objects.order_by("id_planejamento")
-    context = {'lista': lista, "active_bar": "cadeia",}
+    context = {'lista': lista, "active_bar": "macroprocesso",}
     return render(request, 'riscos/listar_cadeia.html', context)
 
 def detalhar_cadeia(request, target_id):
     observacao = get_object_or_404(models.Cadeia, pk=target_id)
-    context = {'observacao': observacao, "active_bar": "cadeia",}
+    context = {'observacao': observacao, "active_bar": "macroprocesso",}
     return render(request, 'riscos/detalhar_cadeia.html', context)
 
 # ------- MACROPROCESSO -------
@@ -92,28 +93,30 @@ def listar_macroprocesso(request):
 
 def detalhar_macroprocesso(request, target_id):
     observacao = get_object_or_404(models.Macroprocesso, pk=target_id)
-    context = {'observacao': observacao, "active_bar": "macroprocesso",}
+    processos = models.Processo.objects.filter(id_macroprocesso=target_id)
+    context = {
+        "observacao": observacao,
+        "processos": processos,
+        "active_bar": "macroprocesso",
+    }
     return render(request, 'riscos/detalhar_macroprocesso.html', context)
 
 # ------- PROCESSO -------
-def criar_processo(request):
+def criar_processo(request, parent_id):
+    parent = get_object_or_404(models.Macroprocesso, pk=parent_id)
     if request.method == 'POST':
-        form2 = forms.FormSelecionarPlanejamento()
-        form3 = forms.FormSelecionarCadeia()
         form = forms.FormProcesso(request.POST)
         if form.is_valid():
             instance = form.save(commit=False)
+            instance.id_macroprocesso = parent
             instance.ds_usuario = "usuario-teste"
             instance.save()
             return redirect(reverse("riscos:listar_processo"))
     else:
-        form2 = forms.FormSelecionarPlanejamento()
-        form3 = forms.FormSelecionarCadeia()
         form = forms.FormProcesso()
     context = {
         "form": form,
-        "form2": form2,
-        "form3": form3,
+        "parent": parent,
         "active_bar": "processo",
     }
     return render(request, 'riscos/criar_processo.html', context)
@@ -125,23 +128,70 @@ def listar_processo(request):
 
 def detalhar_processo(request, target_id):
     observacao = get_object_or_404(models.Processo, pk=target_id)
-    context = {'observacao': observacao,"active_bar": "processo",}
+    riscos = models.Risco.objects.filter(id_processo=target_id)
+    sem_tratamento = models.Risco.objects.filter(id_probabilidade__gte=12/F('id_impacto'), id_processo=target_id)
+    x = [( x.id_impacto.nr_valor - (random.randint(10, 60) / 100) ) for x in riscos]
+    y = [( y.id_probabilidade.nr_valor - (random.randint(10, 60) / 100) ) for y in riscos]
+    texto = [z.ds_risco for z in riscos]
+    data = {
+        "x": x,
+        "y": y,
+        "mode": 'markers+text',
+        "type": 'scatter',
+        "text": texto,
+        "textposition": 'bottom center',
+        "marker": {"size": 12},
+    }
+    atividades = models.Atividade.objects.filter(id_processo=target_id).order_by("nr_atividade")
+    context = {
+        "observacao": observacao,
+        "riscos": riscos,
+        "data": data,
+        "atividades": atividades,
+        "sem_tratamento": sem_tratamento,
+        "active_bar": "processo",
+    }
     return render(request, 'riscos/detalhar_processo.html', context)
 
+# ------- ATIVIDADE ------- 
+def criar_atividade(request, parent_id): 
+    N_EXTRA = 50
+    parent = get_object_or_404(models.Processo, pk=parent_id)
+    AtividadeFormset = modelformset_factory(    
+        models.Atividade, form=forms.FormAtividade, extra=N_EXTRA, min_num=1,  
+    )
+    queryset = models.Atividade.objects.none()
+    formset = AtividadeFormset(request.POST or None, queryset=queryset) 
+    if formset.is_valid(): 
+        instances = formset.save(commit=False) 
+        for insta in instances: 
+            insta.id_processo = parent
+            insta.ds_usuario = 'usuario-teste' 
+            insta.save() 
+        if "submit-e-detalhar" in request.POST: 
+            return redirect(reverse("riscos:detalhar_processo", kwargs={"target_id":parent_id}))
+        else: 
+            return redirect(reverse("riscos:criar_atividade", kwargs={"parent_id":parent_id}))
+    context = { 
+        "formset": formset,
+        "parent": parent, 
+        "active_bar": "processo", 
+    } 
+    return render(request, 'riscos/criar_atividade.html', context) 
+ 
 # ------- RISCO -------
-def criar_risco(request):
+def criar_risco(request, parent_id):
     N_EXTRA = 5
     RiscoCausaFormset = modelformset_factory(   
         models.CausaConsequencia, form=forms.FormCausaConsequencia, extra=(N_EXTRA * 2 ) + 1, min_num=1, 
     )
     queryset = models.CausaConsequencia.objects.none()
     formset = RiscoCausaFormset(request.POST or None, queryset=queryset)
-    form2 = forms.FormSelecionarPlanejamento()
-    form3 = forms.FormSelecionarCadeia()
-    form4 = forms.FormSelecionarMacroprocesso()
+    parent = get_object_or_404(models.Processo, pk=parent_id)
     form = forms.FormRisco(request.POST or None)
     if form.is_valid() and formset.is_valid():
         instance = form.save(commit=False)
+        instance.id_processo = parent
         instance.ds_usuario = "usuario-teste"
         instance.save()
         saved_id = instance.pk
@@ -153,12 +203,10 @@ def criar_risco(request):
         if "submit-e-detalhar" in request.POST:
             return redirect(reverse("riscos:detalhar_risco", kwargs={"target_id":saved_id}))
         else:
-            return redirect(reverse("riscos:criar_risco"))
+            return redirect(reverse("riscos:criar_risco", kwargs={"parent_id":parent_id}))
     context = {
         "form": form,
-        "form2": form2,
-        "form3": form3,
-        "form4": form4,
+        "parent": parent,
         "formset": formset,
         "active_bar": "risco",
         "causa": ":" + str(N_EXTRA + 1),
@@ -175,25 +223,53 @@ def detalhar_risco(request, target_id):
     observacao = get_object_or_404(models.Risco, pk=target_id)
     causas = models.CausaConsequencia.objects.filter(id_risco=target_id, ds_tipo="Causa")
     consequencias = models.CausaConsequencia.objects.filter(id_risco=target_id, ds_tipo="Consequência")
-    tratamentos = models.Tratamento.objects.filter(id_causa_consequencia=target_id)
+    tratamentos = models.Tratamento.objects.filter(id_causa_consequencia__id_risco=target_id)
+    riscos = models.Risco.objects.filter(
+        id_processo=observacao.id_processo
+    ).exclude(
+        pk=target_id
+    )
+    x = [( x.id_impacto.nr_valor - (random.randint(20, 80) / 100) ) for x in riscos]
+    y = [( y.id_probabilidade.nr_valor - (random.randint(20, 80) / 100) ) for y in riscos]
+    texto = [z.ds_risco for z in riscos]
+    fator = observacao.id_impacto.nr_valor * observacao.id_probabilidade.nr_valor
+    sem_tratamento = fator >= 12
+    data = {
+        "x": x,
+        "y": y,
+        "mode": 'markers',
+        "type": 'scatter',
+        "text": texto,
+        "name": "riscos",
+        "textposition": 'bottom center',
+        "marker": {"size": 12},
+    } 
+    ponto = {
+        "x": [observacao.id_impacto.nr_valor - (random.randint(20, 80) / 100) ],
+        "y": [observacao.id_probabilidade.nr_valor - (random.randint(20, 80) / 100) ],
+        "mode": 'markers+text',
+        "type": 'scatter',
+        "text": [observacao.ds_risco],
+        "name": observacao.ds_risco,
+        "textposition": 'bottom center',
+        "marker": {"size": 18},
+    }
     context = {
         'observacao': observacao,
         "causas": causas,
         "consequencias": consequencias,
         "tratamentos": tratamentos,
+        "sem_tratamento": sem_tratamento,
+        "data": data,
+        "ponto": ponto,
         "active_bar": "risco",
     }
     return render(request, 'riscos/detalhar_risco.html', context)
 
 # ------- TRATAMENTO -------
-def criar_tratamento(request):
-    form2 = forms.FormSelecionarPlanejamento()
-    form3 = forms.FormSelecionarCadeia()
-    form4 = forms.FormSelecionarMacroprocesso()
-    form5 = forms.FormSelecionarProcesso()
-    form6 = forms.FormSelecionarRisco()
-    
+def criar_tratamento(request, parent_id): 
     form = forms.FormTratamento(request.POST or None)
+    parent = get_object_or_404(models.Risco, pk=parent_id)
     if form.is_valid():
         instance = form.save(commit=False)
         instance.ds_usuario = 'usuario-teste'
@@ -203,11 +279,7 @@ def criar_tratamento(request):
 
     context = {
         "form": form,
-        "form2": form2,
-        "form3": form3,
-        "form4": form4,
-        "form5": form5,
-        "form6": form6,
+        "parent": parent,
         "active_bar": "controle",
     }
     return render(request, "riscos/criar_tratamento.html", context)
