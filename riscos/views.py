@@ -221,11 +221,41 @@ def detalhar_risco(request, target_id):
     causas = models.CausaConsequencia.objects.filter(id_risco=target_id, ds_tipo="Causa")
     consequencias = models.CausaConsequencia.objects.filter(id_risco=target_id, ds_tipo="Consequência")
     tratamentos = models.Tratamento.objects.filter(id_causa_consequencia__id_risco=target_id)
+    riscos = models.Risco.objects.filter(
+        id_processo=observacao.id_processo
+    ).exclude(
+        pk=target_id
+    )
+    x = [( x.id_impacto.nr_valor - (random.randint(20, 80) / 100) ) for x in riscos]
+    y = [( y.id_probabilidade.nr_valor - (random.randint(20, 80) / 100) ) for y in riscos]
+    texto = [z.ds_risco for z in riscos]
+    data = {
+        "x": x,
+        "y": y,
+        "mode": 'markers',
+        "type": 'scatter',
+        "text": texto,
+        "name": "riscos",
+        "textposition": 'bottom center',
+        "marker": {"size": 12},
+    } 
+    ponto = {
+        "x": [observacao.id_impacto.nr_valor - (random.randint(20, 80) / 100) ],
+        "y": [observacao.id_probabilidade.nr_valor - (random.randint(20, 80) / 100) ],
+        "mode": 'markers+text',
+        "type": 'scatter',
+        "text": [observacao.ds_risco],
+        "name": observacao.ds_risco,
+        "textposition": 'bottom center',
+        "marker": {"size": 18},
+    }
     context = {
         'observacao': observacao,
         "causas": causas,
         "consequencias": consequencias,
         "tratamentos": tratamentos,
+        "data": data,
+        "ponto": ponto,
         "active_bar": "risco",
     }
     return render(request, 'riscos/detalhar_risco.html', context)

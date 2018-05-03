@@ -141,11 +141,11 @@
         title: 'Matriz de risco'
     };
 
-    if (data[0].x != "") {
+    {% if riscos %}
         Plotly.newPlot('myDiv', data, layout);
         console.log("Matriz de riscos plotada.");
-    } else {
+    {% else %}
         console.log("Processo sem riscos.");
-    }
+    {% endif %}
 </script>
 {% endblock %}
