@@ -16,8 +16,16 @@
 <div class="container" style="font-size:small;">
     <h5>Matriz de riscos</h5>
     <hr>
-    <br><br>
-
+    <br>
+    {% if riscos %}
+        <div style="width:600;height:400">
+        <div id="myDiv"></div>
+        </div>
+    {% else %}
+        <p> Nenhum risco registrado </p>
+    {% endif %}
+    <br>
+    
     <h5>Dados gerais</h5>
     <hr>
     <table class="table table-bordered table-hover">
@@ -103,7 +111,7 @@
         </tbody>
     </table>
     {% else %}
-    <p> Nenhum risco registrada </p>
+    <p> Nenhum risco registrado </p>
     {% endif %}
     <div style="text-align: right; line-height:0">
         <a title="Adicionar risco" href="{% url 'riscos:criar_risco' parent_id=observacao.pk %}" style="color:green;font-size:1.5em;cursor:pointer;">
@@ -118,4 +126,28 @@
     </div>
     <br>
 </div>
-<br> {% endblock %}
+<br> 
+
+<script>
+    const trace = "{{data|safe}}";
+    var data = [ JSON.parse(trace.replace(/'/g, "\"")) ];
+    var layout = {
+        xaxis: {
+            range: [0, 5.5],
+            title: 'Impacto'
+        },
+        yaxis: {
+            range: [0, 5.5],
+            title: 'Probabilidade'
+        },
+        title: 'Matriz de risco'
+    };
+
+    {% if riscos %}
+        Plotly.newPlot('myDiv', data, layout);
+        console.log("Matriz de riscos plotada.");
+    {% else %}
+        console.log("Processo sem riscos.");
+    {% endif %}
+</script>
+{% endblock %}
