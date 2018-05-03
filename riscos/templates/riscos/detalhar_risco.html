@@ -169,10 +169,12 @@
     var data = [ JSON.parse(trace.replace(/'/g, "\"")),  JSON.parse(ponto.replace(/'/g, "\""))];
     var layout = {
         xaxis: {
-            range: [0, 5.5]
+            range: [0, 5.5],
+            title: 'Impacto'
         },
         yaxis: {
-            range: [0, 5.5]
+            range: [0, 5.5],
+            title: 'Probabilidade'
         },
         title: 'Matriz de risco'
     };
