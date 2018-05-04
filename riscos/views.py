@@ -4,7 +4,6 @@ import random
 from django.shortcuts import render, redirect, get_object_or_404, get_list_or_404
 from django.core import serializers
 from django.urls import reverse
-from django.http import JsonResponse
 from django.forms.models import modelformset_factory
 from django.db.models import F
 from django import forms
@@ -123,15 +122,17 @@ def criar_processo(request, parent_id):
 
 def listar_processo(request):
     lista = models.Processo.objects.order_by("ds_processo")
-    context = {'lista': lista,"active_bar": "processo",}
+    context = {'lista': lista, "active_bar": "processo",}
     return render(request, 'riscos/listar_processo.html', context)
 
 def detalhar_processo(request, target_id):
     observacao = get_object_or_404(models.Processo, pk=target_id)
     riscos = models.Risco.objects.filter(id_processo=target_id)
-    sem_tratamento = models.Risco.objects.filter(id_probabilidade__gte=12/F('id_impacto'), id_processo=target_id)
-    x = [( x.id_impacto.nr_valor - (random.randint(10, 60) / 100) ) for x in riscos]
-    y = [( y.id_probabilidade.nr_valor - (random.randint(10, 60) / 100) ) for y in riscos]
+    com_tratamento = models.Tratamento.objects.filter(id_causa_consequencia__id_risco__id_processo=target_id)
+    com_tratamento = [x.id_causa_consequencia.id_risco.pk for x in com_tratamento]
+    sem_tratamento = models.Risco.objects.filter(id_probabilidade__gte=12/F('id_impacto'), id_processo=target_id).exclude(pk__in=com_tratamento)
+    x = [(x.id_impacto.nr_valor-(random.randint(10, 60)/100)) for x in riscos]
+    y = [(y.id_probabilidade.nr_valor-(random.randint(10, 60)/100)) for y in riscos]
     texto = [z.ds_risco for z in riscos]
     data = {
         "x": x,
@@ -157,33 +158,33 @@ def detalhar_processo(request, target_id):
 def criar_atividade(request, parent_id): 
     N_EXTRA = 50
     parent = get_object_or_404(models.Processo, pk=parent_id)
-    AtividadeFormset = modelformset_factory(    
-        models.Atividade, form=forms.FormAtividade, extra=N_EXTRA, min_num=1,  
+    AtividadeFormset = modelformset_factory(
+        models.Atividade, form=forms.FormAtividade, extra=N_EXTRA, min_num=1,
     )
     queryset = models.Atividade.objects.none()
-    formset = AtividadeFormset(request.POST or None, queryset=queryset) 
-    if formset.is_valid(): 
-        instances = formset.save(commit=False) 
-        for insta in instances: 
+    formset = AtividadeFormset(request.POST or None, queryset=queryset)
+    if formset.is_valid():
+        instances = formset.save(commit=False)
+        for insta in instances:
             insta.id_processo = parent
-            insta.ds_usuario = 'usuario-teste' 
-            insta.save() 
-        if "submit-e-detalhar" in request.POST: 
+            insta.ds_usuario = 'usuario-teste'
+            insta.save()
+        if "submit-e-detalhar" in request.POST:
             return redirect(reverse("riscos:detalhar_processo", kwargs={"target_id":parent_id}))
-        else: 
+        else:
             return redirect(reverse("riscos:criar_atividade", kwargs={"parent_id":parent_id}))
-    context = { 
+    context = {
         "formset": formset,
-        "parent": parent, 
-        "active_bar": "processo", 
-    } 
-    return render(request, 'riscos/criar_atividade.html', context) 
- 
+        "parent": parent,
+        "active_bar": "processo",
+    }
+    return render(request, 'riscos/criar_atividade.html', context)
+
 # ------- RISCO -------
 def criar_risco(request, parent_id):
     N_EXTRA = 5
-    RiscoCausaFormset = modelformset_factory(   
-        models.CausaConsequencia, form=forms.FormCausaConsequencia, extra=(N_EXTRA * 2 ) + 1, min_num=1, 
+    RiscoCausaFormset = modelformset_factory(
+        models.CausaConsequencia, form=forms.FormCausaConsequencia, extra=(N_EXTRA * 2 ) + 1, min_num=1,
     )
     queryset = models.CausaConsequencia.objects.none()
     formset = RiscoCausaFormset(request.POST or None, queryset=queryset)
@@ -229,11 +230,11 @@ def detalhar_risco(request, target_id):
     ).exclude(
         pk=target_id
     )
-    x = [( x.id_impacto.nr_valor - (random.randint(20, 80) / 100) ) for x in riscos]
-    y = [( y.id_probabilidade.nr_valor - (random.randint(20, 80) / 100) ) for y in riscos]
+    x = [(x.id_impacto.nr_valor - (random.randint(20, 80)/100)) for x in riscos]
+    y = [(y.id_probabilidade.nr_valor - (random.randint(20, 80)/100)) for y in riscos]
     texto = [z.ds_risco for z in riscos]
     fator = observacao.id_impacto.nr_valor * observacao.id_probabilidade.nr_valor
-    sem_tratamento = fator >= 12
+    sem_tratamento = fator >= 12 and len(tratamentos) == 0
     data = {
         "x": x,
         "y": y,
@@ -243,10 +244,10 @@ def detalhar_risco(request, target_id):
         "name": "riscos",
         "textposition": 'bottom center',
         "marker": {"size": 12},
-    } 
+    }
     ponto = {
-        "x": [observacao.id_impacto.nr_valor - (random.randint(20, 80) / 100) ],
-        "y": [observacao.id_probabilidade.nr_valor - (random.randint(20, 80) / 100) ],
+        "x": [observacao.id_impacto.nr_valor-(random.randint(20, 80)/100)],
+        "y": [observacao.id_probabilidade.nr_valor-(random.randint(20, 80)/100)],
         "mode": 'markers+text',
         "type": 'scatter',
         "text": [observacao.ds_risco],
