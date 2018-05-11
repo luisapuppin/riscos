@@ -36,7 +36,14 @@ def listar_planejamento(request):
 
 def detalhar_planejamento(request, target_id):
     observacao = get_object_or_404(models.Planejamento, pk=target_id)
-    context = {'observacao': observacao, "active_bar": "macroprocesso",}
+    cadeias = models.Cadeia.objects.filter(id_planejamento=target_id).order_by('ds_cadeia')
+    macroprocessos = models.Macroprocesso.objects.filter(id_cadeia__id_planejamento=target_id).order_by('id_cadeia', 'ds_macroprocesso')
+    context = {
+        'observacao': observacao,
+        "cadeias": cadeias,
+        "macroprocessos": macroprocessos,
+        "active_bar": "macroprocesso"
+    }
     return render(request, 'riscos/detalhar_planejamento.html', context)
 
 # ------- CADEIA -------
@@ -60,7 +67,14 @@ def listar_cadeia(request):
 
 def detalhar_cadeia(request, target_id):
     observacao = get_object_or_404(models.Cadeia, pk=target_id)
-    context = {'observacao': observacao, "active_bar": "macroprocesso",}
+    macroprocessos = models.Macroprocesso.objects.filter(id_cadeia=target_id).order_by('ds_macroprocesso')
+    processos = models.Processo.objects.filter(id_macroprocesso__id_cadeia=target_id).order_by('id_macroprocesso', 'ds_processo')
+    context = {
+        'observacao': observacao,
+        "macroprocessos": macroprocessos,
+        "processos": processos,
+        "active_bar": "macroprocesso"
+    }
     return render(request, 'riscos/detalhar_cadeia.html', context)
 
 # ------- MACROPROCESSO -------
