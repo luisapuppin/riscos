@@ -1,3 +1,6 @@
+# v0.4.1
++ Bugfix: Alerta some ao se cadastrar um tratamento no risco;
+
 # v0.4.0
 + Cadastro de atividade;
 + Desenha matriz de risco;

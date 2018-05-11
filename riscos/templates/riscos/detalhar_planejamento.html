@@ -1,25 +1,77 @@
 {% extends 'riscos/base.html' %} {% block main_content %}
 
-<div class="container">
-    <h2> {{observacao.ds_planejamento}} </h2> <br>
-    <table class="table table-striped table-hover">
-        <tr>
-            <td class="campo">ID</td>
-            <td class="valor">{{observacao.id}}</td>
-        </tr>
-        <tr>
-            <td class="campo">Nome</td>
-            <td class="valor">{{observacao.ds_planejamento}}</td>
-        </tr>
-        <tr>
-            <td class="campo">Data de cadastro</td>
-            <td class="valor">{{observacao.dt_cadastro}}</td>
-        </tr>
-        <tr>
-            <td class="campo">Cadastrado por</td>
-            <td class="valor">{{observacao.ds_usuario}}</td>
-        </tr>
+<div class="jumbotron">
+    <div class="container">
+        <p style="font-size:xx-small; color:grey">
+            {{observacao.ds_planejamento}} > Detalhar
+        </p>
+        <h1 class="display-4" style="text-align: center"> {{observacao.ds_planejamento}} </h1>
+        <hr>
+        <h6 style="text-align: center">Detalhar Planejamento Estratégico</h6>
+    </div>
+</div>
+
+<div class="container" style="font-size:small;">
+    <h5>Cadeias</h5>
+    <hr> {% if cadeias %}
+    <table class="table table-bordered table-hover">
+        <thead class="thead-light">
+            <tr>
+                <th style="width: 10%">Item</th>
+                <th>Descrição da cadeia</th>
+                <th style="width: 5%"></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in cadeias %}
+            <tr>
+                <td style="width: 10%">{{ forloop.counter }}</td>
+                <td>{{ item.ds_cadeia }}</td>
+                <td style="width:5%;text-align:center;">
+                    <a title="Detalhar cadeia" href="{% url 'riscos:detalhar_cadeia' target_id=item.pk %}">
+                        <i class="far fa-list-alt"></i>
+                    </a>
+                </td>
+            </tr>{% endfor %}
+        </tbody>
     </table>
-    <a class="btn btn-primary" href="{{request.META.HTTP_REFERER}}">Voltar</a>
+    {% else %}
+    <p> Nenhuma cadeia registrada </p>
+    {% endif %}
+    <br><br>
+
+    <h5>Macroprocessos</h5>
+    <hr> {% if macroprocessos %}
+    <table class="table table-bordered table-hover">
+        <thead class="thead-light">
+            <tr>
+                <th style="width: 10%">Item</th>
+                <th>Cadeia</th>
+                <th>Descrição do macroprocesso</th>
+                <th style="width: 5%"></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in macroprocessos %}
+            <tr>
+                <td style="width: 10%">{{ forloop.counter }}</td>
+                <td>{{ item.id_cadeia }}</td>
+                <td>{{ item.ds_macroprocesso }}</td>
+                <td style="width:5%;text-align:center;">
+                    <a title="Detalhar macroprocesso" href="{% url 'riscos:detalhar_macroprocesso' target_id=item.pk %}">
+                        <i class="far fa-list-alt"></i>
+                    </a>
+                </td>
+            </tr>{% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p> Nenhum macroprocesso registrado </p>
+    {% endif %}
+    <br><br>
+
+    <div style="text-align:right;">
+        <a class="btn btn-primary" href="{{request.META.HTTP_REFERER}}">Voltar</a>
+    </div>
 </div>
 <br> {% endblock %}

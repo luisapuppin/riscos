@@ -3,7 +3,8 @@
 <div class="jumbotron">
     <div class="container">
         <p style="font-size:xx-small; color:grey">
-            {{observacao.id_processo.id_macroprocesso.id_cadeia.id_planejamento}} > {{observacao.id_processo.id_macroprocesso.id_cadeia}} >
+            <a href="{% url 'riscos:detalhar_planejamento' target_id=observacao.id_processo.id_macroprocesso.id_cadeia.id_planejamento.pk %}" style="color:unset;"> {{observacao.id_processo.id_macroprocesso.id_cadeia.id_planejamento}}</a> >
+            <a href="{% url 'riscos:detalhar_cadeia' target_id=observacao.id_processo.id_macroprocesso.id_cadeia.pk %}" style="color:unset;"> {{observacao.id_processo.id_macroprocesso.id_cadeia}}</a> >
             <a href="{% url 'riscos:detalhar_macroprocesso' target_id=observacao.id_processo.id_macroprocesso.pk %}" style="color:unset;"> {{observacao.id_processo.id_macroprocesso}}</a> >
             <a href="{% url 'riscos:detalhar_processo' target_id=observacao.id_processo.pk %}" style="color:unset;">{{observacao.id_processo}}</a> >
             <a href="{% url 'riscos:detalhar_risco' target_id=observacao.pk %}" style="color:unset;">{{observacao.ds_risco}}</a> > Detalhar
@@ -35,16 +36,26 @@
     </div>
     <br>
 
-    <h5>Dados gerais</h5>
+    <h5>Contexto</h5>
     <hr>
     <table class="table table-bordered table-hover">
         <tr>
             <td class="campo table-active" style="width: 20%">Planejamento Estratégico</td>
-            <td class="valor">{{observacao.id_processo.id_macroprocesso.id_cadeia.id_planejamento}}</td>
+            <td class="valor">
+                {{observacao.id_processo.id_macroprocesso.id_cadeia.id_planejamento}}
+                <a title="Detalhar" href="{% url 'riscos:detalhar_planejamento' target_id=observacao.id_processo.id_macroprocesso.id_cadeia.id_planejamento.pk %}">
+                    <i class="fas fa-search"></i>
+                </a>
+            </td>
         </tr>
         <tr>
             <td class="campo table-active" style="width: 20%">Cadeia</td>
-            <td class="valor">{{observacao.id_processo.id_macroprocesso.id_cadeia}}</td>
+            <td class="valor">
+                {{observacao.id_processo.id_macroprocesso.id_cadeia}}
+                <a title="Detalhar" href="{% url 'riscos:detalhar_cadeia' target_id=observacao.id_processo.id_macroprocesso.id_cadeia.pk %}">
+                    <i class="fas fa-search"></i>
+                </a>
+            </td>
         </tr>
         <tr>
             <td class="campo table-active" style="width: 20%">Macroprocesso</td>
