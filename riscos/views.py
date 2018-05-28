@@ -12,7 +12,16 @@ from . import models
 
 # ------- INDEX -------
 def index(request):
-    return render(request, "riscos/index.html", {"active_bar": "home"})
+    processos = get_list_or_404(models.Processo)
+    riscos = get_list_or_404(models.Risco)
+    tratamentos = get_list_or_404(models.Tratamento)
+    context = {
+        "processos": processos,
+        "riscos": riscos,
+        "tratamentos": tratamentos,
+        "active_bar": "home",
+    }
+    return render(request, "riscos/index.html", context)
 
 # ------- PLANEJAMENTO -------
 def criar_planejamento(request):
