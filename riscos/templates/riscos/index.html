@@ -74,7 +74,35 @@
         Faltam <strong>{{proximo.dt_quando|timeuntil}}</strong> para entregar <strong>{{proximo}}</strong>.
     </div>
     {% endfor %}
+
+    <br/>
+
+    <div class="modal fade" id="modal" role="dialog">
+    <div class="modal-dialog">
     
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        <div class="modal-body">
+            <label>Escolha um macroprocesso</label>
+            <select id = "escolha_macro" class="form-control">
+                {% for macro in macroprocessos %}
+                <option value="{{macro.pk}}">{{macro}}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="modal-footer">
+          <a id="btn_processo" class="btn btn-primary" href="macroprocesso/1/criar/processo/">Criar processo</a>
+          <a type="button" class="btn btn-default" data-dismiss="modal">Fechar</a>
+
+        </div>
+      </div>
+      
+    </div>
+  </div>
+
     <br/>
 
     <div class = "busca">
