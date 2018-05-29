@@ -5,26 +5,37 @@
 <style>
     svg {
         width: 80px; height: 80px;
-        transform: rotate(-90deg);
-        background: yellowgreen;
+        transform: rotate(0deg);
+        background: white;
         border-radius: 50%;
     }
 
     circle {
-        fill: #655;
+        fill: #555;
         stroke:indianred;
         stroke-width: 32;
-        stroke-dasharray: 38 100; /* for 38% */
+        stroke-dasharray: {{graves_perc}} 100;
     }
     
     .card-body {
         padding-top: 30px;
         padding-bottom: 10px;
     }
+    .hidden {
+        display: none;
+    }
+
+    ul {
+        margin-top: 3px;
+        margin-bottom: 2px;
+    }
+    li {
+        margin-top: 1px;
+    }
 </style>
 
 <div class="container">
-    <h4 class = "text-center">CGCO</h3>
+    <h3 class = "text-center">CGCO</h3>
     <div class="card-deck">
         <div class="card bg-primary">
             <div class = "card-body text-center">
@@ -39,7 +50,8 @@
             </div>
         </div>
         <div class="card">
-            <div class = "card-body text-center" style = "padding-top: 15px;">
+            <div class = "card-body text-center" style = "padding-top: 15px;"
+                 title="{{ graves|length }} {% if graves|length == 1 %} risco grave {% else %} riscos graves {% endif %}">
                 <svg viewBox="0 0 32 32">
                     <circle r="16" cx="16" cy="16" />
                 </svg>
@@ -48,11 +60,18 @@
         </div>
     </div>
     <br/>
-    
-    {% for tratamento in tratamentos %}
+      
+    {% for vencido in vencidos %}
     <div class = "alert alert-danger">
         <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-        Faltam <strong>2 dias</strong> para entregar {{tratamento}}
+        O tratamento "<strong>{{vencido}}</strong>" deveria haver sido entregue em <strong>{{vencido.dt_quando}}</strong>.
+    </div>
+    {% endfor %}
+
+    {% for proximo in proximos %}
+    <div class = "alert alert-warning">
+        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+        Faltam <strong>{{proximo.dt_quando|timeuntil}}</strong> para entregar <strong>{{proximo}}</strong>.
     </div>
     {% endfor %}
     
@@ -60,55 +79,54 @@
 
     <div class = "busca">
         <div class="card">
-            <h5 class="card-title pull-left left">Processos &nbsp;
-                <a href="javascript:modal_macroprocesso();">
+            <h5 class="card-title pull-left left" style="margin-top: 5px; margin-left: 5px">Processos &nbsp;
+                <a href="javascript:modal_macroprocesso();" title="Cadastrar processo"
+                   data-toggle="modal" data-target="#modal">
                     <i class="fas fa-plus-circle" style="color:red;"></i>
                 </a>
             </h5>
             <div class="arvore">
                 <ul>
-                <!--for i in processos-->
-                {% for processo in processos%}
-                    <li>
-                        {{processo}} &nbsp;
-                        <a href="{% url 'riscos:detalhar_processo' target_id=processo.pk %}">
-                            <i class="far fa-list-alt" style="font-size:1.25em"></i>  &nbsp;
-                        </a>
-                        <a href="{% url 'riscos:criar_atividade' parent_id=processo.pk %}">
-                            <i class="fas fa-plus-circle" style="color:green;font-size:1.25em;"></i> &nbsp;
-                        </a> 
-                        <a href="{% url 'riscos:criar_risco' parent_id=processo.pk %}">
+                {% for processo in processos %}
+                    <li class="processo">
+                        <span>{{processo}}</span> &nbsp;
+                        <a href="{% url 'riscos:detalhar_processo' target_id=processo.pk %}" title="Detalhar processo">
+                            <i class="far fa-list-alt" style="font-size:1.25em"></i>
+                        </a> &nbsp;
+                        <a href="{% url 'riscos:criar_atividade' parent_id=processo.pk %}" title="Cadastrar atividade">
+                            <i class="fas fa-plus-circle" style="color:green;font-size:1.25em;"></i>
+                        </a> &nbsp;
+                        <a href="{% url 'riscos:criar_risco' parent_id=processo.pk %}" title="Cadastrar risco">
                             <i class="fas fa-plus-circle" style="color:red;font-size:1.25em;"></i>
                         </a>
                     </li>
-                    <ul>
-                    {% for risco in riscos %}
-                    {% if risco.id_processo == processo %}
-                        <li>
-                            {{risco}} &nbsp;
-                            <a href="{% url 'riscos:detalhar_risco' target_id=risco.pk %}">
-                                <i class="far fa-list-alt" style="font-size:1.25em"></i> &nbsp;
-                            </a>
-                            <a href="{% url 'riscos:criar_tratamento' parent_id=risco.pk %}">
-                                <i class="fas fa-plus-circle" style="color:red;font-size:1.25em;"></i>
-                            </a>
-                        </li>
-                        <ul>
-                        {% for tratamento in tratamentos %}
-
+                    <ul class="hidden">
+                        {% for risco in riscos %}
+                        {% if risco.id_processo == processo %}
+                            <li>
+                                <span>{{risco}}</span> &nbsp;
+                                <a href="{% url 'riscos:detalhar_risco' target_id=risco.pk %}" title="Detalhar risco">
+                                    <i class="far fa-list-alt" style="font-size:1.25em"></i>
+                                </a> &nbsp;
+                                <a href="{% url 'riscos:criar_tratamento' parent_id=risco.pk %}" title="Cadastrar tratamento">
+                                    <i class="fas fa-plus-circle" style="color:red;font-size:1.25em;"></i>
+                                </a>
+                            </li>
+                            <ul class="hidden">
+                            {% for tratamento in tratamentos %}
                             {% if tratamento.id_causa_consequencia.id_risco == risco %}
                                 <li>
                                     {{tratamento}} &nbsp;
-                                    <a href="{% url 'riscos:detalhar_tratamento' target_id=tratamento.pk %}">
+                                    <a href="{% url 'riscos:detalhar_tratamento' target_id=tratamento.pk %}" title="Detalhar tratamento">
                                         <i class="far fa-list-alt" style="font-size:1.25em"></i>
                                     </a>
                                 </li>
                             {% endif %}
+                            {% endfor %}
+                            </ul>
+                        {% endif %}
                         {% endfor %}
                         </ul>
-                    {% endif %}
-                    {% endfor %}
-                    </ul>
                     <br/>
                 {% endfor %}
                 </ul>
@@ -119,9 +137,18 @@
 <br/>
 </div>
 <script>
-    const modal_macroprocesso = () => {
-        console.log("Um dia isso irá abrir um modal.")
-    }
+    $(".arvore li span").click(function() {
+        $(this).parent().next().toggleClass("hidden")
+        $(this).parent().next().children("ul").addClass("hidden")
+    })
+
+    $("#escolha_macro").change(function() {
+        console.log(this.value)
+        id = this.value
+        console.log($("#btn_processo").attr("href"))
+        $("#btn_processo").attr("href", "macroprocesso/" + id + "/criar/processo/") 
+    })
+
 </script>
 
 {% endblock %}
