@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, timedelta
 import random
 
 from django.shortcuts import render, redirect, get_object_or_404, get_list_or_404
@@ -10,10 +10,38 @@ from django import forms
 from . import forms
 from . import models
 
+LIMITE_GRAVES = 12
+
 # ------- INDEX -------
 def index(request):
-    return render(request, "riscos/index.html", {"active_bar": "home"})
+    macroprocessos = get_list_or_404(models.Macroprocesso)
+    processos = get_list_or_404(models.Processo)
+    riscos = get_list_or_404(models.Risco)
+    graves = models.Risco.objects.filter(id_probabilidade__gte=LIMITE_GRAVES/F('id_impacto'))
+    graves_perc = (graves.count() * 100) / riscos.__len__()
+    tratamentos = get_list_or_404(models.Tratamento)
+    vencidos = models.Tratamento.objects.filter(dt_quando__lt=date.today())
+    proximos = models.Tratamento.objects.filter(dt_quando__lt=date.today() + timedelta(days=15)).exclude(pk__in=vencidos)
 
+    context = {
+        "macroprocessos": macroprocessos,
+        "processos": processos,
+        "riscos": riscos,
+        "tratamentos": tratamentos,
+        "vencidos": vencidos,
+        "proximos": proximos,
+        "graves": graves,
+        "graves_perc": graves_perc,
+        "active_bar": "home",
+    }
+    return render(request, "riscos/index.html", context)
+
+# ------- SOBRE -------
+def sobre(request):
+    context = {
+        "active_bar": "sobre",
+    }
+    return render(request, "riscos/sobre.html", context)
 # ------- PLANEJAMENTO -------
 def criar_planejamento(request):
     if request.method == 'POST':
@@ -144,14 +172,14 @@ def detalhar_processo(request, target_id):
     riscos = models.Risco.objects.filter(id_processo=target_id)
     com_tratamento = models.Tratamento.objects.filter(id_causa_consequencia__id_risco__id_processo=target_id)
     com_tratamento = [x.id_causa_consequencia.id_risco.pk for x in com_tratamento]
-    sem_tratamento = models.Risco.objects.filter(id_probabilidade__gte=12/F('id_impacto'), id_processo=target_id).exclude(pk__in=com_tratamento)
+    sem_tratamento = models.Risco.objects.filter(id_probabilidade__gte=LIMITE_GRAVES/F('id_impacto'), id_processo=target_id).exclude(pk__in=com_tratamento)
     x = [(x.id_impacto.nr_valor-(random.randint(10, 60)/100)) for x in riscos]
     y = [(y.id_probabilidade.nr_valor-(random.randint(10, 60)/100)) for y in riscos]
     texto = [z.ds_risco for z in riscos]
     data = {
         "x": x,
         "y": y,
-        "mode": 'markers+text',
+        "mode": 'markers',
         "type": 'scatter',
         "text": texto,
         "textposition": 'bottom center',
