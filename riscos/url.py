@@ -6,6 +6,9 @@ urlpatterns = [
 
     # INDEX
     re_path(r'^$', views.index, name="index"),
+    
+    # SOBRE
+    re_path(r'^sobre/$', views.sobre, name="sobre"),
 
     # CADEIA
     re_path(r'^cadeia/listar/$', views.listar_cadeia, name="listar_cadeia"),

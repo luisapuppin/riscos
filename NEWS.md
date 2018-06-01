@@ -1,3 +1,12 @@
+# v0.5.0
++ Altera página inicial para estilo “dashboard”;
++ Plano de trabalho do tratamento passa a ser listado na página de detalhamento do risco;
++ Remove textos na matriz de riscos da página de detalhamento do processo.
+
+
+# v0.4.1
++ Bugfix: Alerta some ao se cadastrar um tratamento no risco;
+
 # v0.4.0
 + Cadastro de atividade;
 + Desenha matriz de risco;

@@ -1,21 +1,218 @@
 {% extends 'riscos/base.html' %} {% block main_content %}
-<div class="jumbotron">
+<div class="jumbotron" style="padding-bottom: 20px; margin-bottom: 1.25rem;">
     {% include "riscos/piloto.html" %}
 </div>
+<style>
+    svg {
+        width: 80px; height: 80px;
+        transform: rotate(0deg);
+        background: white;
+        border-radius: 50%;
+    }
+
+    circle {
+        fill: #555;
+        stroke:indianred;
+        stroke-width: 32;
+        stroke-dasharray: {{graves_perc}} 100;
+    }
+    
+    .card-body {
+        padding-top: 30px;
+        padding-bottom: 10px;
+    }
+
+    input[type=text] {
+        width: 150px;
+        box-sizing: border-box;
+        border: 2px solid #ccc;
+        border-radius: 2px;
+        font-size: 16px;
+        background-color: white;
+        background-position: 10px 10px; 
+        background-repeat: no-repeat;
+        padding: 7px 10px 8px 5px;
+        -webkit-transition: width 0.5s ease-in-out;
+        transition: width 0.5s ease-in-out;
+    }
+
+    input[type=text]:focus {
+        width: 50%;
+    }
+    .hidden {
+        display: none;
+    }
+
+    ul {
+        margin-top: 3px;
+        margin-bottom: 2px;
+    }
+    li {
+        margin-top: 1px;
+    }
+    li.processo {
+        padding-bottom: 6px;
+    }
+</style>
+
 <div class="container">
+    <h3 class = "text-center">CGCO</h3>
+    <div class="card-deck">
+        <div class="card bg-primary">
+            <div class = "card-body text-center">
+                <h1 class = "card-text">{{ processos|length }}</h1>
+                <h4 class = "card-text">processos</h4>
+            </div>
+        </div>
+        <div class="card bg-warning">
+            <div class = "card-body text-center">
+                <h1 class = "card-text">{{ riscos|length }}</h1>
+                <h4 class = "card-text">riscos</h4>
+            </div>
+        </div>
+        <div class="card">
+            <div class = "card-body text-center" style = "padding-top: 15px;"
+                 title="{{ graves|length }} {% if graves|length == 1 %} risco grave {% else %} riscos graves {% endif %}">
+                <svg viewBox="0 0 32 32">
+                    <circle r="16" cx="16" cy="16" />
+                </svg>
+                <h4 class = "card-text">riscos graves</h4>
+            </div>
+        </div>
+    </div>
+    <br/>
+      
+    {% for vencido in vencidos %}
+    <div class = "alert alert-danger">
+        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+        O tratamento "<strong>{{vencido}}</strong>" deveria haver sido entregue em <strong>{{vencido.dt_quando}}</strong>.
+    </div>
+    {% endfor %}
 
-    <h2>Olá!</h2><br>
+    {% for proximo in proximos %}
+    <div class = "alert alert-warning">
+        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+        Faltam <strong>{{proximo.dt_quando|timeuntil}}</strong> para entregar <strong>{{proximo}}</strong>.
+    </div>
+    {% endfor %}
 
-    <p>Bem-vindos ao sistema integrado de riscos do Ministério da Agricultura, Pecuária e Abastecimento, o SIR/MAPA. Integrado significa colocar todas as práticas de gestão de riscos do ministério em um único sistema.</p>
+    <br/>
 
-    <p>A integração dos processos faz com que o ministério caminhe em bloco para o real atingimento de seus objetivos estratégicos, táticos e operacionais.</p>
+    <div class="modal fade" id="modal" role="dialog">
+    <div class="modal-dialog">
+    
+      <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        <div class="modal-body">
+            <label>Escolha um macroprocesso</label>
+            <select id = "escolha_macro" class="form-control">
+                {% for macro in macroprocessos %}
+                <option value="{{macro.pk}}">{{macro}}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="modal-footer">
+          <a id="btn_processo" class="btn btn-primary" href="macroprocesso/1/criar/processo/">Criar processo</a>
+          <a type="button" class="btn btn-default" data-dismiss="modal">Fechar</a>
 
-    <p>As técnicas de Gestão de Riscos fornecem às pessoas, em todos os níveis, uma abordagem sistemática para o gerenciamento dos riscos que são parte integrante de suas responsabilidades.</p>
+        </div>
+      </div>
+      
+    </div>
+  </div>
 
-    <p>O principal objetivo da Gestão de Riscos é avaliar as incertezas de forma a tomar a melhor decisão possível. De certa forma, toda gestão de risco e toda tomada de decisão lida com esta situação, e os seus benefícios dão as melhores decisões, menos
-        surpresa, melhora no planejamento, na performance e na efetividade, além da melhora no relacionamento com as partes interessadas.</p>
+    <br/>
 
-    <p>O SIR surge como uma ferramenta elabora pela Coordenação Geral de Controle Operacional – CGCO com o intuito de facilitar a dinâmica da gestão de riscos no âmbito do Ministério.</p>
-
+    <div class = "busca">
+        <div class="card">
+            <h5 class="card-title pull-left left" style="margin-top: 5px; margin-left: 5px">Processos &nbsp;
+                <a href="#" title="Cadastrar processo" data-toggle="modal" data-target="#modal">
+                    <i class="fas fa-plus-circle" style="color:red; font-size:1.25em;"></i>
+                </a> &nbsp; &nbsp; &nbsp;
+                <input id = "termo" type="text" placeholder="Buscar...">
+            </h5>
+            <div class="arvore">
+                <ul>
+                {% for processo in processos %}
+                    <li class="processo">
+                        <span>{{processo}}</span> &nbsp;
+                        <a href="{% url 'riscos:detalhar_processo' target_id=processo.pk %}" title="Detalhar processo">
+                            <i class="far fa-list-alt" style="font-size:1.25em"></i>
+                        </a> &nbsp;
+                        <a href="{% url 'riscos:criar_atividade' parent_id=processo.pk %}" title="Cadastrar atividade">
+                            <i class="fas fa-plus-circle" style="color:green;font-size:1.25em;"></i>
+                        </a> &nbsp;
+                        <a href="{% url 'riscos:criar_risco' parent_id=processo.pk %}" title="Cadastrar risco">
+                            <i class="fas fa-plus-circle" style="color:red;font-size:1.25em;"></i>
+                        </a>
+                    </li>
+                    <ul class="hidden">
+                        {% for risco in riscos %}
+                        {% if risco.id_processo == processo %}
+                            <li>
+                                <span>{{risco}}</span> &nbsp;
+                                <a href="{% url 'riscos:detalhar_risco' target_id=risco.pk %}" title="Detalhar risco">
+                                    <i class="far fa-list-alt" style="font-size:1.25em"></i>
+                                </a> &nbsp;
+                                <a href="{% url 'riscos:criar_tratamento' parent_id=risco.pk %}" title="Cadastrar tratamento">
+                                    <i class="fas fa-plus-circle" style="color:red;font-size:1.25em;"></i>
+                                </a>
+                            </li>
+                            <ul class="hidden">
+                            {% for tratamento in tratamentos %}
+                            {% if tratamento.id_causa_consequencia.id_risco == risco %}
+                                <li>
+                                    {{tratamento}} &nbsp;
+                                    <a href="{% url 'riscos:detalhar_tratamento' target_id=tratamento.pk %}" title="Detalhar tratamento">
+                                        <i class="far fa-list-alt" style="font-size:1.25em"></i>
+                                    </a>
+                                </li>
+                            {% endif %}
+                            {% endfor %}
+                            </ul>
+                        {% endif %}
+                        {% endfor %}
+                        </ul>
+                {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+<br/>
 </div>
+<script>
+    $(".arvore li span").click(function() {
+        $(this).parent().next().toggleClass("hidden")
+        $(this).parent().next().children("ul").addClass("hidden")
+    })
+
+    $("#escolha_macro").change(function() {
+        console.log(this.value)
+        id = this.value
+        console.log($("#btn_processo").attr("href"))
+        $("#btn_processo").attr("href", "macroprocesso/" + id + "/criar/processo/") 
+    })
+
+    $("#termo").change(function() {
+        const termo = this.value
+        console.log()
+        var processos = $(".processo")
+        processos.each(function(i, elem) {
+            const texto = processos[i].children[0].textContent.toUpperCase()
+            var teste = texto.match(termo.toUpperCase())
+            if (teste === null) {
+                if (elem.className.match("hidden") === null) {
+                    elem.className =  elem.className + " hidden"
+                }
+            } else {
+                elem.className =  elem.className.replace(" hidden", "")
+            }
+        })
+    })
+
+</script>
+
 {% endblock %}
