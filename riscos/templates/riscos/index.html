@@ -21,6 +21,24 @@
         padding-top: 30px;
         padding-bottom: 10px;
     }
+
+    input[type=text] {
+        width: 150px;
+        box-sizing: border-box;
+        border: 2px solid #ccc;
+        border-radius: 2px;
+        font-size: 16px;
+        background-color: white;
+        background-position: 10px 10px; 
+        background-repeat: no-repeat;
+        padding: 7px 10px 8px 5px;
+        -webkit-transition: width 0.5s ease-in-out;
+        transition: width 0.5s ease-in-out;
+    }
+
+    input[type=text]:focus {
+        width: 50%;
+    }
     .hidden {
         display: none;
     }
@@ -32,6 +50,9 @@
     li {
         margin-top: 1px;
     }
+    li.processo {
+        padding-bottom: 6px;
+    }
 </style>
 
 <div class="container">
@@ -39,13 +60,13 @@
     <div class="card-deck">
         <div class="card bg-primary">
             <div class = "card-body text-center">
-                <h1 class = "card-text">{{ processos|length }}</h3>
+                <h1 class = "card-text">{{ processos|length }}</h1>
                 <h4 class = "card-text">processos</h4>
             </div>
         </div>
         <div class="card bg-warning">
             <div class = "card-body text-center">
-                <h1 class = "card-text">{{ riscos|length }}</h3>
+                <h1 class = "card-text">{{ riscos|length }}</h1>
                 <h4 class = "card-text">riscos</h4>
             </div>
         </div>
@@ -55,7 +76,7 @@
                 <svg viewBox="0 0 32 32">
                     <circle r="16" cx="16" cy="16" />
                 </svg>
-                <h4 class = "card-text">riscos graves</h5>
+                <h4 class = "card-text">riscos graves</h4>
             </div>
         </div>
     </div>
@@ -80,7 +101,6 @@
     <div class="modal fade" id="modal" role="dialog">
     <div class="modal-dialog">
     
-      <!-- Modal content-->
       <div class="modal-content">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">&times;</button>
@@ -108,10 +128,10 @@
     <div class = "busca">
         <div class="card">
             <h5 class="card-title pull-left left" style="margin-top: 5px; margin-left: 5px">Processos &nbsp;
-                <a href="javascript:modal_macroprocesso();" title="Cadastrar processo"
-                   data-toggle="modal" data-target="#modal">
-                    <i class="fas fa-plus-circle" style="color:red;"></i>
-                </a>
+                <a href="#" title="Cadastrar processo" data-toggle="modal" data-target="#modal">
+                    <i class="fas fa-plus-circle" style="color:red; font-size:1.25em;"></i>
+                </a> &nbsp; &nbsp; &nbsp;
+                <input id = "termo" type="text" placeholder="Buscar...">
             </h5>
             <div class="arvore">
                 <ul>
@@ -155,7 +175,6 @@
                         {% endif %}
                         {% endfor %}
                         </ul>
-                    <br/>
                 {% endfor %}
                 </ul>
             </div>
@@ -175,6 +194,23 @@
         id = this.value
         console.log($("#btn_processo").attr("href"))
         $("#btn_processo").attr("href", "macroprocesso/" + id + "/criar/processo/") 
+    })
+
+    $("#termo").change(function() {
+        const termo = this.value
+        console.log()
+        var processos = $(".processo")
+        processos.each(function(i, elem) {
+            const texto = processos[i].children[0].textContent.toUpperCase()
+            var teste = texto.match(termo.toUpperCase())
+            if (teste === null) {
+                if (elem.className.match("hidden") === null) {
+                    elem.className =  elem.className + " hidden"
+                }
+            } else {
+                elem.className =  elem.className.replace(" hidden", "")
+            }
+        })
     })
 
 </script>
