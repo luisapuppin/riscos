@@ -1,54 +1,126 @@
 {% extends 'riscos/base.html' %} {% block main_content %}
 
-<div class="container">
-    <h1> Detalhamento: {{observacao.ds_risco}} </h1>
-    <br><br>
+<style>
+    .card-header::after {
+        font-family: "Font Awesome 5 Free";
+        content: "\f107";
+        font-weight: 900;
+        font-size: 1.2em;
+        margin-top: 7px;
+        float: right;
+    }
+    
+    .card-header.aberto::after {
+        font-family: "Font Awesome 5 Free";
+        content: "\f106";
+        font-weight: 900;
+        font-size: 1.2em;
+        margin-top: 7px;
+        float: right;
+    }
+</style>
 
-    <h4>Dados gerais</h4>
+<div class="jumbotron">
+    <div class="container">
+        <p style="font-size:xx-small; color:grey">
+            <a href="{% url 'riscos:detalhar_planejamento' target_id=observacao.id_processo.id_macroprocesso.id_cadeia.id_planejamento.pk %}" style="color:unset;"> {{observacao.id_processo.id_macroprocesso.id_cadeia.id_planejamento}}</a> >
+            <a href="{% url 'riscos:detalhar_cadeia' target_id=observacao.id_processo.id_macroprocesso.id_cadeia.pk %}" style="color:unset;"> {{observacao.id_processo.id_macroprocesso.id_cadeia}}</a> >
+            <a href="{% url 'riscos:detalhar_macroprocesso' target_id=observacao.id_processo.id_macroprocesso.pk %}" style="color:unset;"> {{observacao.id_processo.id_macroprocesso}}</a> >
+            <a href="{% url 'riscos:detalhar_processo' target_id=observacao.id_processo.pk %}" style="color:unset;">{{observacao.id_processo}}</a> >
+            <a href="{% url 'riscos:detalhar_risco' target_id=observacao.pk %}" style="color:unset;">{{observacao.ds_risco}}</a> > Detalhar
+        </p>
+        <h1 class="display-4" style="text-align: center"> {{observacao.ds_risco}} </h1>
+        <hr>
+        <h6 style="text-align: center">Processo - {{observacao.id_processo}}</h6>
+        {% if observacao.id_atividade %}
+        <h6 style="text-align: center">Atividade - {{observacao.id_atividade}}</h6>
+        {% endif %}
+    </div>
+</div>
+
+<div class="container" style="font-size:small;">
+    {% if sem_tratamento %}
+    <div class="alert alert-danger">
+        <p style="font-weight:bold;margin:0;">Risco grave e sem controle! Cadastre um tratamento!
+            <a title="Adicionar tratamento" href="{% url 'riscos:criar_tratamento' parent_id=observacao.pk %}" style="color:unset;cursor:pointer;">
+                <i class="fas fa-fire-extinguisher"></i>
+            </a>
+        </p>
+    </div>
+    {% endif %}
+    <h5>Localização na matriz de riscos</h5>
     <hr>
-    <table class="table table-striped table-bordered table-hover">
+    <br>
+    <div style="width:600;height:400">
+        <div id="myDiv"></div>
+    </div>
+    <br>
+
+    <h5>Contexto</h5>
+    <hr>
+    <table class="table table-bordered table-hover">
         <tr>
-            <td class="campo" style="width: 20%">Planejamento Estratégico</td>
-            <td class="valor">{{observacao.id_processo.id_macroprocesso.id_cadeia.id_planejamento}}</td>
+            <td class="campo table-active" style="width: 20%">Planejamento Estratégico</td>
+            <td class="valor">
+                {{observacao.id_processo.id_macroprocesso.id_cadeia.id_planejamento}}
+                <a title="Detalhar" href="{% url 'riscos:detalhar_planejamento' target_id=observacao.id_processo.id_macroprocesso.id_cadeia.id_planejamento.pk %}">
+                    <i class="fas fa-search"></i>
+                </a>
+            </td>
         </tr>
         <tr>
-            <td class="campo" style="width: 20%">Cadeia</td>
-            <td class="valor">{{observacao.id_processo.id_macroprocesso.id_cadeia}}</td>
+            <td class="campo table-active" style="width: 20%">Cadeia</td>
+            <td class="valor">
+                {{observacao.id_processo.id_macroprocesso.id_cadeia}}
+                <a title="Detalhar" href="{% url 'riscos:detalhar_cadeia' target_id=observacao.id_processo.id_macroprocesso.id_cadeia.pk %}">
+                    <i class="fas fa-search"></i>
+                </a>
+            </td>
         </tr>
         <tr>
-            <td class="campo" style="width: 20%">Macroprocesso</td>
-            <td class="valor">{{observacao.id_processo.id_macroprocesso}}</td>
+            <td class="campo table-active" style="width: 20%">Macroprocesso</td>
+            <td class="valor">
+                {{observacao.id_processo.id_macroprocesso}}
+                <a title="Detalhar" href="{% url 'riscos:detalhar_macroprocesso' target_id=observacao.id_processo.id_macroprocesso.pk %}">
+                    <i class="fas fa-search"></i>
+                </a>
+            </td>
         </tr>
         <tr>
-            <td class="campo" style="width: 20%">Processo</td>
-            <td class="valor">{{observacao.id_processo}}</td>
-        </tr>
-        <tr>
-            <td class="campo">Risco</td>
-            <td class="valor">{{observacao.ds_risco}}</td>
+            <td class="campo table-active" style="width: 20%">Processo</td>
+            <td class="valor">
+                {{observacao.id_processo}}
+                <a title="Detalhar" href="{% url 'riscos:detalhar_processo' target_id=observacao.id_processo.pk %}">
+                    <i class="fas fa-search"></i>
+                </a>
+            </td>
         </tr>
     </table>
     <br><br>
 
-    <h4>Classificação do risco</h4>
+    <h5>Dados do risco</h5>
     <hr>
-    <table class="table table-striped table-bordered table-hover">
+    <table class="table table-bordered table-hover">
         <tr>
-            <td class="campo" style="width: 20%">Tipologia</td>
+            <td class="campo table-active">Descrição do risco</td>
+            <td class="valor">{{observacao.ds_risco}}</td>
+        </tr>
+        <tr>
+            <td class="campo table-active" style="width: 20%">Tipologia</td>
             <td class="valor">{{observacao.id_tipo_risco}}</td>
         </tr>
         <tr>
-            <td class="campo" style="width: 20%">Impacto</td>
+            <td class="campo table-active" style="width: 20%">Impacto</td>
             <td class="valor">{{observacao.id_impacto}}</td>
         </tr>
         <tr>
-            <td class="campo" style="width: 20%">Probabilidade</td>
+            <td class="campo table-active" style="width: 20%">Probabilidade</td>
             <td class="valor">{{observacao.id_probabilidade}}</td>
         </tr>
     </table>
     <br><br>
 
-    <h4>Causas</h4>
+    <h5>Causas</h5>
     <hr> {% if causas %}
     <table class="table table-bordered table-hover">
         <thead class="thead-light">
@@ -71,7 +143,7 @@
     {% endif %}
     <br><br>
 
-    <h4>Consequências</h4>
+    <h5>Consequências</h5>
     <hr> {% if consequencias %}
     <table class="table table-bordered table-hover">
         <thead class="thead-light">
@@ -94,35 +166,102 @@
     {% endif %}
     <br><br>
 
-    <h4>Tratamento (controle)</h4>
+    <h5>Tratamentos</h5>
     <hr> {% if tratamentos %}
-    <table class="table table-bordered table-hover">
-        <thead class="thead-light">
-            <tr>
-                <th style="width: 10%">Item</th>
-                <th>Descrição do controle</th>
-                <th>Status do controle</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in tratamentos %}
-            <tr>
-                <td style="width: 10%">{{ forloop.counter }}</td>
-                <td>{{item.ds_controle}}</td>
-                <td>{{item.ds_status}}</td>
-            </tr>{% endfor %}
+    <div class="accordion" id="accordionTratamentos">
+        {% for item in tratamentos %}
+        <div class="card">
+            <div class="card-header" id="tratamento{{ forloop.counter }}">
+                <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseTrat{{ forloop.counter }}" aria-expanded="true" aria-controls="collapseTrat{{ forloop.counter }}">
+          T{{ forloop.counter }}. {{item.ds_controle}}
+        </button>
+            </div>
 
-        </tbody>
-    </table>
-    {% else %}
+            <div id="collapseTrat{{ forloop.counter }}" class="collapse" aria-labelledby="tratamento{{ forloop.counter }}" data-parent="#accordionTratamentos">
+                <div class="card-body">
+                    <div class="alert {% if item.ds_status == 'Ineficaz' or item.ds_status == 'Ineficiente' %}
+                        alert-warning {% elif item.ds_status == 'Inexistente' %}
+                        alert-danger {% else %} alert-success {% endif %}">
+                        Status do tratamento: {{item.ds_status}} {% if item.ds_status == "Ineficaz" or item.ds_status == "Ineficiente" %}
+                        <i class="fas fa-thumbs-down"></i> {% elif item.ds_status == "Inexistente" %}
+                        <i class="fas fa-exclamation-triangle"></i> {% else %}
+                        <i class="fas fa-thumbs-up"></i> {% endif %}
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <p><span style="font-weight: 600;">Descrição: </span> {{item.ds_oque}}</p>
+                        </div>
+                        <div class="col">
+                            <p><span style="font-weight: 600;">Local: </span> {{item.ds_onde}}</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <p><span style="font-weight: 600;">Motivo: </span> {{item.ds_porque}}</p>
+                        </div>
+                        <div class="col">
+                            <p><span style="font-weight: 600;">Responsável: </span> {{item.ds_quem}}</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <p><span style="font-weight: 600;">Modo: </span> {{item.ds_como}}</p>
+                        </div>
+                        <div class="col">
+                            <p><span style="font-weight: 600;">Data de execução/implementação: </span> {{item.dt_quando}}</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <p><span style="font-weight: 600;">Custo/valor: </span> R$ {{item.ds_quanto}}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <br> {% else %}
     <p> Nenhum tratamento registrado </p>
     {% endif %}
+    <div style="text-align: right; line-height:0">
+        <a title="Adicionar tratamento" href="{% url 'riscos:criar_tratamento' parent_id=observacao.pk %}" style="color:green;font-size:1.5em;cursor:pointer;">
+            <i class="fas fa-plus-circle"></i>
+        </a>
+    </div>
     <br><br>
 
-    <div class="float-right">
+    <div style="text-align:right">
         <a class="btn btn-primary" href="#">Editar risco</a>
         <a class="btn btn-dark" href="{{request.META.HTTP_REFERER}}">Voltar</a>
     </div>
     <br>
 </div>
-<br> {% endblock %}
+<br>
+<script>
+    const trace = "{{data|safe}}";
+    const ponto = "{{ponto|safe}}";
+    var data = [JSON.parse(trace.replace(/'/g, "\"")), JSON.parse(ponto.replace(/'/g, "\""))];
+    var layout = {
+        xaxis: {
+            range: [0, 5.5],
+            title: 'Impacto'
+        },
+        yaxis: {
+            range: [0, 5.5],
+            title: 'Probabilidade'
+        },
+        title: 'Matriz de risco'
+    };
+
+    Plotly.newPlot('myDiv', data, layout);
+
+    // Mudança de css no accordion (setas)
+    $(".accordion div").on("show.bs.collapse", function() {
+        $(":first", this).addClass("aberto");
+    })
+    $(".accordion div").on("hide.bs.collapse", function() {
+        $(":first", this).removeClass("aberto");
+    })
+</script>
+{% endblock %}

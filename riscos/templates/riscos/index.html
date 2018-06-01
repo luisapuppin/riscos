@@ -1,46 +1,218 @@
 {% extends 'riscos/base.html' %} {% block main_content %}
-<div class="jumbotron">
+<div class="jumbotron" style="padding-bottom: 20px; margin-bottom: 1.25rem;">
     {% include "riscos/piloto.html" %}
 </div>
+<style>
+    svg {
+        width: 80px; height: 80px;
+        transform: rotate(0deg);
+        background: white;
+        border-radius: 50%;
+    }
+
+    circle {
+        fill: #555;
+        stroke:indianred;
+        stroke-width: 32;
+        stroke-dasharray: {{graves_perc}} 100;
+    }
+    
+    .card-body {
+        padding-top: 30px;
+        padding-bottom: 10px;
+    }
+
+    input[type=text] {
+        width: 150px;
+        box-sizing: border-box;
+        border: 2px solid #ccc;
+        border-radius: 2px;
+        font-size: 16px;
+        background-color: white;
+        background-position: 10px 10px; 
+        background-repeat: no-repeat;
+        padding: 7px 10px 8px 5px;
+        -webkit-transition: width 0.5s ease-in-out;
+        transition: width 0.5s ease-in-out;
+    }
+
+    input[type=text]:focus {
+        width: 50%;
+    }
+    .hidden {
+        display: none;
+    }
+
+    ul {
+        margin-top: 3px;
+        margin-bottom: 2px;
+    }
+    li {
+        margin-top: 1px;
+    }
+    li.processo {
+        padding-bottom: 6px;
+    }
+</style>
+
 <div class="container">
-    <h2>Página inicial</h2><br>
-    <p> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus vel urna in est molestie pretium. Mauris vel pretium enim, id mattis libero. Quisque maximus dolor sed odio porttitor tempus in consectetur mi. In vulputate, diam vitae aliquam vestibulum,
-        purus nisi dignissim nisl, sit amet fermentum quam sem ut arcu. Nullam quam lectus, ultricies quis cursus varius, suscipit a dui. Cras nisi diam, ornare in erat finibus, egestas consequat massa. In elementum nisi convallis, volutpat lacus vel,
-        consequat eros. Pellentesque nulla justo, tempor sit amet tristique a, volutpat at urna. Duis congue massa orci, sed venenatis elit fermentum at. Nam maximus mollis leo ut sagittis. Mauris sit amet lacus non ipsum mollis hendrerit. Donec auctor
-        ornare sapien a consectetur. Morbi feugiat fermentum quam at hendrerit. Nulla mollis eget dui et vehicula.</p>
+    <h3 class = "text-center">CGCO</h3>
+    <div class="card-deck">
+        <div class="card bg-primary">
+            <div class = "card-body text-center">
+                <h1 class = "card-text">{{ processos|length }}</h1>
+                <h4 class = "card-text">processos</h4>
+            </div>
+        </div>
+        <div class="card bg-warning">
+            <div class = "card-body text-center">
+                <h1 class = "card-text">{{ riscos|length }}</h1>
+                <h4 class = "card-text">riscos</h4>
+            </div>
+        </div>
+        <div class="card">
+            <div class = "card-body text-center" style = "padding-top: 15px;"
+                 title="{{ graves|length }} {% if graves|length == 1 %} risco grave {% else %} riscos graves {% endif %}">
+                <svg viewBox="0 0 32 32">
+                    <circle r="16" cx="16" cy="16" />
+                </svg>
+                <h4 class = "card-text">riscos graves</h4>
+            </div>
+        </div>
+    </div>
+    <br/>
+      
+    {% for vencido in vencidos %}
+    <div class = "alert alert-danger">
+        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+        O tratamento "<strong>{{vencido}}</strong>" deveria haver sido entregue em <strong>{{vencido.dt_quando}}</strong>.
+    </div>
+    {% endfor %}
 
-    <p> Aenean consequat, nunc eu aliquet tempus, lorem risus rutrum sapien, tincidunt tempor libero mi at est. In vel auctor ex. Cras eget semper ipsum. Duis consequat ipsum nec risus egestas cursus. Cras consequat a felis in commodo. Nullam mi urna, molestie
-        quis urna vel, laoreet semper tortor. Curabitur accumsan mi felis. Fusce purus leo, sagittis id sapien fermentum, malesuada tristique magna. Fusce vulputate, nisi vitae eleifend maximus, nunc lacus bibendum nisl, nec mattis metus eros ac mauris.</p>
+    {% for proximo in proximos %}
+    <div class = "alert alert-warning">
+        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+        Faltam <strong>{{proximo.dt_quando|timeuntil}}</strong> para entregar <strong>{{proximo}}</strong>.
+    </div>
+    {% endfor %}
 
-    <p> Vivamus sollicitudin scelerisque orci. Proin ut elit in elit dignissim interdum. Suspendisse dictum arcu et magna dictum semper. Maecenas pharetra ullamcorper nunc nec faucibus. Suspendisse id ligula at justo facilisis ultricies. Integer non dui nulla.
-        Sed vel egestas lectus. Proin augue felis, vestibulum non aliquam ac, tristique at mi. Vivamus porttitor tincidunt tortor, nec gravida odio scelerisque et.</p>
+    <br/>
 
-    <p> Sed vestibulum risus sit amet est mattis molestie. Nam sodales a lectus eget placerat. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Sed semper efficitur tellus, quis malesuada quam efficitur ut. Nullam convallis
-        mi eu iaculis fermentum. Donec tempus consectetur orci, eu lacinia nunc auctor vitae. Nulla eu eleifend mi. Maecenas et rhoncus enim, et faucibus urna. In at lacinia justo. Sed pellentesque porttitor lacus, et ornare lorem suscipit eget. Sed dignissim
-        erat blandit mollis blandit.</p>
+    <div class="modal fade" id="modal" role="dialog">
+    <div class="modal-dialog">
+    
+      <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        <div class="modal-body">
+            <label>Escolha um macroprocesso</label>
+            <select id = "escolha_macro" class="form-control">
+                {% for macro in macroprocessos %}
+                <option value="{{macro.pk}}">{{macro}}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="modal-footer">
+          <a id="btn_processo" class="btn btn-primary" href="macroprocesso/1/criar/processo/">Criar processo</a>
+          <a type="button" class="btn btn-default" data-dismiss="modal">Fechar</a>
 
-    <p> Phasellus sit amet euismod urna. Quisque convallis pretium mollis. Donec sit amet velit luctus ante feugiat imperdiet rutrum vitae mauris. Quisque nec tempus est. Quisque eu mi ultrices, semper nulla vel, tincidunt ex. Vivamus nec sapien sed mi facilisis
-        convallis. Fusce vel lacinia leo. Sed et fermentum nulla. Mauris tempus luctus luctus. Suspendisse interdum scelerisque purus, vitae ullamcorper justo. Donec viverra ex egestas, dignissim purus ac, eleifend lectus. Integer bibendum, velit sit
-        amet accumsan viverra, arcu arcu molestie libero, ut pellentesque mauris augue ut tellus. Donec ligula dui, varius a faucibus ut, fermentum in ex. Sed dictum euismod dui, non cursus augue vestibulum ut. Nulla at pulvinar erat, ac mattis turpis.</p>
+        </div>
+      </div>
+      
+    </div>
+  </div>
 
-    <p> Nunc quis nulla finibus, congue odio vitae, volutpat elit. Aliquam accumsan justo ligula, eu egestas lorem maximus a. Phasellus ac metus id purus blandit fermentum a ac nulla. Aenean dictum laoreet erat, ac laoreet arcu commodo et. Mauris molestie
-        finibus congue. Curabitur aliquam, orci in ullamcorper accumsan, dui libero auctor ante, eget suscipit purus leo ut nisi. Praesent nunc est, auctor at ante eu, venenatis posuere lectus. Class aptent taciti sociosqu ad litora torquent per conubia
-        nostra, per inceptos himenaeos. Sed pretium euismod sapien. Nullam sagittis ex vel turpis blandit lobortis. Curabitur a fringilla sapien.</p>
+    <br/>
 
-    <p> Morbi vitae imperdiet odio, vitae mattis ligula. Ut maximus vel tortor ac venenatis. Quisque tristique, lorem mattis euismod fermentum, tellus ante gravida leo, sed suscipit quam lectus vitae nibh. Phasellus purus erat, auctor vel suscipit vitae,
-        vehicula eu sapien. Donec et turpis scelerisque, iaculis sapien eu, iaculis nisl. Suspendisse commodo diam eu felis venenatis, tempor semper ante maximus. Praesent eget nunc vel odio dapibus tempus. Aenean est elit, hendrerit quis augue a, aliquet
-        mattis dolor. Aliquam luctus odio a aliquam condimentum. Donec semper, leo a dictum gravida, risus ex tempor dui, a dictum enim augue in dolor.</p>
-
-    <p> Vivamus tristique ex eu augue pulvinar, vel lobortis purus semper. Nam viverra leo non urna vehicula, at sagittis urna pulvinar. Vivamus eros tellus, suscipit dictum congue non, tincidunt in justo. Phasellus nec diam aliquam, fringilla arcu sit amet,
-        consectetur tortor. Mauris lectus enim, dictum eget pulvinar at, vulputate vel velit. Praesent mattis lacinia ex, ac consectetur velit posuere ac. Vestibulum augue ante, bibendum et posuere vitae, condimentum eu tellus. Donec sit amet ex et ipsum
-        euismod efficitur ut ut nulla. In hac habitasse platea dictumst. Aenean pretium vehicula justo, ut sagittis diam pulvinar aliquam. Donec egestas libero ac risus sollicitudin, id porta diam consectetur.</p>
-
-    <p> Duis sit amet magna pretium, blandit erat quis, pulvinar dui. Suspendisse elementum, massa et fringilla lacinia, est nunc aliquet lorem, ac ullamcorper libero quam non leo. Cras id nisl suscipit, dictum libero ut, auctor leo. Duis molestie convallis
-        lacinia. Maecenas luctus, neque nec feugiat posuere, nunc velit suscipit enim, at fermentum ipsum nunc non lectus. Suspendisse at ex condimentum, dapibus tellus a, ullamcorper dolor. Nunc varius, libero nec bibendum bibendum, dolor augue dictum
-        libero, id posuere tortor urna id est. Pellentesque sed nibh turpis. Pellentesque tincidunt massa vel lacus ultrices, quis molestie nulla tincidunt.</p>
-
-    <p> Duis a diam elit. Vestibulum arcu mi, pellentesque quis sapien vitae, pulvinar ultricies enim. Proin feugiat nibh ultrices neque porta, vitae eleifend dolor sollicitudin. Nam at sodales ex. Quisque sollicitudin accumsan felis sit amet tempor. Nullam
-        dignissim egestas dui, nec venenatis diam tristique ut. Curabitur porttitor nibh felis, viverra blandit ex iaculis non. Nulla congue felis quis tellus interdum, in pellentesque lectus vehicula. Nullam lobortis lacus eu lorem auctor malesuada.
-        Vestibulum purus mi, commodo molestie eros vitae, porta commodo elit. Cras cursus blandit erat.</p>
+    <div class = "busca">
+        <div class="card">
+            <h5 class="card-title pull-left left" style="margin-top: 5px; margin-left: 5px">Processos &nbsp;
+                <a href="#" title="Cadastrar processo" data-toggle="modal" data-target="#modal">
+                    <i class="fas fa-plus-circle" style="color:red; font-size:1.25em;"></i>
+                </a> &nbsp; &nbsp; &nbsp;
+                <input id = "termo" type="text" placeholder="Buscar...">
+            </h5>
+            <div class="arvore">
+                <ul>
+                {% for processo in processos %}
+                    <li class="processo">
+                        <span>{{processo}}</span> &nbsp;
+                        <a href="{% url 'riscos:detalhar_processo' target_id=processo.pk %}" title="Detalhar processo">
+                            <i class="far fa-list-alt" style="font-size:1.25em"></i>
+                        </a> &nbsp;
+                        <a href="{% url 'riscos:criar_atividade' parent_id=processo.pk %}" title="Cadastrar atividade">
+                            <i class="fas fa-plus-circle" style="color:green;font-size:1.25em;"></i>
+                        </a> &nbsp;
+                        <a href="{% url 'riscos:criar_risco' parent_id=processo.pk %}" title="Cadastrar risco">
+                            <i class="fas fa-plus-circle" style="color:red;font-size:1.25em;"></i>
+                        </a>
+                    </li>
+                    <ul class="hidden">
+                        {% for risco in riscos %}
+                        {% if risco.id_processo == processo %}
+                            <li>
+                                <span>{{risco}}</span> &nbsp;
+                                <a href="{% url 'riscos:detalhar_risco' target_id=risco.pk %}" title="Detalhar risco">
+                                    <i class="far fa-list-alt" style="font-size:1.25em"></i>
+                                </a> &nbsp;
+                                <a href="{% url 'riscos:criar_tratamento' parent_id=risco.pk %}" title="Cadastrar tratamento">
+                                    <i class="fas fa-plus-circle" style="color:red;font-size:1.25em;"></i>
+                                </a>
+                            </li>
+                            <ul class="hidden">
+                            {% for tratamento in tratamentos %}
+                            {% if tratamento.id_causa_consequencia.id_risco == risco %}
+                                <li>
+                                    {{tratamento}} &nbsp;
+                                    <a href="{% url 'riscos:detalhar_tratamento' target_id=tratamento.pk %}" title="Detalhar tratamento">
+                                        <i class="far fa-list-alt" style="font-size:1.25em"></i>
+                                    </a>
+                                </li>
+                            {% endif %}
+                            {% endfor %}
+                            </ul>
+                        {% endif %}
+                        {% endfor %}
+                        </ul>
+                {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+<br/>
 </div>
+<script>
+    $(".arvore li span").click(function() {
+        $(this).parent().next().toggleClass("hidden")
+        $(this).parent().next().children("ul").addClass("hidden")
+    })
+
+    $("#escolha_macro").change(function() {
+        console.log(this.value)
+        id = this.value
+        console.log($("#btn_processo").attr("href"))
+        $("#btn_processo").attr("href", "macroprocesso/" + id + "/criar/processo/") 
+    })
+
+    $("#termo").change(function() {
+        const termo = this.value
+        console.log()
+        var processos = $(".processo")
+        processos.each(function(i, elem) {
+            const texto = processos[i].children[0].textContent.toUpperCase()
+            var teste = texto.match(termo.toUpperCase())
+            if (teste === null) {
+                if (elem.className.match("hidden") === null) {
+                    elem.className =  elem.className + " hidden"
+                }
+            } else {
+                elem.className =  elem.className.replace(" hidden", "")
+            }
+        })
+    })
+
+</script>
+
 {% endblock %}
