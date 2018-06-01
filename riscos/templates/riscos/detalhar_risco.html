@@ -1,5 +1,25 @@
 {% extends 'riscos/base.html' %} {% block main_content %}
 
+<style>
+    .card-header::after {
+        font-family: "Font Awesome 5 Free";
+        content: "\f107";
+        font-weight: 900;
+        font-size: 1.2em;
+        margin-top: 7px;
+        float: right;
+    }
+    
+    .card-header.aberto::after {
+        font-family: "Font Awesome 5 Free";
+        content: "\f106";
+        font-weight: 900;
+        font-size: 1.2em;
+        margin-top: 7px;
+        float: right;
+    }
+</style>
+
 <div class="jumbotron">
     <div class="container">
         <p style="font-size:xx-small; color:grey">
@@ -146,27 +166,62 @@
     {% endif %}
     <br><br>
 
-    <h5>Tratamento</h5>
+    <h5>Tratamentos</h5>
     <hr> {% if tratamentos %}
-    <table class="table table-bordered table-hover">
-        <thead class="thead-light">
-            <tr>
-                <th style="width: 10%">Item</th>
-                <th>Descrição do controle</th>
-                <th>Status do controle</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in tratamentos %}
-            <tr>
-                <td style="width: 10%">{{ forloop.counter }}</td>
-                <td>{{item.ds_controle}}</td>
-                <td>{{item.ds_status}}</td>
-            </tr>{% endfor %}
+    <div class="accordion" id="accordionTratamentos">
+        {% for item in tratamentos %}
+        <div class="card">
+            <div class="card-header" id="tratamento{{ forloop.counter }}">
+                <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseTrat{{ forloop.counter }}" aria-expanded="true" aria-controls="collapseTrat{{ forloop.counter }}">
+          T{{ forloop.counter }}. {{item.ds_controle}}
+        </button>
+            </div>
 
-        </tbody>
-    </table>
-    {% else %}
+            <div id="collapseTrat{{ forloop.counter }}" class="collapse" aria-labelledby="tratamento{{ forloop.counter }}" data-parent="#accordionTratamentos">
+                <div class="card-body">
+                    <div class="alert {% if item.ds_status == 'Ineficaz' or item.ds_status == 'Ineficiente' %}
+                        alert-warning {% elif item.ds_status == 'Inexistente' %}
+                        alert-danger {% else %} alert-success {% endif %}">
+                        Status do tratamento: {{item.ds_status}} {% if item.ds_status == "Ineficaz" or item.ds_status == "Ineficiente" %}
+                        <i class="fas fa-thumbs-down"></i> {% elif item.ds_status == "Inexistente" %}
+                        <i class="fas fa-exclamation-triangle"></i> {% else %}
+                        <i class="fas fa-thumbs-up"></i> {% endif %}
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <p><span style="font-weight: 600;">Descrição: </span> {{item.ds_oque}}</p>
+                        </div>
+                        <div class="col">
+                            <p><span style="font-weight: 600;">Local: </span> {{item.ds_onde}}</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <p><span style="font-weight: 600;">Motivo: </span> {{item.ds_porque}}</p>
+                        </div>
+                        <div class="col">
+                            <p><span style="font-weight: 600;">Responsável: </span> {{item.ds_quem}}</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <p><span style="font-weight: 600;">Modo: </span> {{item.ds_como}}</p>
+                        </div>
+                        <div class="col">
+                            <p><span style="font-weight: 600;">Data de execução/implementação: </span> {{item.dt_quando}}</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <p><span style="font-weight: 600;">Custo/valor: </span> R$ {{item.ds_quanto}}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <br> {% else %}
     <p> Nenhum tratamento registrado </p>
     {% endif %}
     <div style="text-align: right; line-height:0">
@@ -200,5 +255,13 @@
     };
 
     Plotly.newPlot('myDiv', data, layout);
+
+    // Mudança de css no accordion (setas)
+    $(".accordion div").on("show.bs.collapse", function() {
+        $(":first", this).addClass("aberto");
+    })
+    $(".accordion div").on("hide.bs.collapse", function() {
+        $(":first", this).removeClass("aberto");
+    })
 </script>
 {% endblock %}
