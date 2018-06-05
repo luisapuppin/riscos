@@ -104,7 +104,7 @@ class CausaConsequencia(models.Model):
     ds_usuario = models.CharField(max_length=30)
 
     def __str__(self):
-        return self.ds_causa_consequencia
+        return self.ds_tipo + ": " + self.ds_causa_consequencia
 
 class Tratamento(models.Model):
     STATUS_CHOICE = (
