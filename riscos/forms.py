@@ -119,22 +119,24 @@ class FormCausaConsequencia(forms.ModelForm):
         }
 
 class FormTratamento(forms.ModelForm):
+    def __init__(self, risco, *args,**kwargs):
+        super(FormTratamento, self).__init__(*args,**kwargs)
+        self.fields['id_causa_consequencia'].queryset = models.CausaConsequencia.objects.filter(id_risco=risco)
+
     class Meta:
         model = models.Tratamento
-        fields = ("id_causa_consequencia", "ds_controle", "ds_status", "ds_oque", "ds_quem", "ds_porque",
-                  "ds_onde", "dt_quando", "ds_como", "ds_quanto",)
+        fields = ("id_causa_consequencia", "ds_controle", "ds_status", "ds_quem", "ds_porque",
+                  "dt_quando", "ds_como", "ds_quanto",)
         labels = {
             "id_causa_consequencia": "Controle sobre:",
             "ds_status": "Status do controle",
             "ds_controle": "Descrição do controle",
-            "ds_oque": "O que?",
             "ds_quem": "Quem?",
             "ds_porque": "Por que?",
-            "ds_onde": "Onde?",
             "dt_quando": "Quando?",
             "ds_como": "Como?",
             "ds_quanto": "Quanto?",
-        }
+        }   
         widgets = {
             "id_causa_consequencia": forms.Select(
                 attrs={"class": "selectpicker form-control"},
@@ -145,17 +147,11 @@ class FormTratamento(forms.ModelForm):
             "ds_controle": forms.TextInput(
                 attrs={"class": "form-control", "placeholder": "Descreva o que será realizado"}
             ),
-            "ds_oque": forms.TextInput(
-                attrs={"class": "form-control", "placeholder": "Descreva o que será realizado"}
-            ),
             "ds_quem": forms.TextInput(
                 attrs={"class": "form-control", "placeholder": "Quem será o responsável?"}
             ),
             "ds_porque": forms.TextInput(
                 attrs={"class": "form-control", "placeholder": "Por que isso será feito?"}
-            ),
-            "ds_onde": forms.TextInput(
-                attrs={"class": "form-control", "placeholder": "Onde isso será feito?"}
             ),
             "dt_quando": forms.DateInput(
                 attrs={"class": "form-control"}, format="%d/%m/%Y", 
