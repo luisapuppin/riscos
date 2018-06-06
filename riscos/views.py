@@ -230,7 +230,7 @@ def criar_risco(request, parent_id):
     queryset = models.CausaConsequencia.objects.none()
     formset = RiscoCausaFormset(request.POST or None, queryset=queryset)
     parent = get_object_or_404(models.Processo, pk=parent_id)
-    form = forms.FormRisco(request.POST or None)
+    form = forms.FormRisco(parent_id, request.POST or None)
     if form.is_valid() and formset.is_valid():
         instance = form.save(commit=False)
         instance.id_processo = parent
