@@ -14,24 +14,23 @@ LIMITE_GRAVES = 12
 
 # ------- INDEX -------
 def index(request):
-    macroprocessos = get_list_or_404(models.Macroprocesso)
-    processos = get_list_or_404(models.Processo)
-    riscos = get_list_or_404(models.Risco)
+    macroprocessos = models.Macroprocesso.objects.all()
+    processos = models.Processo.objects.all()
+    riscos = models.Risco.objects.all()
+    processos_com_risco = [risco.id_processo for risco in riscos]
     graves = models.Risco.objects.filter(id_probabilidade__gte=LIMITE_GRAVES/F('id_impacto'))
-    graves_perc = (graves.count() * 100) / riscos.__len__()
-    tratamentos = get_list_or_404(models.Tratamento)
+    tratamentos = models.Tratamento.objects.all()
     vencidos = models.Tratamento.objects.filter(dt_quando__lt=date.today())
     proximos = models.Tratamento.objects.filter(dt_quando__lt=date.today() + timedelta(days=15)).exclude(pk__in=vencidos)
-
     context = {
         "macroprocessos": macroprocessos,
         "processos": processos,
+        "processos_com_risco": processos_com_risco,
         "riscos": riscos,
         "tratamentos": tratamentos,
         "vencidos": vencidos,
         "proximos": proximos,
         "graves": graves,
-        "graves_perc": graves_perc,
         "active_bar": "home",
     }
     return render(request, "riscos/index.html", context)
