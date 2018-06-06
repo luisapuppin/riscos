@@ -20,22 +20,21 @@
     }
 </style>
 
-<div class="jumbotron">
-    <div class="container">
-        <p style="font-size:xx-small; color:grey">
-            <a href="{% url 'riscos:detalhar_planejamento' target_id=observacao.id_processo.id_macroprocesso.id_cadeia.id_planejamento.pk %}" style="color:unset;"> {{observacao.id_processo.id_macroprocesso.id_cadeia.id_planejamento}}</a> >
-            <a href="{% url 'riscos:detalhar_cadeia' target_id=observacao.id_processo.id_macroprocesso.id_cadeia.pk %}" style="color:unset;"> {{observacao.id_processo.id_macroprocesso.id_cadeia}}</a> >
-            <a href="{% url 'riscos:detalhar_macroprocesso' target_id=observacao.id_processo.id_macroprocesso.pk %}" style="color:unset;"> {{observacao.id_processo.id_macroprocesso}}</a> >
-            <a href="{% url 'riscos:detalhar_processo' target_id=observacao.id_processo.pk %}" style="color:unset;">{{observacao.id_processo}}</a> >
-            <a href="{% url 'riscos:detalhar_risco' target_id=observacao.pk %}" style="color:unset;">{{observacao.ds_risco}}</a> > Detalhar
-        </p>
-        <h1 class="display-4" style="text-align: center"> {{observacao.ds_risco}} </h1>
-        <hr>
-        <h6 style="text-align: center">Processo - {{observacao.id_processo}}</h6>
-        {% if observacao.id_atividade %}
-        <h6 style="text-align: center">Atividade - {{observacao.id_atividade}}</h6>
-        {% endif %}
-    </div>
+<div class="container">
+    <p style="font-size:xx-small; color:grey">
+        <a href="{% url 'riscos:detalhar_planejamento' target_id=observacao.id_processo.id_macroprocesso.id_cadeia.id_planejamento.pk %}" style="color:unset;"> {{observacao.id_processo.id_macroprocesso.id_cadeia.id_planejamento}}</a> >
+        <a href="{% url 'riscos:detalhar_cadeia' target_id=observacao.id_processo.id_macroprocesso.id_cadeia.pk %}" style="color:unset;"> {{observacao.id_processo.id_macroprocesso.id_cadeia}}</a> >
+        <a href="{% url 'riscos:detalhar_macroprocesso' target_id=observacao.id_processo.id_macroprocesso.pk %}" style="color:unset;"> {{observacao.id_processo.id_macroprocesso}}</a> >
+        <a href="{% url 'riscos:detalhar_processo' target_id=observacao.id_processo.pk %}" style="color:unset;">{{observacao.id_processo}}</a> >
+        <a href="{% url 'riscos:detalhar_risco' target_id=observacao.pk %}" style="color:unset;">{{observacao.ds_risco}}</a> > Detalhar
+    </p>
+    <h1 class="titulo-pagina"> {{observacao.ds_risco}} </h1>
+    <hr>
+    <h6 class="subtitulo-pagina">Processo - {{observacao.id_processo}}</h6>
+    {% if observacao.id_atividade %}
+    <h6 class="subtitulo-pagina">Atividade - {{observacao.id_atividade}}</h6>
+    {% endif %}
+    <br>
 </div>
 
 <div class="container" style="font-size:small;">

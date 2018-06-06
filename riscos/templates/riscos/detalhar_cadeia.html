@@ -1,15 +1,14 @@
 {% extends 'riscos/base.html' %} {% block main_content %}
 
-<div class="jumbotron">
-    <div class="container">
-        <p style="font-size:xx-small; color:grey">
-            <a href="{% url 'riscos:detalhar_planejamento' target_id=observacao.id_planejamento.pk %}" style="color:unset;">{{observacao.id_planejamento}}</a> >
-            <a href="{% url 'riscos:detalhar_cadeia' target_id=observacao.pk %}" style="color:unset;">{{observacao.ds_cadeia}}</a> > Detalhar
-        </p>
-        <h1 class="display-4" style="text-align: center"> {{observacao.ds_cadeia}} </h1>
-        <hr>
-        <h6 style="text-align: center">Planejamento Estratégico - {{observacao.id_planejamento}}</h6>
-    </div>
+<div class="container">
+    <p style="font-size:xx-small; color:grey">
+        <a href="{% url 'riscos:detalhar_planejamento' target_id=observacao.id_planejamento.pk %}" style="color:unset;">{{observacao.id_planejamento}}</a> >
+        <a href="{% url 'riscos:detalhar_cadeia' target_id=observacao.pk %}" style="color:unset;">{{observacao.ds_cadeia}}</a> > Detalhar
+    </p>
+    <h1 class="titulo-pagina"> {{observacao.ds_cadeia}} </h1>
+    <hr>
+    <h6 class="subtitulo-pagina">Planejamento Estratégico - {{observacao.id_planejamento}}</h6>
+    <br>
 </div>
 
 <div class="container" style="font-size:small;">
