@@ -10,9 +10,6 @@
                 <a class="nav-link {% if active_bar == 'home' %} active {% endif %}" href="{% url 'riscos:index' %}">Dashboard <span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link {% if active_bar == 'sobre' %} active {% endif %}" href="{% url 'riscos:sobre' %}">Sobre</a>
-            </li>
-            <li class="nav-item">
                 <a class="nav-link {% if active_bar == 'macroprocesso' %} active {% endif %}" href="{% url 'riscos:listar_macroprocesso' %}">Macroprocesso</a>
             </li>
             <li class="nav-item">
@@ -20,6 +17,9 @@
             </li>
             <li class="nav-item">
                 <a class="nav-link {% if active_bar == 'risco' %} active {% endif %}" href="{% url 'riscos:listar_risco' %}">Risco</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if active_bar == 'sobre' %} active {% endif %}" href="{% url 'riscos:sobre' %}">Sobre</a>
             </li>
         </ul>
         <button class="btn btn-outline-light my-2 my-sm-0" type="submit">Entrar</button>
