@@ -104,7 +104,7 @@ class CausaConsequencia(models.Model):
     ds_usuario = models.CharField(max_length=30)
 
     def __str__(self):
-        return self.ds_causa_consequencia
+        return self.ds_tipo + ": " + self.ds_causa_consequencia
 
 class Tratamento(models.Model):
     STATUS_CHOICE = (
@@ -116,13 +116,11 @@ class Tratamento(models.Model):
     id_causa_consequencia = models.ForeignKey(CausaConsequencia, on_delete=models.PROTECT)
     ds_status = models.CharField(max_length=30, choices=STATUS_CHOICE, default="Inexistente",)
     ds_controle = models.CharField(max_length=500)
-    ds_oque = models.CharField(max_length=500)
     ds_quem = models.CharField(max_length=500)
     ds_porque = models.CharField(max_length=500)
-    ds_onde = models.CharField(max_length=500)
     dt_quando = models.DateField() 
     ds_como = models.CharField(max_length=500)
-    ds_quanto = models.FloatField(validators=[MinValueValidator(0)]) 
+    ds_quanto = models.DecimalField(validators=[MinValueValidator(0)], max_digits=11, decimal_places=2, default=None, blank=True, null=True) 
     dt_cadastro = models.DateTimeField(auto_now_add=True)
     ds_usuario = models.CharField(max_length=30)
 

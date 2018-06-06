@@ -189,14 +189,6 @@
                     </div>
                     <div class="row">
                         <div class="col">
-                            <p><span style="font-weight: 600;">Descrição: </span> {{item.ds_oque}}</p>
-                        </div>
-                        <div class="col">
-                            <p><span style="font-weight: 600;">Local: </span> {{item.ds_onde}}</p>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col">
                             <p><span style="font-weight: 600;">Motivo: </span> {{item.ds_porque}}</p>
                         </div>
                         <div class="col">
@@ -213,7 +205,7 @@
                     </div>
                     <div class="row">
                         <div class="col">
-                            <p><span style="font-weight: 600;">Custo/valor: </span> R$ {{item.ds_quanto}}</p>
+                            <p><span style="font-weight: 600;">Custo/valor: </span> R$ {{item.ds_quanto|default_if_none:"-"}}</p>
                         </div>
                     </div>
                 </div>
