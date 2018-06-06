@@ -42,8 +42,8 @@
         </div>
         <div class="card border-0">
             <div class="card-body text-center" style="padding-top: 15px;" title="{{ graves|length }} {% if graves|length == 1 %} risco grave {% else %} riscos graves {% endif %}">
-                <svg viewBox="0 0 32 32">
-                    <circle r="16" cx="16" cy="16" />
+                <svg class="svg-dashboard" viewBox="0 0 32 32">
+                    <circle class="circle-dashboard" r="16" cx="16" cy="16" />
                 </svg>
                 <h6 class="card-text">Riscos graves</h6>
                 <h6 class="card-text">detectados</h6>
@@ -63,7 +63,7 @@
         </div>
         <div class="card-body arvore">
             <div class="accordion-dashboard" id="acc-Processo">
-                {% for processo in processos %}
+                {% if processos %} {% for processo in processos %}
                 <div>
                     <div class="card-header bg-white" id="head-proc-{{processo.pk}}">
                         <div class="mb-0">
@@ -81,6 +81,7 @@
 
                     <div id="data-proc-{{processo.pk}}" class="collapse" aria-labelledby="head-proc-{{processo.pk}}" data-parent="#acc-Processo">
                         <div class="card-body">
+                            {% if processo in processos_com_risco %}
                             <table class="table table-bordered table-hover">
                                 <thead class="thead-light">
                                     <th> Descrição do risco </th>
@@ -101,10 +102,13 @@
                                 </tr>
                                 {% endif %} {% endfor %}
                             </table>
+                            {% else %}
+                            <p class="card-text"> Nenhum risco cadastrado neste processo </p>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
-                {% endfor %}
+                {% endfor %} {% endif %}
             </div>
         </div>
         <br>

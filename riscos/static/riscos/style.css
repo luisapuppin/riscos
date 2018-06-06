@@ -101,11 +101,21 @@
 
 /* End Pallete */
 
+.titulo-pagina {
+    font-weight: 300;
+    text-align: center;
+}
+
+.subtitulo-pagina {
+    text-align: center;
+    font: status-bar;
+}
+
 .errorlist {
     color: #ff0000;
 }
 
-svg {
+.svg-dashboard {
     width: 80px;
     height: 80px;
     transform: rotate(0deg);
@@ -113,7 +123,7 @@ svg {
     border-radius: 50%;
 }
 
-circle {
+.circle-dashboard {
     fill: #555;
     stroke: indianred;
     stroke-width: 32;
@@ -149,7 +159,8 @@ input[id=termo]:focus {
     width: 50%;
 }*/
 
-.hidden {
+
+/*.hidden {
     display: none;
 }
 
@@ -164,7 +175,7 @@ li {
 
 li.processo {
     padding-bottom: 6px;
-}
+}*/
 
 .accordion-dashboard .card-header>div::before {
     font-family: "Font Awesome 5 Free";
