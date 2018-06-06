@@ -1,14 +1,13 @@
 {% extends 'riscos/base.html' %} {% block main_content %}
 
-<div class="jumbotron">
-    <div class="container">
-        <p style="font-size:xx-small; color:grey">
-            {{observacao.ds_planejamento}} > Detalhar
-        </p>
-        <h1 class="display-4" style="text-align: center"> {{observacao.ds_planejamento}} </h1>
-        <hr>
-        <h6 style="text-align: center">Detalhar Planejamento Estratégico</h6>
-    </div>
+<div class="container">
+    <p style="font-size:xx-small; color:grey">
+        {{observacao.ds_planejamento}} > Detalhar
+    </p>
+    <h1 class="titulo-pagina"> {{observacao.ds_planejamento}} </h1>
+    <hr>
+    <h6 class="subtitulo-pagina">Detalhar Planejamento Estratégico</h6>
+    <br>
 </div>
 
 <div class="container" style="font-size:small;">
