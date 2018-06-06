@@ -120,7 +120,7 @@ class Tratamento(models.Model):
     ds_porque = models.CharField(max_length=500)
     dt_quando = models.DateField() 
     ds_como = models.CharField(max_length=500)
-    ds_quanto = models.FloatField(validators=[MinValueValidator(0)], default=None, blank=True, null=True) 
+    ds_quanto = models.DecimalField(validators=[MinValueValidator(0)], max_digits=11, decimal_places=2, default=None, blank=True, null=True) 
     dt_cadastro = models.DateTimeField(auto_now_add=True)
     ds_usuario = models.CharField(max_length=30)
 
