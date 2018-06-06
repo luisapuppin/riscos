@@ -9,6 +9,7 @@
     <title> Sistema Integrado de Riscos </title>
     <link rel="stylesheet" type="text/css" href="{% static 'riscos/fontawesome/fontawesome-all.min.css' %}" />
     <link rel="stylesheet" type="text/css" href="{% static 'riscos/bootstrap-4.0.0-dist/css/bootstrap.min.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'riscos/style.css' %}" />
     <script src="{% static 'riscos/jquery/jquery-3.3.1.min.js' %}"></script>
     <script src="{% static 'riscos/js/functions.js' %}"></script>
 </head>
@@ -16,6 +17,7 @@
 <body>
 
     {% include "riscos/header.html" %}
+    <div style="padding:2.5em;"></div>
 
     <main role="main">
         {% block main_content %} {% endblock %}
