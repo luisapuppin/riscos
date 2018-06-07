@@ -88,6 +88,10 @@ class FormAtividade(forms.ModelForm):
         } 
  
 class FormRisco(forms.ModelForm):
+    def __init__(self, processo, *args,**kwargs):
+        super(FormRisco, self).__init__(*args,**kwargs)
+        self.fields['id_atividade'].queryset = models.Atividade.objects.filter(id_processo=processo)
+
     class Meta:
         model = models.Risco
         fields = ("id_atividade", "ds_risco", "id_tipo_risco", "id_impacto", "id_probabilidade",)

@@ -115,26 +115,6 @@
     color: #ff0000;
 }
 
-.svg-dashboard {
-    width: 80px;
-    height: 80px;
-    transform: rotate(0deg);
-    background: white;
-    border-radius: 50%;
-}
-
-.circle-dashboard {
-    fill: #555;
-    stroke: indianred;
-    stroke-width: 32;
-    stroke-dasharray: {
-        {
-            graves_perc
-        }
-    }
-    100;
-}
-
 .card-body {
     padding-top: 30px;
     padding-bottom: 10px;
@@ -157,24 +137,6 @@
 
 input[id=termo]:focus {
     width: 50%;
-}*/
-
-
-/*.hidden {
-    display: none;
-}
-
-ul {
-    margin-top: 3px;
-    margin-bottom: 2px;
-}
-
-li {
-    margin-top: 1px;
-}
-
-li.processo {
-    padding-bottom: 6px;
 }*/
 
 .accordion-dashboard .card-header>div::before {

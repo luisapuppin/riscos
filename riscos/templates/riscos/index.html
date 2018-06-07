@@ -41,10 +41,8 @@
             </div>
         </div>
         <div class="card border-0">
-            <div class="card-body text-center" style="padding-top: 15px;" title="{{ graves|length }} {% if graves|length == 1 %} risco grave {% else %} riscos graves {% endif %}">
-                <svg class="svg-dashboard" viewBox="0 0 32 32">
-                    <circle class="circle-dashboard" r="16" cx="16" cy="16" />
-                </svg>
+            <div class="card-body text-center" style="padding-top: 15px;">
+                <div id="myDiv"></div>
                 <h6 class="card-text">Riscos graves</h6>
                 <h6 class="card-text">detectados</h6>
             </div>
@@ -117,7 +115,7 @@
 
     <!--MODAL-->
     <div class="modal fade" id="modal" role="dialog">
-        <div class="modal-dialog">
+        <div class="modal-dialog" style="max-width:960px">
             <div class="modal-content">
                 <div class="modal-header color-secondary-1-3" style="color:#FFF">
                     <h5 class="modal-title">Criar novo processo</h5>
@@ -175,6 +173,32 @@
         $(".accordion-dashboard div").on("hide.bs.collapse", function() {
             $(":first", this).removeClass("accordion-open");
         })
+
+        const quantidadeRiscos = Number("{{riscos|length}}")
+        const quantidadeGraves = Number("{{graves|length}}")
+
+        const data = [{
+            values: [quantidadeRiscos - quantidadeGraves, quantidadeGraves],
+            labels: ["Leves", "Graves"],
+            type: "pie",
+            textinfo: "label+value"
+        }];
+
+        const layout = {
+            height: 150,
+            width: 250,
+            showlegend: false,
+            margin: {
+                l: 10,
+                r: 10,
+                b: 10,
+                t: 10,
+                pad: 4
+            },
+            colorway: ["#B0D566", "#E46E6E"]
+        };
+
+        Plotly.newPlot('myDiv', data, layout);
     </script>
 
     {% endblock %}

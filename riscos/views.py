@@ -19,10 +19,6 @@ def index(request):
     riscos = models.Risco.objects.all()
     processos_com_risco = [risco.id_processo for risco in riscos]
     graves = models.Risco.objects.filter(id_probabilidade__gte=LIMITE_GRAVES/F('id_impacto'))
-    if len(riscos) > 0:
-        graves_perc = (graves.count() * 100) / len(riscos)
-    else:
-        graves_perc = 0
     tratamentos = models.Tratamento.objects.all()
     vencidos = models.Tratamento.objects.filter(dt_quando__lt=date.today())
     proximos = models.Tratamento.objects.filter(dt_quando__lt=date.today() + timedelta(days=15)).exclude(pk__in=vencidos)
@@ -35,7 +31,6 @@ def index(request):
         "vencidos": vencidos,
         "proximos": proximos,
         "graves": graves,
-        "graves_perc": graves_perc,
         "active_bar": "home",
     }
     return render(request, "riscos/index.html", context)
@@ -235,7 +230,7 @@ def criar_risco(request, parent_id):
     queryset = models.CausaConsequencia.objects.none()
     formset = RiscoCausaFormset(request.POST or None, queryset=queryset)
     parent = get_object_or_404(models.Processo, pk=parent_id)
-    form = forms.FormRisco(request.POST or None)
+    form = forms.FormRisco(parent_id, request.POST or None)
     if form.is_valid() and formset.is_valid():
         instance = form.save(commit=False)
         instance.id_processo = parent
