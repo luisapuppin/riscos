@@ -44,7 +44,8 @@
 
 <script>
     formularios = $("#form-atividade>div:has(input[id$=ds_atividade])");
-    for (var i = 0; i < formularios.length; i++) {
+    // loop começa em 1 para nunca esconder o primeiro elemento (índice 0)
+    for (var i = 1; i < formularios.length; i++) {
         if(formularios[i].getElementsByTagName("input")[0].value == "") {
             $(formularios[i]).hide();
         }
