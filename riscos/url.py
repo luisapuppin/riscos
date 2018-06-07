@@ -10,6 +10,9 @@ urlpatterns = [
     # SOBRE
     re_path(r'^sobre/$', views.sobre, name="sobre"),
 
+    # CONSULTAR
+    re_path(r'^consultar/$', views.consultar, name="consultar"),
+
     # CADEIA
     re_path(r'^cadeia/listar/$', views.listar_cadeia, name="listar_cadeia"),
     re_path(r'^cadeia/(?P<target_id>[0-9]+)/detalhar/$', views.detalhar_cadeia, name="detalhar_cadeia"),

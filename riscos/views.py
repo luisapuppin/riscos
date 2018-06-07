@@ -35,12 +35,20 @@ def index(request):
     }
     return render(request, "riscos/index.html", context)
 
+# ------- CONSULTAR -------
+def consultar(request):
+    context = {
+        "active_bar": "consultar",
+    }
+    return render(request, "riscos/consultar.html", context)
+
 # ------- SOBRE -------
 def sobre(request):
     context = {
         "active_bar": "sobre",
     }
     return render(request, "riscos/sobre.html", context)
+
 # ------- PLANEJAMENTO -------
 def criar_planejamento(request):
     if request.method == 'POST':
