@@ -151,7 +151,11 @@ def criar_processo(request, parent_id):
             instance.id_macroprocesso = parent
             instance.ds_usuario = "usuario-teste"
             instance.save()
-            return redirect(reverse("riscos:listar_processo"))
+            saved_id = instance.pk
+            if "submit-e-detalhar" in request.POST:
+                return redirect(reverse("riscos:detalhar_processo", kwargs={"target_id":saved_id}))
+            else:
+                return redirect(reverse("riscos:criar_processo", kwargs={"parent_id":parent_id}))
     else:
         form = forms.FormProcesso()
     context = {
@@ -202,7 +206,7 @@ def criar_atividade(request, parent_id):
     AtividadeFormset = modelformset_factory(
         models.Atividade, form=forms.FormAtividade, extra=N_EXTRA, min_num=1,
     )
-    queryset = models.Atividade.objects.none()
+    queryset = models.Atividade.objects.filter(id_processo=parent_id).order_by("nr_atividade")
     formset = AtividadeFormset(request.POST or None, queryset=queryset)
     if formset.is_valid():
         instances = formset.save(commit=False)
@@ -210,10 +214,7 @@ def criar_atividade(request, parent_id):
             insta.id_processo = parent
             insta.ds_usuario = 'usuario-teste'
             insta.save()
-        if "submit-e-detalhar" in request.POST:
-            return redirect(reverse("riscos:detalhar_processo", kwargs={"target_id":parent_id}))
-        else:
-            return redirect(reverse("riscos:criar_atividade", kwargs={"parent_id":parent_id}))
+        return redirect(reverse("riscos:detalhar_processo", kwargs={"target_id":parent_id}))
     context = {
         "formset": formset,
         "parent": parent,
@@ -316,7 +317,11 @@ def criar_tratamento(request, parent_id):
         instance = form.save(commit=False)
         instance.ds_usuario = 'usuario-teste'
         instance.save()
-        return redirect(reverse("riscos:detalhar_risco", kwargs={"target_id":parent_id}))
+        saved_id = instance.pk
+        if "submit-e-detalhar" in request.POST:
+            return redirect(reverse("riscos:detalhar_risco", kwargs={"target_id":parent_id}))
+        else:
+            return redirect(reverse("riscos:criar_tratamento", kwargs={"parent_id":parent_id}))
 
     context = {
         "form": form,
