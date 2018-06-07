@@ -151,7 +151,11 @@ def criar_processo(request, parent_id):
             instance.id_macroprocesso = parent
             instance.ds_usuario = "usuario-teste"
             instance.save()
-            return redirect(reverse("riscos:listar_processo"))
+            saved_id = instance.pk
+            if "submit-e-detalhar" in request.POST:
+                return redirect(reverse("riscos:detalhar_processo", kwargs={"target_id":saved_id}))
+            else:
+                return redirect(reverse("riscos:criar_processo", kwargs={"parent_id":parent_id}))
     else:
         form = forms.FormProcesso()
     context = {
