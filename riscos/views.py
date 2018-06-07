@@ -206,7 +206,7 @@ def criar_atividade(request, parent_id):
     AtividadeFormset = modelformset_factory(
         models.Atividade, form=forms.FormAtividade, extra=N_EXTRA, min_num=1,
     )
-    queryset = models.Atividade.objects.none()
+    queryset = models.Atividade.objects.filter(id_processo=parent_id).order_by("nr_atividade")
     formset = AtividadeFormset(request.POST or None, queryset=queryset)
     if formset.is_valid():
         instances = formset.save(commit=False)

@@ -43,7 +43,12 @@
 </div>
 
 <script>
-    $("#form-atividade>div:has(input[id$=ds_atividade]):gt(0)").hide();
+    formularios = $("#form-atividade>div:has(input[id$=ds_atividade])");
+    for (var i = 0; i < formularios.length; i++) {
+        if(formularios[i].getElementsByTagName("input")[0].value == "") {
+            $(formularios[i]).hide();
+        }
+    }
     $("#add-atividade").on("click", function() {
         $("#form-atividade>div:has(input[id$=ds_atividade]):hidden:first").show();
     })
