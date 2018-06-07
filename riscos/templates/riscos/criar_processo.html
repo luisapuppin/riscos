@@ -6,15 +6,14 @@
     }
 </style>
 
-<div class="jumbotron">
-    <div class="container">
-        <p style="font-size:xx-small; color:grey">
-            {{parent.id_cadeia.id_planejamento}} > {{parent.id_cadeia}} >
-            <a href="{% url 'riscos:detalhar_macroprocesso' target_id=parent.pk %}" style="color:unset;">{{parent.ds_macroprocesso}}</a> > Criar processo</p>
-        <h1 class="display-4" style="text-align: center"> {{parent.ds_macroprocesso}} </h1>
-        <hr>
-        <h6 style="text-align: center">Criar processo</h6>
-    </div>
+<div class="container">
+    <p style="font-size:xx-small; color:grey">
+        {{parent.id_cadeia.id_planejamento}} > {{parent.id_cadeia}} >
+        <a href="{% url 'riscos:detalhar_macroprocesso' target_id=parent.pk %}" style="color:unset;">{{parent.ds_macroprocesso}}</a> > Criar processo</p>
+    <h1 class="titulo-pagina"> {{parent.ds_macroprocesso}} </h1>
+    <hr>
+    <h6 class="subtitulo-pagina">Criar processo</h6>
+    <br>
 </div>
 
 <div class="container criar-processo" style="font-size:small;">
@@ -34,11 +33,11 @@
         </div>
         {% endfor %}
 
-    <br>
-    <div style="text-align:right;">
-        <input type="submit" name="submit-macroprocesso" value="Criar processo" class="btn btn-success">
-        <a class="btn btn-danger" href="{% url 'riscos:detalhar_macroprocesso' target_id=parent.pk %}">Cancelar</a>
-    </div>
+        <br>
+        <div style="text-align:right;">
+            <input type="submit" name="submit-macroprocesso" value="Criar processo" class="btn btn-success">
+            <a class="btn btn-danger" href="{% url 'riscos:detalhar_macroprocesso' target_id=parent.pk %}">Cancelar</a>
+        </div>
     </form>
     <br>
 </div>
