@@ -37,14 +37,19 @@
         </div><br>
         <div class="float-right">
             <input type="submit" name="submit-e-detalhar" value="Criar atividade e detalhar processo" class="btn btn-success">
-            <input type="submit" name="submit-e-cadastrar" value="Criar e cadastrar nova atividade" class="btn btn-primary">
             <a class="btn btn-danger" href="{% url 'riscos:detalhar_processo' target_id=parent.pk %}">Cancelar</a>
         </div><br>
     </form>
 </div>
 
 <script>
-    $("#form-atividade>div:has(input[id$=ds_atividade]):gt(0)").hide();
+    formularios = $("#form-atividade>div:has(input[id$=ds_atividade])");
+    // loop começa em 1 para nunca esconder o primeiro elemento (índice 0)
+    for (var i = 1; i < formularios.length; i++) {
+        if(formularios[i].getElementsByTagName("input")[0].value == "") {
+            $(formularios[i]).hide();
+        }
+    }
     $("#add-atividade").on("click", function() {
         $("#form-atividade>div:has(input[id$=ds_atividade]):hidden:first").show();
     })

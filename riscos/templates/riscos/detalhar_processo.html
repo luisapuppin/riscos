@@ -85,15 +85,17 @@
     <table class="table table-bordered table-hover">
         <thead class="thead-light">
             <tr>
-                <th style="width: 10%">Item</th>
+                <th style="width: 10%">Ordem</th>
                 <th>Descrição da atividade</th>
+                <th>Responsável</th>
             </tr>
         </thead>
         <tbody>
             {% for item in atividades %}
             <tr>
-                <td style="width: 10%">{{ forloop.counter }}</td>
+                <td style="width: 10%">{{ item.nr_atividade }}</td>
                 <td>{{ item.ds_atividade }}</td>
+                <td>{{ item.ds_responsavel }}</td>
             </tr>{% endfor %}
 
         </tbody>
