@@ -214,10 +214,7 @@ def criar_atividade(request, parent_id):
             insta.id_processo = parent
             insta.ds_usuario = 'usuario-teste'
             insta.save()
-        if "submit-e-detalhar" in request.POST:
-            return redirect(reverse("riscos:detalhar_processo", kwargs={"target_id":parent_id}))
-        else:
-            return redirect(reverse("riscos:criar_atividade", kwargs={"parent_id":parent_id}))
+        return redirect(reverse("riscos:detalhar_processo", kwargs={"target_id":parent_id}))
     context = {
         "formset": formset,
         "parent": parent,
