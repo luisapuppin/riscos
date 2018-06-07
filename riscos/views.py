@@ -317,7 +317,11 @@ def criar_tratamento(request, parent_id):
         instance = form.save(commit=False)
         instance.ds_usuario = 'usuario-teste'
         instance.save()
-        return redirect(reverse("riscos:detalhar_risco", kwargs={"target_id":parent_id}))
+        saved_id = instance.pk
+        if "submit-e-detalhar" in request.POST:
+            return redirect(reverse("riscos:detalhar_risco", kwargs={"target_id":parent_id}))
+        else:
+            return redirect(reverse("riscos:criar_tratamento", kwargs={"parent_id":parent_id}))
 
     context = {
         "form": form,
