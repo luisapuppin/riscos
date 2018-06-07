@@ -315,7 +315,7 @@ def detalhar_risco(request, target_id):
 
 # ------- TRATAMENTO -------
 def criar_tratamento(request, parent_id): 
-    form = forms.FormTratamento(request.POST or None)
+    form = forms.FormTratamento(parent_id, request.POST or None)
     parent = get_object_or_404(models.Risco, pk=parent_id)
     if form.is_valid():
         instance = form.save(commit=False)
