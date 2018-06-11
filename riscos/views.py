@@ -55,7 +55,6 @@ def consultar(request):
             "ativ": parametros.get("ativ", [None])[0],
             "risc": parametros.get("risc", [None])[0]
         }
-        print(iniciais)
         form = forms.FormConsulta(initial=iniciais)
     context = {
         "active_bar": "consultar",
