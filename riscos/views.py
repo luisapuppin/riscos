@@ -78,19 +78,24 @@ def consultar(request):
                 filtro_risco = models.Risco.objects.filter(id_processo__in=processos)
                 filtro_risco = filtro_risco.filter(id_atividade__ds_atividade__icontains=parametros.get("ativ")[0])
                 filtro_risco = filtro_risco.filter(ds_risco__icontains=parametros.get("risc")[0])
-                riscos = [x.id_processo.pk for x in filtro_risco]
-                resposta = resposta.filter(pk__in=riscos)
             elif parametros.get("ativ", [""])[0] != "":
                 processos = [x.pk for x in resposta]
                 filtro_ativ = models.Atividade.objects.filter(id_processo__in=processos, ds_atividade__icontains=parametros.get("ativ")[0])
-                atividades = [x.id_processo.pk for x in filtro_ativ]
-                resposta = resposta.filter(pk__in=atividades)
             elif parametros.get("risc", [""])[0] != "":
                 processos = [x.pk for x in resposta]
-                filtro_risco = models.Risco.objects.filter(id_processo__in=processos, ds_risco__icontains=parametros.get("ativ")[0])
-                riscos = [x.id_processo.pk for x in filtro_risco]
-                resposta = resposta.filter(pk__in=riscos)
-        if int(parametros.get("tipo", [1])[0]) != 1:
+                filtro_risco = models.Risco.objects.filter(id_processo__in=processos).filter(ds_risco__icontains=parametros.get("risc")[0])
+        if int(parametros.get("tipo", [1])[0]) == 1 and 'filtro_risco' in locals():
+            riscos = [x.id_processo.pk for x in filtro_risco]
+            resposta = resposta.filter(pk__in=riscos)
+        if int(parametros.get("tipo", [1])[0]) == 1 and 'filtro_ativ' in locals():
+            filtro_ativ = [x.id_processo.pk for x in filtro_ativ]
+            resposta = resposta.filter(pk__in=filtro_ativ)
+        elif int(parametros.get("tipo", [1])[0]) == 2 and 'filtro_risco' in locals():
+            resposta = filtro_risco
+        elif int(parametros.get("tipo", [1])[0]) == 2 and 'filtro_ativ' in locals():
+            filtro_ativ = [x.pk for x in filtro_ativ]
+            resposta = models.Risco.objects.filter(id_atividade__in=filtro_ativ)
+        elif int(parametros.get("tipo", [1])[0]) == 2 and 'filtro_risco' not in locals():
             riscos = [x.pk for x in resposta]
             resposta = models.Risco.objects.filter(id_processo__in=riscos)
         context["res"] = resposta
