@@ -1,0 +1,18 @@
+<h5> Resultados da consulta </h5>
+<br> {% if res %} {% if tipo_res == '1' %} {% for item in res %}
+<div class="card" style="margin-bottom:5px;">
+    <div class="card-body py-3">
+        <h5 class="card-title">Processo: {{item}}</h5>
+        <h6 class="card-subtitle mb-2 text-muted">Macroprocesso: {{item.id_macroprocesso}}</h6>
+    </div>
+</div>
+{% endfor %} {% else %} {% for item in res %}
+<div class="card" style="margin-bottom:5px;">
+    <div class="card-body py-3">
+        <h5 class="card-title">Risco: {{item}}</h5>
+        <h6 class="card-subtitle mb-2 text-muted">Macroprocesso: {{item.id_processo}}</h6>
+    </div>
+</div>
+{% endfor %} {% endif %} {% else %}
+<p> Sem resultados </p>
+{% endif %}
