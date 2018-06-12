@@ -5,8 +5,9 @@ from django.shortcuts import render, redirect, get_object_or_404, get_list_or_40
 from django.core import serializers
 from django.urls import reverse
 from django.forms.models import modelformset_factory
-from django.db.models import F
+from django.db.models import F, Q
 from django import forms
+from itertools import chain
 from . import forms
 from . import models
 
@@ -35,12 +36,79 @@ def index(request):
     }
     return render(request, "riscos/index.html", context)
 
+# ------- CONSULTAR -------
+def consultar(request):
+    if request.method == 'POST':
+        form = forms.FormConsulta(request.POST)
+        if form.is_valid():
+            parametros = dict(request.POST)
+            parametros.pop("csrfmiddlewaretoken")
+            parametros.pop("submit")
+    else:
+        parametros = dict(request.GET)
+        iniciais = {
+            "tipo": parametros.get("tipo", [1])[0],
+            "plan": parametros.get("plan", [None])[0],
+            "cad": parametros.get("cad", [None])[0],
+            "macro": parametros.get("macro", [None])[0],
+            "proc": parametros.get("proc", [None])[0],
+            "ativ": parametros.get("ativ", [None])[0],
+            "risc": parametros.get("risc", [None])[0]
+        }
+        form = forms.FormConsulta(initial=iniciais)
+    context = {
+        "active_bar": "consultar",
+        "form": form,
+        "parametros": parametros
+    }
+    if parametros:
+        consulta_vazia = [parametros[key][0] for key in parametros if parametros.get(key, [""])[0] != ""]
+        resposta = models.Processo.objects.all()
+        if len(consulta_vazia) > 1:
+            if parametros.get("plan", [""])[0] != "":
+                resposta = resposta.filter(id_macroprocesso__id_cadeia__id_planejamento=parametros.get("plan")[0])
+            if parametros.get("cad", [""])[0] != "":
+                resposta = resposta.filter(id_macroprocesso__id_cadeia=parametros.get("cad")[0])
+            if parametros.get("macro", [""])[0] != "":
+                resposta = resposta.filter(id_macroprocesso=parametros.get("macro")[0])
+            if parametros.get("proc", [""])[0] != "":
+                resposta = resposta.filter(ds_processo__icontains=parametros.get("proc")[0])
+            if parametros.get("ativ", [""])[0] != "" and parametros.get("risc", [""])[0] != "":
+                processos = [x.pk for x in resposta]
+                filtro_risco = models.Risco.objects.filter(id_processo__in=processos)
+                filtro_risco = filtro_risco.filter(id_atividade__ds_atividade__icontains=parametros.get("ativ")[0])
+                filtro_risco = filtro_risco.filter(ds_risco__icontains=parametros.get("risc")[0])
+            elif parametros.get("ativ", [""])[0] != "":
+                processos = [x.pk for x in resposta]
+                filtro_ativ = models.Atividade.objects.filter(id_processo__in=processos, ds_atividade__icontains=parametros.get("ativ")[0])
+            elif parametros.get("risc", [""])[0] != "":
+                processos = [x.pk for x in resposta]
+                filtro_risco = models.Risco.objects.filter(id_processo__in=processos).filter(ds_risco__icontains=parametros.get("risc")[0])
+        if int(parametros.get("tipo", [1])[0]) == 1 and 'filtro_risco' in locals():
+            riscos = [x.id_processo.pk for x in filtro_risco]
+            resposta = resposta.filter(pk__in=riscos)
+        if int(parametros.get("tipo", [1])[0]) == 1 and 'filtro_ativ' in locals():
+            filtro_ativ = [x.id_processo.pk for x in filtro_ativ]
+            resposta = resposta.filter(pk__in=filtro_ativ)
+        elif int(parametros.get("tipo", [1])[0]) == 2 and 'filtro_risco' in locals():
+            resposta = filtro_risco
+        elif int(parametros.get("tipo", [1])[0]) == 2 and 'filtro_ativ' in locals():
+            filtro_ativ = [x.pk for x in filtro_ativ]
+            resposta = models.Risco.objects.filter(id_atividade__in=filtro_ativ)
+        elif int(parametros.get("tipo", [1])[0]) == 2 and 'filtro_risco' not in locals():
+            riscos = [x.pk for x in resposta]
+            resposta = models.Risco.objects.filter(id_processo__in=riscos)
+        context["res"] = resposta
+        context["tipo_res"] = parametros.get("tipo", [1])[0]
+    return render(request, "riscos/consultar.html", context)
+
 # ------- SOBRE -------
 def sobre(request):
     context = {
         "active_bar": "sobre",
     }
     return render(request, "riscos/sobre.html", context)
+
 # ------- PLANEJAMENTO -------
 def criar_planejamento(request):
     if request.method == 'POST':
