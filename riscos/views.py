@@ -431,28 +431,4 @@ def detalhar_tratamento(request, target_id):
     }
     return render(request, "riscos/detalhar_tratamento.html", context)
 
-# ------- AJAX -------
-def load_cadeia(request):
-    id_get = request.GET.get('targetId')
-    opcoes = models.Cadeia.objects.filter(id_planejamento=id_get).order_by('ds_cadeia')
-    return render(request, 'riscos/dropdown_cadeia.html', {'opcoes': opcoes})
 
-def load_macroprocesso(request):
-    id_get = request.GET.get('targetId')
-    opcoes = models.Macroprocesso.objects.filter(id_cadeia=id_get).order_by('ds_macroprocesso')
-    return render(request, 'riscos/dropdown_macroprocesso.html', {'opcoes': opcoes})
-
-def load_processo(request):
-    id_get = request.GET.get('targetId')
-    opcoes = models.Processo.objects.filter(id_macroprocesso=id_get).order_by('ds_processo')
-    return render(request, 'riscos/dropdown_processo.html', {'opcoes': opcoes})
-
-def load_risco(request):
-    id_get = request.GET.get('targetId')
-    opcoes = models.Risco.objects.filter(id_processo=id_get).order_by('ds_risco')
-    return render(request, 'riscos/dropdown_risco.html', {'opcoes': opcoes})
-
-def load_causa_consequencia(request):
-    id_get = request.GET.get('targetId')
-    opcoes = models.CausaConsequencia.objects.filter(id_risco=id_get).order_by('ds_causa_consequencia')
-    return render(request, 'riscos/dropdown_causa_consequencia.html', {'opcoes': opcoes})
