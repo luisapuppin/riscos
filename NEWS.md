@@ -1,8 +1,16 @@
+# v0.6.0
++ Habilita consulta;
++ Identifica etapas do cadastro de riscos;
++ Remove "Onde" e "O que" do cadastro de tratamento;
++ Cria novos redirecionamentos para os formulários de cadastro;
+
+# v0.5.1
++ Altera CSS
+
 # v0.5.0
 + Altera página inicial para estilo “dashboard”;
 + Plano de trabalho do tratamento passa a ser listado na página de detalhamento do risco;
 + Remove textos na matriz de riscos da página de detalhamento do processo.
-
 
 # v0.4.1
 + Bugfix: Alerta some ao se cadastrar um tratamento no risco;
