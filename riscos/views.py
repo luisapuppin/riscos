@@ -267,6 +267,20 @@ def detalhar_processo(request, target_id):
     }
     return render(request, 'riscos/detalhar_processo.html', context)
 
+def editar_processo(request, target_id):
+    processo = get_object_or_404(models.Processo, pk=target_id)
+    form = forms.FormProcesso(request.POST or None, instance=processo)
+    if form.is_valid():
+        form.save()
+        return redirect(reverse("riscos:detalhar_processo", kwargs={"target_id":target_id}))
+    
+    context = {
+        "form": form,
+        "parent": processo,
+        "active_bar": "processo",
+    }
+    return render(request, 'riscos/criar    _processo.html', context)
+
 # ------- ATIVIDADE ------- 
 def criar_atividade(request, parent_id, acao): 
     N_EXTRA = 50

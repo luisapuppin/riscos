@@ -148,7 +148,7 @@
     <br><br>
 
     <div style="text-align:right;">
-        <a class="btn btn-primary" href="#">Editar processo</a>
+        <a class="btn btn-primary" href="{% url 'riscos:editar_processo' target_id=observacao.pk %}">Editar processo</a>
         <a class="btn btn-dark" href="{{request.META.HTTP_REFERER}}">Voltar</a>
     </div>
     <br>

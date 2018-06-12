@@ -34,6 +34,8 @@ urlpatterns = [
     re_path(r'^processo/listar/$', views.listar_processo, name="listar_processo"),
     re_path(r'^processo/(?P<target_id>[0-9]+)/detalhar/$', views.detalhar_processo,
             name="detalhar_processo"),
+    re_path(r'^processo/(?P<target_id>[0-9]+)/editar/$', views.editar_processo,
+            name="editar_processo"),
     re_path(r'^macroprocesso/(?P<parent_id>[0-9]+)/criar/processo/$', views.criar_processo, name="criar_processo"),
 
     # ATIVIDADE 
