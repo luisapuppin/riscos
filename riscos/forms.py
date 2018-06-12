@@ -88,6 +88,10 @@ class FormAtividade(forms.ModelForm):
         } 
  
 class FormRisco(forms.ModelForm):
+    def __init__(self, processo, *args,**kwargs):
+        super(FormRisco, self).__init__(*args,**kwargs)
+        self.fields['id_atividade'].queryset = models.Atividade.objects.filter(id_processo=processo)
+
     class Meta:
         model = models.Risco
         fields = ("id_atividade", "ds_risco", "id_tipo_risco", "id_impacto", "id_probabilidade",)
@@ -119,22 +123,24 @@ class FormCausaConsequencia(forms.ModelForm):
         }
 
 class FormTratamento(forms.ModelForm):
+    def __init__(self, risco, *args,**kwargs):
+        super(FormTratamento, self).__init__(*args,**kwargs)
+        self.fields['id_causa_consequencia'].queryset = models.CausaConsequencia.objects.filter(id_risco=risco)
+
     class Meta:
         model = models.Tratamento
-        fields = ("id_causa_consequencia", "ds_controle", "ds_status", "ds_oque", "ds_quem", "ds_porque",
-                  "ds_onde", "dt_quando", "ds_como", "ds_quanto",)
+        fields = ("id_causa_consequencia", "ds_controle", "ds_status", "ds_quem", "ds_porque",
+                  "dt_quando", "ds_como", "ds_quanto",)
         labels = {
             "id_causa_consequencia": "Controle sobre:",
             "ds_status": "Status do controle",
             "ds_controle": "Descrição do controle",
-            "ds_oque": "O que?",
             "ds_quem": "Quem?",
             "ds_porque": "Por que?",
-            "ds_onde": "Onde?",
             "dt_quando": "Quando?",
             "ds_como": "Como?",
             "ds_quanto": "Quanto?",
-        }
+        }   
         widgets = {
             "id_causa_consequencia": forms.Select(
                 attrs={"class": "selectpicker form-control"},
@@ -145,17 +151,11 @@ class FormTratamento(forms.ModelForm):
             "ds_controle": forms.TextInput(
                 attrs={"class": "form-control", "placeholder": "Descreva o que será realizado"}
             ),
-            "ds_oque": forms.TextInput(
-                attrs={"class": "form-control", "placeholder": "Descreva o que será realizado"}
-            ),
             "ds_quem": forms.TextInput(
                 attrs={"class": "form-control", "placeholder": "Quem será o responsável?"}
             ),
             "ds_porque": forms.TextInput(
                 attrs={"class": "form-control", "placeholder": "Por que isso será feito?"}
-            ),
-            "ds_onde": forms.TextInput(
-                attrs={"class": "form-control", "placeholder": "Onde isso será feito?"}
             ),
             "dt_quando": forms.DateInput(
                 attrs={"class": "form-control"}, format="%d/%m/%Y", 
@@ -168,6 +168,48 @@ class FormTratamento(forms.ModelForm):
             )
         }
 
+class FormConsulta(forms.Form):
+    tipo = forms.ChoiceField(
+        choices=[("1", "Processo",), ("2", "Risco",)],
+        required=True,
+        widget=forms.RadioSelect()
+    )
+    plan = forms.ModelChoiceField(
+        required=False,
+        label="Planejamento Estratégico",
+        queryset=models.Planejamento.objects.all(),
+        widget=forms.Select(attrs={"class":"form-control form-control-sm"})
+    )
+    cad = forms.ModelChoiceField(
+        required=False,
+        label="Cadeia",
+        queryset=models.Cadeia.objects.all(),
+        widget=forms.Select(attrs={"class":"form-control form-control-sm"})
+    )
+    macro = forms.ModelChoiceField(
+        required=False,
+        label="Macroprocesso",
+        queryset=models.Macroprocesso.objects.all(),
+        widget=forms.Select(attrs={"class":"form-control form-control-sm"})
+    )
+    proc = forms.CharField(
+        required=False,
+        max_length=150,
+        label="Processo",
+        widget=forms.TextInput(attrs={"class":"form-control form-control-sm"})
+    )
+    ativ = forms.CharField(
+        required=False,
+        label="Atividade",
+        max_length=150,
+        widget=forms.TextInput(attrs={"class":"form-control form-control-sm"})
+    )
+    risc = forms.CharField(
+        required=False,
+        max_length=150,
+        label="Risco",
+        widget=forms.TextInput(attrs={"class":"form-control form-control-sm"})
+    )
 
 # ----- FORMS AJAX ----- #
 
@@ -195,18 +237,18 @@ class FormSelecionarMacroprocesso(forms.Form):
         widget=forms.Select(attrs={'class':'form-control', 'readonly': "True"})
     )
 
-class FormSelecionarProcesso(forms.Form):
-    processo = forms.ModelChoiceField(
-        label="Processo",
-        queryset=models.Processo.objects.none(),
-        empty_label="Selecione o Processo",
-        widget=forms.Select(attrs={'class':'form-control', 'readonly': "True"})
-    )
+# class FormSelecionarProcesso(forms.Form):
+#     processo = forms.ModelChoiceField(
+#         label="Processo",
+#         queryset=models.Processo.objects.none(),
+#         empty_label="Selecione o Processo",
+#         widget=forms.Select(attrs={'class':'form-control', 'readonly': "True"})
+#     )
 
-class FormSelecionarRisco(forms.Form):
-    risco = forms.ModelChoiceField(
-        label="Risco",
-        queryset=models.Risco.objects.none(),
-        empty_label="Selecione o Risco",
-        widget=forms.Select(attrs={'class':'form-control', 'readonly': "True"})
-    )
+# class FormSelecionarRisco(forms.Form):
+#     risco = forms.ModelChoiceField(
+#         label="Risco",
+#         queryset=models.Risco.objects.none(),
+#         empty_label="Selecione o Risco",
+#         widget=forms.Select(attrs={'class':'form-control', 'readonly': "True"})
+#     )
