@@ -268,7 +268,7 @@ def detalhar_processo(request, target_id):
     return render(request, 'riscos/detalhar_processo.html', context)
 
 # ------- ATIVIDADE ------- 
-def criar_atividade(request, parent_id): 
+def criar_atividade(request, parent_id, acao): 
     N_EXTRA = 50
     parent = get_object_or_404(models.Processo, pk=parent_id)
     AtividadeFormset = modelformset_factory(
@@ -287,6 +287,7 @@ def criar_atividade(request, parent_id):
         "formset": formset,
         "parent": parent,
         "active_bar": "processo",
+        "acao": acao
     }
     return render(request, 'riscos/criar_atividade.html', context)
 
