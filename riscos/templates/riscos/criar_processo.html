@@ -9,10 +9,12 @@
 <div class="container">
     <p style="font-size:xx-small; color:grey">
         {{parent.id_cadeia.id_planejamento}} > {{parent.id_cadeia}} >
-        <a href="{% url 'riscos:detalhar_macroprocesso' target_id=parent.pk %}" style="color:unset;">{{parent.ds_macroprocesso}}</a> > Criar processo</p>
+        <a href="{% url 'riscos:detalhar_macroprocesso' target_id=parent.pk %}" style="color:unset;">{{parent.ds_macroprocesso}}</a> {% if acao == 'edit' %} > Editar processo</p>
+    <h1 class="titulo-pagina"> Editar processo </h1> {% else %} > Criar processo</p>
     <h1 class="titulo-pagina"> {{parent.ds_macroprocesso}} </h1>
     <hr>
     <h6 class="subtitulo-pagina">Criar processo</h6>
+    {% endif %}
     <br>
 </div>
 
@@ -33,12 +35,18 @@
         </div>
         {% endfor %}
 
-        <br>
+        <br> {% if acao == 'edit' %}
+        <div style="text-align:right;">
+            <input type="submit" name="submit-e-detalhar" value="Salvar" class="btn btn-success">
+            <a class="btn btn-danger" href="{% url 'riscos:detalhar_macroprocesso' target_id=parent.pk %}">Cancelar</a>
+        </div>
+        {% else %}
         <div style="text-align:right;">
             <input type="submit" name="submit-e-detalhar" value="Criar e detalhar processo" class="btn btn-success">
             <input type="submit" name="submit-e-cadastrar" value="Criar e cadastrar novo processo" class="btn btn-primary">
             <a class="btn btn-danger" href="{% url 'riscos:detalhar_macroprocesso' target_id=parent.pk %}">Cancelar</a>
         </div>
+        {% endif %}
     </form>
     <br>
 </div>
