@@ -28,8 +28,7 @@
     </div>
     {% endif %}
     <h5>Matriz de riscos</h5>
-    <hr>
-    <br> {% if riscos %}
+    <hr> {% if riscos %}
     <div style="width:600;height:400">
         <div id="myDiv"></div>
     </div>
@@ -38,7 +37,13 @@
     {% endif %}
     <br>
 
-    <h5>Contexto</h5>
+    <div>
+        <h5 style="display: inline;">Contexto</h5>
+        <div class="float-right">
+            <a title="Editar nome do processo" href="{% url 'riscos:editar_processo' target_id=observacao.pk %}" style="font-size:1.5em">
+                <i class="fas fa-edit"></i></a>
+        </div>
+    </div>
     <hr>
     <table class="table table-bordered table-hover">
         <tr>
@@ -80,7 +85,17 @@
     </table>
     <br><br>
 
-    <h5>Atividades</h5>
+    <div>
+        <h5 style="display: inline;">Atividades</h5>
+        <div class="float-right">
+            <a title="Editar atividades" href="{% url 'riscos:criar_atividade' parent_id=observacao.pk acao='editar' %}" style="font-size:1.5em">
+                <i class="fas fa-edit"></i></a>
+            &nbsp;
+            <a title="Adicionar atividade" href="{% url 'riscos:criar_atividade' parent_id=observacao.pk acao='criar' %}" style="color:green; font-size:1.5em">
+                <i class="fas fa-plus-circle"></i>
+            </a>
+        </div>
+    </div>
     <hr> {% if atividades %}
     <table class="table table-bordered table-hover">
         <thead class="thead-light">
@@ -103,17 +118,16 @@
     {% else %}
     <p> Nenhuma atividade registrada </p>
     {% endif %}
-    <div style="text-align: right; line-height:0">
-        <a title="Editar atividades" href="{% url 'riscos:criar_atividade' parent_id=observacao.pk acao='editar' %}" style="font-size:1.5em">
-            <i class="fas fa-edit"></i></a>
-        &nbsp;
-        <a title="Adicionar atividade" href="{% url 'riscos:criar_atividade' parent_id=observacao.pk acao='criar' %}" style="color:green; font-size:1.5em">
-            <i class="fas fa-plus-circle"></i>
-        </a>
-    </div>
     <br><br>
 
-    <h5>Riscos</h5>
+    <div>
+        <h5 style="display: inline;">Riscos</h5>
+        <div class="float-right">
+            <a title="Adicionar risco" href="{% url 'riscos:criar_risco' parent_id=observacao.pk %}" style="color:green;font-size:1.5em;cursor:pointer;">
+                <i class="fas fa-plus-circle"></i>
+            </a>
+        </div>
+    </div>
     <hr> {% if riscos %}
     <table class="table table-bordered table-hover">
         <thead class="thead-light">
@@ -140,15 +154,9 @@
     {% else %}
     <p> Nenhum risco registrado </p>
     {% endif %}
-    <div style="text-align: right; line-height:0">
-        <a title="Adicionar risco" href="{% url 'riscos:criar_risco' parent_id=observacao.pk %}" style="color:green;font-size:1.5em;cursor:pointer;">
-            <i class="fas fa-plus-circle"></i>
-        </a>
-    </div>
-    <br><br>
+    <br>
 
     <div style="text-align:right;">
-        <a class="btn btn-primary" href="{% url 'riscos:editar_processo' target_id=observacao.pk %}">Editar processo</a>
         <a class="btn btn-dark" href="{{request.META.HTTP_REFERER}}">Voltar</a>
     </div>
     <br>
@@ -166,7 +174,7 @@
             range: [0, 5.5],
             title: 'Probabilidade'
         },
-        title: 'Matriz de risco'
+        //title: 'Matriz de risco'
     };
     Plotly.newPlot('myDiv', data, layout);
     console.log("Matriz de riscos plotada.");
