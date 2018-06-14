@@ -24,19 +24,19 @@
     <p><span>Cadeia:</span> {{parent.id_macroprocesso.id_cadeia}}</p>
     <p><span>Macroprcesso:</span> {{parent.id_macroprocesso}}</p>
     <p><span>Processo:</span> {{parent}}</p>
-    <form id="atividade-form" class="atividade-form" action="{% url 'riscos:criar_atividade' parent_id=parent.pk %}" method="post">
+    <form id="atividade-form" class="atividade-form" action="{% url 'riscos:criar_atividade' parent_id=parent.pk acao='criar' %}" method="post">
         <div id="form-atividade">
             <h5> Atividades </h5>
             <hr> {{ formset.management_form }} {% for form in formset %} {% csrf_token %}
             <div> {{form}} <br> </div>
             {% endfor %}
             <div style="text-align: end">
-                <button type="button" class="btn btn-success" id="add-atividade">+</button>
-                <button type="button" class="btn btn-danger" id="remove-atividade">-</button> <br>
+                <a id="add-atividade" style="color:green; font-size:1.5em"><i class="fas fa-plus-circle"></i></a>
+                <a id="remove-atividade" style="color:red; font-size:1.5em"><i class="fas fa-minus-circle"></i></a> <br>
             </div>
         </div><br>
         <div class="float-right">
-            <input type="submit" name="submit-e-detalhar" value="Criar atividade e detalhar processo" class="btn btn-success">
+            <input type="submit" name="submit-e-detalhar" value="Criar" class="btn btn-success">
             <a class="btn btn-danger" href="{% url 'riscos:detalhar_processo' target_id=parent.pk %}">Cancelar</a>
         </div><br>
     </form>
@@ -59,6 +59,9 @@
             $("#form-atividade>div:has(input[id$=ds_atividade]):not(:hidden):last").hide();
         }
     })
+    if ("{{acao}}" === "criar") {
+        document.getElementById("add-atividade").click()
+    }
 </script>
 
 {% endblock %}
