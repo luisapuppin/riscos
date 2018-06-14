@@ -38,7 +38,7 @@
         <br> {% if acao == 'edit' %}
         <div style="text-align:right;">
             <input type="submit" name="submit-e-detalhar" value="Salvar" class="btn btn-success">
-            <a class="btn btn-danger" href="{% url 'riscos:detalhar_macroprocesso' target_id=parent.pk %}">Cancelar</a>
+            <a class="btn btn-danger" href="{{request.META.HTTP_REFERER}}">Cancelar</a>
         </div>
         {% else %}
         <div style="text-align:right;">
