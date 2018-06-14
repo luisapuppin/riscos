@@ -168,6 +168,23 @@ class FormTratamento(forms.ModelForm):
             )
         }
 
+class FormMonitoramento(forms.ModelForm):
+    class Meta:
+        model = models.Monitoramento
+        fields = ("ds_status", "ds_justificativa",)
+        labels = {
+            "ds_status": "Status do tratamento:",
+            "ds_justificativa": "Justificativa:",
+        }   
+        widgets = {
+            "ds_status": forms.Select(
+                attrs={"class": "selectpicker form-control"}
+            ),
+            "ds_justificativa": forms.Textarea(
+                attrs={"class": "form-control", "rows": "2"},
+            ),
+        }
+
 class FormConsulta(forms.Form):
     tipo = forms.ChoiceField(
         choices=[("1", "Processo",), ("2", "Risco",)],

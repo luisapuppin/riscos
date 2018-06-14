@@ -54,4 +54,7 @@ urlpatterns = [
             name="detalhar_tratamento"),
     re_path(r'^risco/(?P<parent_id>[0-9]+)/criar/tratamento/$', views.criar_tratamento, name="criar_tratamento"),
 
+    # MONITORAMENTO
+    re_path(r'^monitoramento/$', views.fazer_monitoramento, name="fazer_monitoramento"),
+
 ]

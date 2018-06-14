@@ -431,4 +431,36 @@ def detalhar_tratamento(request, target_id):
     }
     return render(request, "riscos/detalhar_tratamento.html", context)
 
+# ------- MONITORAMENTO -------
+def fazer_monitoramento(request):
+    hoje = date.today()
+    ano = hoje.strftime("%Y")
+    mes = int(hoje.strftime("%m"))
+    quadrimestre = (mes - 1)//3 + 1
+    ciclo = ano + "/" + str(quadrimestre)
+    
+    monitoramento = models.Monitoramento.objects.filter(id_ciclo_monitoramento=ciclo)
+    monitorados = [x.id_tratamento.pk for x in monitoramento]
+    tratamentos = models.Tratamento.objects.all().exclude(pk__in=monitorados)
+
+    form = forms.FormMonitoramento(request.POST or None)
+    
+    if form.is_valid():
+        id_tratamento = [x[11:] for x in request.POST if "tratamento" in x]
+        parent =  get_object_or_404(models.Tratamento, pk=id_tratamento[0])
+        instance = form.save(commit=False)
+        instance.id_tratamento = parent
+        instance.id_ciclo_monitoramento = ciclo
+        instance.ds_usuario = "usuario-teste"
+        models.Tratamento.objects.filter(id=id_tratamento[0]).update(ds_status=instance.ds_status)
+        instance.save()
+        return redirect(reverse("riscos:fazer_monitoramento"))
+    
+    context = {
+        "form": form,
+        "tratamentos": tratamentos,
+        "hoje": date.today,
+        "active_bar": "monitoramento",
+    }
+    return render(request, "riscos/fazer_monitoramento.html", context)
 
