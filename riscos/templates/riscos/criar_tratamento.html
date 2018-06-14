@@ -11,10 +11,13 @@
         {{parent.id_processo.id_macroprocesso.id_cadeia.id_planejamento}} > {{parent.id_processo.id_macroprocesso.id_cadeia}} >
         <a href="{% url 'riscos:detalhar_macroprocesso' target_id=parent.id_processo.id_macroprocesso.pk %}" style="color:unset;">{{parent.id_processo.id_macroprocesso}}</a> >
         <a href="{% url 'riscos:detalhar_processo' target_id=parent.id_processo.pk %}" style="color:unset;">{{parent.id_processo}}</a> >
-        <a href="{% url 'riscos:detalhar_risco' target_id=parent.pk %}" style="color:unset;">{{parent.ds_risco}}</a> > Criar tratamento</p>
+        <a href="{% url 'riscos:detalhar_risco' target_id=parent.pk %}" style="color:unset;">{{parent.ds_risco}}</a> {% if acao == 'edit' %} > Editar tratamento</p>
+    <h1 class="titulo-pagina"> Editar tratamento </h1>
+    {% else %} > Criar tratamento</p>
     <h1 class="titulo-pagina"> {{parent.ds_risco}} </h1>
     <hr>
     <h6 class="subtitulo-pagina">Criar tratamento</h6>
+    {% endif %}
     <br>
 </div>
 
@@ -32,12 +35,18 @@
     <form method="POST" action="">
         {{ form.management_form }} {% csrf_token %}
         <div> {{form}} <br> </div>
-        <br>
+        <br> {% if acao == 'edit' %}
+        <div style="text-align:right;">
+            <input type="submit" name="submit-e-detalhar" value="Salvar" class="btn btn-success">
+            <a class="btn btn-danger" href="{% url 'riscos:detalhar_risco' target_id=parent.pk %}">Cancelar</a>
+        </div>
+        {% else %}
         <div style="text-align:right;">
             <input type="submit" name="submit-e-detalhar" value="Criar e detalhar risco" class="btn btn-success">
             <input type="submit" name="submit-e-cadastrar" value="Criar e cadastrar novo tratamento" class="btn btn-primary">
             <a class="btn btn-danger" href="{% url 'riscos:detalhar_risco' target_id=parent.pk %}">Cancelar</a>
         </div>
+        {% endif %}
     </form> <br>
 </div>
 {% endblock %}

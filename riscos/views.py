@@ -272,7 +272,9 @@ def editar_processo(request, target_id):
     parent = get_object_or_404(models.Macroprocesso, pk=processo.id_macroprocesso.pk)
     form = forms.FormProcesso(request.POST or None, instance=processo)
     if form.is_valid():
-        form.save()
+        instance = form.save(commit=False)
+        instance.ds_usuario = "usuario-teste"
+        instance.save()
         return redirect(reverse("riscos:detalhar_processo", kwargs={"target_id":target_id}))
     context = {
         "form": form,
@@ -338,6 +340,8 @@ def criar_risco(request, parent_id):
         "active_bar": "risco",
         "causa": ":" + str(N_EXTRA + 1),
         "conseq": str(N_EXTRA + 1) + ":",
+        "num_causa": 1,
+        "num_consq": 1
     }
     return render(request, 'riscos/criar_risco.html', context)
 
@@ -393,6 +397,54 @@ def detalhar_risco(request, target_id):
     }
     return render(request, 'riscos/detalhar_risco.html', context)
 
+def editar_risco(request, target_id):
+    risco = get_object_or_404(models.Risco, pk=target_id)
+    N_EXTRA = 5
+    RiscoCausaFormset = modelformset_factory(
+        models.CausaConsequencia,
+        form=forms.FormCausaConsequencia,
+        extra=(N_EXTRA * 2) + 1,
+        min_num=1,
+    )
+    consulta = models.CausaConsequencia.objects.filter(id_risco=target_id).order_by("ds_tipo")
+    posicao_inicial = [x.ds_tipo for x in consulta]
+    num_causa = len([x for x in posicao_inicial if x == "Causa"])
+    num_consq = len([x for x in posicao_inicial if x == "Consequência"])
+    causa_posicao = [1 + x*1 for x in range(len(posicao_inicial)) if posicao_inicial[x]=="Causa"]
+    consq_posicao = [1 + x*1 for x in range(len(posicao_inicial)) if posicao_inicial[x]=="Consequência"]
+    for num in range(1, 13):
+        if num not in causa_posicao and num not in consq_posicao and len(causa_posicao) < 6:
+            causa_posicao.append(num)
+        elif num not in causa_posicao and num not in consq_posicao and len(causa_posicao) == 6:
+            consq_posicao.append(num)
+    formset = RiscoCausaFormset(request.POST or None, queryset=consulta)
+    parent = get_object_or_404(models.Processo, pk=risco.id_processo.pk)
+    form = forms.FormRisco(risco.id_processo.pk, request.POST or None, instance=risco)
+    if form.is_valid() and formset.is_valid():
+        instance = form.save(commit=False)
+        instance.ds_usuario = "usuario-teste"
+        instance.save()
+        instances = formset.save(commit=False)
+        for insta in instances:
+            insta.id_risco = risco
+            insta.ds_usuario = 'usuario-teste'
+            insta.save()
+        return redirect(reverse("riscos:detalhar_risco", kwargs={"target_id":target_id}))
+    context = {
+        "form": form,
+        "parent": parent,
+        "formset": formset,
+        "active_bar": "risco",
+        "causa": ":" + str(N_EXTRA + 1),
+        "conseq": str(N_EXTRA + 1) + ":",
+        "acao": "edit",
+        "causa_posicao": causa_posicao,
+        "consq_posicao": consq_posicao,
+        "num_causa": num_causa,
+        "num_consq": num_consq
+    }
+    return render(request, 'riscos/criar_risco.html', context)
+
 # ------- TRATAMENTO -------
 def criar_tratamento(request, parent_id): 
     form = forms.FormTratamento(parent_id, request.POST or None)
@@ -414,6 +466,27 @@ def criar_tratamento(request, parent_id):
     }
     return render(request, "riscos/criar_tratamento.html", context)
 
+def editar_tratamento(request, target_id):
+    tratamento = get_object_or_404(models.Tratamento, pk=target_id)
+    form = forms.FormTratamento(
+        tratamento.id_causa_consequencia.id_risco.pk,
+        request.POST or None,
+        instance=tratamento
+    )
+    parent = get_object_or_404(models.Risco, pk=tratamento.id_causa_consequencia.id_risco.pk)
+    if form.is_valid():
+        instance = form.save(commit=False)
+        instance.ds_usuario = 'usuario-teste'
+        instance.save()
+        return redirect(reverse("riscos:detalhar_risco", kwargs={"target_id":parent.pk}))
+    context = {
+        "form": form,
+        "parent": parent,
+        "active_bar": "controle",
+        "acao": "edit"
+    }
+    return render(request, "riscos/criar_tratamento.html", context)
+
 def listar_tratamento(request):
     lista = models.Tratamento.objects.order_by("ds_oque")
     context = {
@@ -427,7 +500,6 @@ def detalhar_tratamento(request, target_id):
     context = {
         'observacao': observacao,
         "hoje": date.today(),
-        # "cor": cor,
         "active_bar": "controle",
     }
     return render(request, "riscos/detalhar_tratamento.html", context)

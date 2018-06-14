@@ -10,15 +10,18 @@
     <p style="font-size:xx-small; color:grey">
         {{parent.id_macroprocesso.id_cadeia.id_planejamento}} > {{parent.id_macroprocesso.id_cadeia}} >
         <a href="{% url 'riscos:detalhar_macroprocesso' target_id=parent.id_macroprocesso.pk %}" style="color:unset;">{{parent.id_macroprocesso}}</a> >
-        <a href="{% url 'riscos:detalhar_processo' target_id=parent.pk %}" style="color:unset;">{{parent.ds_processo}}</a> > Criar risco</p>
+        <a href="{% url 'riscos:detalhar_processo' target_id=parent.pk %}" style="color:unset;">{{parent.ds_processo}}</a> {% if acao == 'edit' %} > Editar risco</p>
+    <h1 class="titulo-pagina"> Editar risco </h1>
+    {% else %} > Criar risco</p>
     <h1 class="titulo-pagina"> {{parent.ds_processo}} </h1>
     <hr>
     <h6 class="subtitulo-pagina">Criar risco</h6>
-    <br>
+    {% endif %}<br>
 </div>
 
 <div class="container criar-risco" style="font-size:small;">
     <h5>Dados Gerais</h5>
+    <hr>
     <p><span>Planejamento estratégico:</span> {{parent.id_macroprocesso.id_cadeia.id_planejamento}}</p>
     <p><span>Cadeia:</span> {{parent.id_macroprocesso.id_cadeia}}</p>
     <p><span>Macroprcesso:</span> {{parent.id_macroprocesso}}</p>
@@ -26,7 +29,7 @@
     <br>
     <h5>Identificação</h5>
     <hr>
-    <form id="risco-form" class="risco-form" action="{% url 'riscos:criar_risco' parent_id=parent.pk %}" method="post">
+    <form id="risco-form" class="risco-form" action="" method="post">
         {% csrf_token %} {% for field in form %}
         <div class="form-group">
             {{ field.label_tag }} {{ field }} {{ field.errors }}
@@ -36,9 +39,10 @@
             <h5>Análise</h5>
             <hr>
             <h6> Causas do Risco </h6>
-            {{ formset.management_form }} {% for form in formset|slice:causa %} {% csrf_token %}
+            {{ formset.management_form }} {% if acao == 'edit' %} {% for form in formset %} {% if forloop.counter in causa_posicao %} {% csrf_token %}
+            <div> {{form}} <br> </div>{% endif %} {% endfor %} {% else %} {% for form in formset|slice:causa %} {% csrf_token %}
             <div> {{form}} <br> </div>
-            {% endfor %}
+            {% endfor %} {% endif %}
             <div style="text-align: right; line-height:0">
                 <a id="add-causa" title="Adicionar causa" style="color:#008000;font-size:1.5em;cursor:pointer;">
                     <i class="fas fa-plus-circle"></i>
@@ -50,9 +54,10 @@
         </div><br>
         <div id="form-consequencia">
             <h6> Consequências do Risco </h6>
-            {{ formset2.management_form }} {% for form in formset|slice:conseq %} {% csrf_token %}
+            {{ formset2.management_form }} {% if acao == 'edit' %} {% for form in formset %} {% if forloop.counter in consq_posicao %} {% csrf_token %}
+            <div> {{form}} <br> </div>{% endif %} {% endfor %} {% else %} {% for form in formset|slice:conseq %} {% csrf_token %}
             <div> {{form}} <br> </div>
-            {% endfor %}
+            {% endfor %} {% endif %}
             <div style="text-align: right; line-height:0">
                 <a id="add-consequencia" title="Adicionar consequência" style="color:#008000;font-size:1.5em;cursor:pointer;">
                     <i class="fas fa-plus-circle"></i>
@@ -62,42 +67,65 @@
                 </a>
             </div>
         </div><br>
-        <h5>Avaliação <div id="resultado" style="float:right"></div></h5>
+        <h5>Avaliação
+            <div id="resultado" style="float:right"></div>
+        </h5>
         <hr>
         <div id="ilusao1"></div>
         <div id="ilusao2"></div>
-        <br>
+        <br> {% if acao == 'edit' %}
+        <div style="text-align:right;">
+            <input type="submit" name="submit-e-detalhar" value="Salvar" class="btn btn-success">
+            <a class="btn btn-danger" href="{{request.META.HTTP_REFERER}}">Cancelar</a>
+        </div>
+        {% else %}
         <div style="text-align:right;">
             <input type="submit" name="submit-e-detalhar" value="Criar e detalhar risco" class="btn btn-success">
             <input type="submit" name="submit-e-cadastrar" value="Criar e cadastrar novo risco" class="btn btn-primary">
             <a class="btn btn-danger" href="{% url 'riscos:detalhar_processo' target_id=parent.pk %}">Cancelar</a>
-        </div><br>
+        </div>
+        {% endif %} <br>
     </form>
 </div>
 
 <script>
-    $("#form-causa>div:has(input[id$=ds_causa_consequencia]):gt(0)").hide();
+    causas = $("#form-causa>div:has(input[id$=ds_causa_consequencia])");
+    // loop começa em num_causa para nunca esconder os elementos já criados
+    for (var i = "{{num_causa}}"; i < causas.length; i++) {
+        if (causas[i].getElementsByTagName("input")[0].value == "") {
+            $(causas[i]).hide();
+        }
+    }
+
     $("#add-causa").on("click", function() {
         $("#form-causa>div:has(input[id$=ds_causa_consequencia]):hidden:first").show();
     })
     $("#remove-causa").on("click", function() {
-        if ($("#form-causa>div:has(input[id$=ds_causa_consequencia]):not(:hidden)").length > 1) {
+        if ($("#form-causa>div:has(input[id$=ds_causa_consequencia]):not(:hidden)").length > "{{num_causa}}") {
             $("#form-causa>div:has(input[id$=ds_causa_consequencia]):not(:hidden):last>input[id$=ds_causa_consequencia]")[0].value = "";
             $("#form-causa>div:has(input[id$=ds_causa_consequencia]):not(:hidden):last").hide();
         }
     })
 
-    $("#form-consequencia>div:has(input[id$=ds_causa_consequencia]):gt(0)").hide();
+    conseq = $("#form-consequencia>div:has(input[id$=ds_causa_consequencia])");
+    // loop começa em num_consq para nunca esconder os elementos já criados
+    for (var i = "{{num_consq}}"; i < conseq.length; i++) {
+        if (conseq[i].getElementsByTagName("input")[0].value == "") {
+            $(conseq[i]).hide();
+        }
+    }
+
     $("#add-consequencia").on("click", function() {
+
         $("#form-consequencia>div:has(input[id$=ds_causa_consequencia]):hidden:first").show();
     })
     $("#remove-consequencia").on("click", function() {
-        if ($("#form-consequencia>div:has(input[id$=ds_causa_consequencia]):not(:hidden)").length > 1) {
+        if ($("#form-consequencia>div:has(input[id$=ds_causa_consequencia]):not(:hidden)").length > "{{num_consq}}") {
             $("#form-consequencia>div:has(input[id$=ds_causa_consequencia]):not(:hidden):last>input[id$=ds_causa_consequencia]")[0].value = "";
             $("#form-consequencia>div:has(input[id$=ds_causa_consequencia]):not(:hidden):last").hide();
         }
     })
-    $("input[name^=submit-").click(function() {
+    $("input[name^=submit-]").click(function() {
         $("#form-causa input[name$='ds_causa_consequencia']").each(function(i, elem) {
             if (elem.value != "") {
                 $("#form-causa select option[value='Causa']:eq(" + i + ")").attr('selected', 'selected');
@@ -113,23 +141,22 @@
 
     var impacto = document.getElementById("id_id_impacto").parentElement
     var probabiliade = document.getElementById("id_id_probabilidade").parentElement
-    
+
     document.getElementById("ilusao1").appendChild(impacto)
     document.getElementById("ilusao2").appendChild(probabiliade)
 
     const definir_cor = (n) => {
-        console.log(n)
         const res = n > 10 ? 0 : n > 4 ? 1 : 2
         if (res < 2) alert("Este risco foi classificado como médio ou alto.\nUm controle deve ser cadastrado!")
         return ["red", "darkgoldenrod", "green"][res]
-    }   
+    }
 
     const atualizar = () => {
         var resultado = document.getElementById("resultado")
         const valor1 = document.getElementById("id_id_impacto").value
         const valor2 = document.getElementById("id_id_probabilidade").value
         const multiplicacao = valor1 * valor2
-        
+
         resultado.innerText = "Nível de risco: " + multiplicacao
         resultado.style.color = definir_cor(multiplicacao)
     }
