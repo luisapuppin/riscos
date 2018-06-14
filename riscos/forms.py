@@ -158,7 +158,7 @@ class FormTratamento(forms.ModelForm):
                 attrs={"class": "form-control", "placeholder": "Por que isso será feito?"}
             ),
             "dt_quando": forms.DateInput(
-                attrs={"class": "form-control"}, format="%d/%m/%Y", 
+                attrs={"class": "form-control datepicker"}, format="%d/%m/%Y", 
             ),
             "ds_como": forms.TextInput(
                 attrs={"class": "form-control", "placeholder": "Como isso ocorrerá?"}
