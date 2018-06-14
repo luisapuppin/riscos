@@ -104,7 +104,10 @@
     <p> Nenhuma atividade registrada </p>
     {% endif %}
     <div style="text-align: right; line-height:0">
-        <a title="Adicionar atividade" href="{% url 'riscos:criar_atividade' parent_id=observacao.pk %}" style="color:green; font-size:1.5em">
+        <a title="Editar atividades" href="{% url 'riscos:criar_atividade' parent_id=observacao.pk acao='editar' %}" style="font-size:1.5em">
+            <i class="fas fa-edit"></i></a>
+        &nbsp;
+        <a title="Adicionar atividade" href="{% url 'riscos:criar_atividade' parent_id=observacao.pk acao='criar' %}" style="color:green; font-size:1.5em">
             <i class="fas fa-plus-circle"></i>
         </a>
     </div>
@@ -145,7 +148,7 @@
     <br><br>
 
     <div style="text-align:right;">
-        <a class="btn btn-primary" href="#">Editar processo</a>
+        <a class="btn btn-primary" href="{% url 'riscos:editar_processo' target_id=observacao.pk %}">Editar processo</a>
         <a class="btn btn-dark" href="{{request.META.HTTP_REFERER}}">Voltar</a>
     </div>
     <br>

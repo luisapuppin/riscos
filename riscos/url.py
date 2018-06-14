@@ -34,10 +34,12 @@ urlpatterns = [
     re_path(r'^processo/listar/$', views.listar_processo, name="listar_processo"),
     re_path(r'^processo/(?P<target_id>[0-9]+)/detalhar/$', views.detalhar_processo,
             name="detalhar_processo"),
+    re_path(r'^processo/(?P<target_id>[0-9]+)/editar/$', views.editar_processo,
+            name="editar_processo"),
     re_path(r'^macroprocesso/(?P<parent_id>[0-9]+)/criar/processo/$', views.criar_processo, name="criar_processo"),
 
     # ATIVIDADE 
-    re_path(r'^processo/(?P<parent_id>[0-9]+)/atividade/criar/$', views.criar_atividade, name="criar_atividade"),  
+    re_path(r'^processo/(?P<parent_id>[0-9]+)/atividade/(?P<acao>[a-z]+)/$', views.criar_atividade, name="criar_atividade"),  
 
     # RISCO
     re_path(r'^risco/listar/$', views.listar_risco, name="listar_risco"),
@@ -52,10 +54,7 @@ urlpatterns = [
             name="detalhar_tratamento"),
     re_path(r'^risco/(?P<parent_id>[0-9]+)/criar/tratamento/$', views.criar_tratamento, name="criar_tratamento"),
 
-    # AJAX
-    re_path(r'^ajax/cadeia/$', views.load_cadeia, name="ajax_load_cadeia"),
-    re_path(r'^ajax/macroprocesso/$', views.load_macroprocesso, name="ajax_load_macroprocesso"),
-    re_path(r'^ajax/processo/$', views.load_processo, name="ajax_processo"),
-    re_path(r'^ajax/risco/$', views.load_risco, name="ajax_risco"),
-    re_path(r'^ajax/causa_consequencia/$', views.load_causa_consequencia, name="ajax_causa_consequencia"),
+    # MONITORAMENTO
+    re_path(r'^monitoramento/$', views.fazer_monitoramento, name="fazer_monitoramento"),
+
 ]
