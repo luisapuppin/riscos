@@ -70,7 +70,7 @@
                                 </button>
                             <a title="Detalhar processo" href="{% url 'riscos:detalhar_processo' target_id=processo.pk %}" style="margin:0 3px;">
                                 <i class="far fa-list-alt" style="font-size:1em"></i></a>
-                            <a href="{% url 'riscos:criar_atividade' parent_id=processo.pk %}" title="Cadastrar atividade" style="margin:0 3px;">
+                            <a href="{% url 'riscos:criar_atividade' parent_id=processo.pk acao='criar' %}" title="Cadastrar atividade" style="margin:0 3px;">
                                 <i class="fas fa-plus-circle" style="color:green;font-size:1em;"></i></a>
                             <a href="{% url 'riscos:criar_risco' parent_id=processo.pk %}" title="Cadastrar risco" style="margin:0 3px;">
                                 <i class="fas fa-plus-circle" style="color:red;font-size:1em;"></i></a>

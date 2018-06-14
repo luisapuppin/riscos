@@ -267,8 +267,22 @@ def detalhar_processo(request, target_id):
     }
     return render(request, 'riscos/detalhar_processo.html', context)
 
+def editar_processo(request, target_id):
+    processo = get_object_or_404(models.Processo, pk=target_id)
+    form = forms.FormProcesso(request.POST or None, instance=processo)
+    if form.is_valid():
+        form.save()
+        return redirect(reverse("riscos:detalhar_processo", kwargs={"target_id":target_id}))
+    
+    context = {
+        "form": form,
+        "parent": processo,
+        "active_bar": "processo",
+    }
+    return render(request, 'riscos/criar    _processo.html', context)
+
 # ------- ATIVIDADE ------- 
-def criar_atividade(request, parent_id): 
+def criar_atividade(request, parent_id, acao): 
     N_EXTRA = 50
     parent = get_object_or_404(models.Processo, pk=parent_id)
     AtividadeFormset = modelformset_factory(
@@ -287,6 +301,7 @@ def criar_atividade(request, parent_id):
         "formset": formset,
         "parent": parent,
         "active_bar": "processo",
+        "acao": acao
     }
     return render(request, 'riscos/criar_atividade.html', context)
 
@@ -416,28 +431,36 @@ def detalhar_tratamento(request, target_id):
     }
     return render(request, "riscos/detalhar_tratamento.html", context)
 
-# ------- AJAX -------
-def load_cadeia(request):
-    id_get = request.GET.get('targetId')
-    opcoes = models.Cadeia.objects.filter(id_planejamento=id_get).order_by('ds_cadeia')
-    return render(request, 'riscos/dropdown_cadeia.html', {'opcoes': opcoes})
+# ------- MONITORAMENTO -------
+def fazer_monitoramento(request):
+    hoje = date.today()
+    ano = hoje.strftime("%Y")
+    mes = int(hoje.strftime("%m"))
+    quadrimestre = (mes - 1)//3 + 1
+    ciclo = ano + "/" + str(quadrimestre)
+    
+    monitoramento = models.Monitoramento.objects.filter(id_ciclo_monitoramento=ciclo)
+    monitorados = [x.id_tratamento.pk for x in monitoramento]
+    tratamentos = models.Tratamento.objects.all().exclude(pk__in=monitorados)
 
-def load_macroprocesso(request):
-    id_get = request.GET.get('targetId')
-    opcoes = models.Macroprocesso.objects.filter(id_cadeia=id_get).order_by('ds_macroprocesso')
-    return render(request, 'riscos/dropdown_macroprocesso.html', {'opcoes': opcoes})
+    form = forms.FormMonitoramento(request.POST or None)
+    
+    if form.is_valid():
+        id_tratamento = [x[11:] for x in request.POST if "tratamento" in x]
+        parent =  get_object_or_404(models.Tratamento, pk=id_tratamento[0])
+        instance = form.save(commit=False)
+        instance.id_tratamento = parent
+        instance.id_ciclo_monitoramento = ciclo
+        instance.ds_usuario = "usuario-teste"
+        models.Tratamento.objects.filter(id=id_tratamento[0]).update(ds_status=instance.ds_status)
+        instance.save()
+        return redirect(reverse("riscos:fazer_monitoramento"))
+    
+    context = {
+        "form": form,
+        "tratamentos": tratamentos,
+        "hoje": date.today,
+        "active_bar": "monitoramento",
+    }
+    return render(request, "riscos/fazer_monitoramento.html", context)
 
-def load_processo(request):
-    id_get = request.GET.get('targetId')
-    opcoes = models.Processo.objects.filter(id_macroprocesso=id_get).order_by('ds_processo')
-    return render(request, 'riscos/dropdown_processo.html', {'opcoes': opcoes})
-
-def load_risco(request):
-    id_get = request.GET.get('targetId')
-    opcoes = models.Risco.objects.filter(id_processo=id_get).order_by('ds_risco')
-    return render(request, 'riscos/dropdown_risco.html', {'opcoes': opcoes})
-
-def load_causa_consequencia(request):
-    id_get = request.GET.get('targetId')
-    opcoes = models.CausaConsequencia.objects.filter(id_risco=id_get).order_by('ds_causa_consequencia')
-    return render(request, 'riscos/dropdown_causa_consequencia.html', {'opcoes': opcoes})
