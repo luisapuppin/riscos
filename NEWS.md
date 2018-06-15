@@ -1,3 +1,7 @@
+# v0.7.0
++ Habilita edição dos processos, atividades, riscos e tratamentos;
++ Módulo de monitoramento.
+
 # v0.6.0
 + Habilita consulta;
 + Identifica etapas do cadastro de riscos;
