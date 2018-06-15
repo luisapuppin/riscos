@@ -14,11 +14,13 @@
     <!--ALERTAS-->
     {% for vencido in vencidos %}
     <div class="alert alert-danger">
-        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a> O tratamento "<strong>{{vencido}}</strong>" deveria haver sido entregue em <strong>{{vencido.dt_quando}}</strong>.
+        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a> O tratamento "<strong>{{vencido}}</strong>" está atrasado! Data de entrega: <strong>{{vencido.dt_quando}}</strong>
+        <a title="Ir para o risco" href="{% url 'riscos:detalhar_risco' target_id=vencido.id_causa_consequencia.id_risco.pk %}" style="color:unset;"><i class="fas fa-info-circle"></i></a>
     </div>
     {% endfor %} {% for proximo in proximos %}
     <div class="alert alert-warning">
-        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a> Faltam <strong>{{proximo.dt_quando|timeuntil}}</strong> para entregar <strong>{{proximo}}</strong>.
+        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a> Faltam <strong>{{proximo.dt_quando|timeuntil}}</strong> para entregar <strong>{{proximo}}</strong>
+        <a title="Ir para o risco" href="{% url 'riscos:detalhar_risco' target_id=proximo.id_causa_consequencia.id_risco.pk %}" style="color:unset;"><i class="fas fa-info-circle"></i></a>
     </div>
     {% endfor %}
     <br>
