@@ -21,8 +21,8 @@ def index(request):
     processos_com_risco = [risco.id_processo for risco in riscos]
     graves = models.Risco.objects.filter(id_probabilidade__gte=LIMITE_GRAVES/F('id_impacto'))
     tratamentos = models.Tratamento.objects.all()
-    vencidos = models.Tratamento.objects.filter(dt_quando__lt=date.today())
-    proximos = models.Tratamento.objects.filter(dt_quando__lt=date.today() + timedelta(days=15)).exclude(pk__in=vencidos)
+    vencidos = models.Tratamento.objects.filter(dt_quando__lt=date.today()).exclude(ds_status="Concluído")
+    proximos = models.Tratamento.objects.filter(dt_quando__lt=date.today() + timedelta(days=15)).exclude(ds_status="Concluído").exclude(pk__in=vencidos)
     context = {
         "macroprocessos": macroprocessos,
         "processos": processos,
@@ -267,8 +267,25 @@ def detalhar_processo(request, target_id):
     }
     return render(request, 'riscos/detalhar_processo.html', context)
 
+def editar_processo(request, target_id):
+    processo = get_object_or_404(models.Processo, pk=target_id)
+    parent = get_object_or_404(models.Macroprocesso, pk=processo.id_macroprocesso.pk)
+    form = forms.FormProcesso(request.POST or None, instance=processo)
+    if form.is_valid():
+        instance = form.save(commit=False)
+        instance.ds_usuario = "usuario-teste"
+        instance.save()
+        return redirect(reverse("riscos:detalhar_processo", kwargs={"target_id":target_id}))
+    context = {
+        "form": form,
+        "parent": parent,
+        "acao": "edit",
+        "active_bar": "processo",
+    }
+    return render(request, 'riscos/criar_processo.html', context)
+
 # ------- ATIVIDADE ------- 
-def criar_atividade(request, parent_id): 
+def criar_atividade(request, parent_id, acao): 
     N_EXTRA = 50
     parent = get_object_or_404(models.Processo, pk=parent_id)
     AtividadeFormset = modelformset_factory(
@@ -287,6 +304,7 @@ def criar_atividade(request, parent_id):
         "formset": formset,
         "parent": parent,
         "active_bar": "processo",
+        "acao": acao
     }
     return render(request, 'riscos/criar_atividade.html', context)
 
@@ -322,6 +340,8 @@ def criar_risco(request, parent_id):
         "active_bar": "risco",
         "causa": ":" + str(N_EXTRA + 1),
         "conseq": str(N_EXTRA + 1) + ":",
+        "num_causa": 1,
+        "num_consq": 1
     }
     return render(request, 'riscos/criar_risco.html', context)
 
@@ -377,6 +397,54 @@ def detalhar_risco(request, target_id):
     }
     return render(request, 'riscos/detalhar_risco.html', context)
 
+def editar_risco(request, target_id):
+    risco = get_object_or_404(models.Risco, pk=target_id)
+    N_EXTRA = 5
+    RiscoCausaFormset = modelformset_factory(
+        models.CausaConsequencia,
+        form=forms.FormCausaConsequencia,
+        extra=(N_EXTRA * 2) + 1,
+        min_num=1,
+    )
+    consulta = models.CausaConsequencia.objects.filter(id_risco=target_id).order_by("ds_tipo")
+    posicao_inicial = [x.ds_tipo for x in consulta]
+    num_causa = len([x for x in posicao_inicial if x == "Causa"])
+    num_consq = len([x for x in posicao_inicial if x == "Consequência"])
+    causa_posicao = [1 + x*1 for x in range(len(posicao_inicial)) if posicao_inicial[x]=="Causa"]
+    consq_posicao = [1 + x*1 for x in range(len(posicao_inicial)) if posicao_inicial[x]=="Consequência"]
+    for num in range(1, 13):
+        if num not in causa_posicao and num not in consq_posicao and len(causa_posicao) < 6:
+            causa_posicao.append(num)
+        elif num not in causa_posicao and num not in consq_posicao and len(causa_posicao) == 6:
+            consq_posicao.append(num)
+    formset = RiscoCausaFormset(request.POST or None, queryset=consulta)
+    parent = get_object_or_404(models.Processo, pk=risco.id_processo.pk)
+    form = forms.FormRisco(risco.id_processo.pk, request.POST or None, instance=risco)
+    if form.is_valid() and formset.is_valid():
+        instance = form.save(commit=False)
+        instance.ds_usuario = "usuario-teste"
+        instance.save()
+        instances = formset.save(commit=False)
+        for insta in instances:
+            insta.id_risco = risco
+            insta.ds_usuario = 'usuario-teste'
+            insta.save()
+        return redirect(reverse("riscos:detalhar_risco", kwargs={"target_id":target_id}))
+    context = {
+        "form": form,
+        "parent": parent,
+        "formset": formset,
+        "active_bar": "risco",
+        "causa": ":" + str(N_EXTRA + 1),
+        "conseq": str(N_EXTRA + 1) + ":",
+        "acao": "edit",
+        "causa_posicao": causa_posicao,
+        "consq_posicao": consq_posicao,
+        "num_causa": num_causa,
+        "num_consq": num_consq
+    }
+    return render(request, 'riscos/criar_risco.html', context)
+
 # ------- TRATAMENTO -------
 def criar_tratamento(request, parent_id): 
     form = forms.FormTratamento(parent_id, request.POST or None)
@@ -398,6 +466,27 @@ def criar_tratamento(request, parent_id):
     }
     return render(request, "riscos/criar_tratamento.html", context)
 
+def editar_tratamento(request, target_id):
+    tratamento = get_object_or_404(models.Tratamento, pk=target_id)
+    form = forms.FormTratamento(
+        tratamento.id_causa_consequencia.id_risco.pk,
+        request.POST or None,
+        instance=tratamento
+    )
+    parent = get_object_or_404(models.Risco, pk=tratamento.id_causa_consequencia.id_risco.pk)
+    if form.is_valid():
+        instance = form.save(commit=False)
+        instance.ds_usuario = 'usuario-teste'
+        instance.save()
+        return redirect(reverse("riscos:detalhar_risco", kwargs={"target_id":parent.pk}))
+    context = {
+        "form": form,
+        "parent": parent,
+        "active_bar": "controle",
+        "acao": "edit"
+    }
+    return render(request, "riscos/criar_tratamento.html", context)
+
 def listar_tratamento(request):
     lista = models.Tratamento.objects.order_by("ds_oque")
     context = {
@@ -411,33 +500,40 @@ def detalhar_tratamento(request, target_id):
     context = {
         'observacao': observacao,
         "hoje": date.today(),
-        # "cor": cor,
         "active_bar": "controle",
     }
     return render(request, "riscos/detalhar_tratamento.html", context)
 
-# ------- AJAX -------
-def load_cadeia(request):
-    id_get = request.GET.get('targetId')
-    opcoes = models.Cadeia.objects.filter(id_planejamento=id_get).order_by('ds_cadeia')
-    return render(request, 'riscos/dropdown_cadeia.html', {'opcoes': opcoes})
+# ------- MONITORAMENTO -------
+def fazer_monitoramento(request):
+    hoje = date.today()
+    ano = hoje.strftime("%Y")
+    mes = int(hoje.strftime("%m"))
+    quadrimestre = (mes - 1)//3 + 1
+    ciclo = ano + "/" + str(quadrimestre)
+    
+    monitoramento = models.Monitoramento.objects.filter(id_ciclo_monitoramento=ciclo)
+    monitorados = [x.id_tratamento.pk for x in monitoramento]
+    tratamentos = models.Tratamento.objects.all().exclude(pk__in=monitorados)
 
-def load_macroprocesso(request):
-    id_get = request.GET.get('targetId')
-    opcoes = models.Macroprocesso.objects.filter(id_cadeia=id_get).order_by('ds_macroprocesso')
-    return render(request, 'riscos/dropdown_macroprocesso.html', {'opcoes': opcoes})
+    form = forms.FormMonitoramento(request.POST or None)
+    
+    if form.is_valid():
+        id_tratamento = [x[11:] for x in request.POST if "tratamento" in x]
+        parent =  get_object_or_404(models.Tratamento, pk=id_tratamento[0])
+        instance = form.save(commit=False)
+        instance.id_tratamento = parent
+        instance.id_ciclo_monitoramento = ciclo
+        instance.ds_usuario = "usuario-teste"
+        models.Tratamento.objects.filter(id=id_tratamento[0]).update(ds_status=instance.ds_status)
+        instance.save()
+        return redirect(reverse("riscos:fazer_monitoramento"))
+    
+    context = {
+        "form": form,
+        "tratamentos": tratamentos,
+        "hoje": date.today,
+        "active_bar": "monitoramento",
+    }
+    return render(request, "riscos/fazer_monitoramento.html", context)
 
-def load_processo(request):
-    id_get = request.GET.get('targetId')
-    opcoes = models.Processo.objects.filter(id_macroprocesso=id_get).order_by('ds_processo')
-    return render(request, 'riscos/dropdown_processo.html', {'opcoes': opcoes})
-
-def load_risco(request):
-    id_get = request.GET.get('targetId')
-    opcoes = models.Risco.objects.filter(id_processo=id_get).order_by('ds_risco')
-    return render(request, 'riscos/dropdown_risco.html', {'opcoes': opcoes})
-
-def load_causa_consequencia(request):
-    id_get = request.GET.get('targetId')
-    opcoes = models.CausaConsequencia.objects.filter(id_risco=id_get).order_by('ds_causa_consequencia')
-    return render(request, 'riscos/dropdown_causa_consequencia.html', {'opcoes': opcoes})

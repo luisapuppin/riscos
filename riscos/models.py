@@ -1,7 +1,11 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 
-# Create your models here.
+STATUS_CHOICE = (
+    ("Não iniciado", "Não iniciado"),
+    ("Em andamento", "Em andamento"),
+    ("Concluído", "Concluído"),
+)
 
 class Planejamento(models.Model):
     nr_inicio = models.PositiveSmallIntegerField("ano inicial do pe")
@@ -93,12 +97,12 @@ class Risco(models.Model):
         return self.ds_risco
 
 class CausaConsequencia(models.Model):
-    STATUS_CHOICE = (
+    TIPO_CHOICE = (
         ("Causa", "Causa"),
         ("Consequência", "Consequência"),
     )
     id_risco = models.ForeignKey(Risco, on_delete=models.PROTECT)
-    ds_tipo = models.CharField(max_length=30, choices=STATUS_CHOICE,)
+    ds_tipo = models.CharField(max_length=30, choices=TIPO_CHOICE,)
     ds_causa_consequencia = models.CharField(max_length=500)
     dt_cadastro = models.DateTimeField(auto_now_add=True)
     ds_usuario = models.CharField(max_length=30)
@@ -107,14 +111,8 @@ class CausaConsequencia(models.Model):
         return self.ds_tipo + ": " + self.ds_causa_consequencia
 
 class Tratamento(models.Model):
-    STATUS_CHOICE = (
-        ("Inexistente", "Inexistente") ,
-        ("Ineficaz", "Ineficaz"),
-        ("Ineficiente", "Ineficiente"),
-        ("Existente", "Existente"),
-    )
     id_causa_consequencia = models.ForeignKey(CausaConsequencia, on_delete=models.PROTECT)
-    ds_status = models.CharField(max_length=30, choices=STATUS_CHOICE, default="Inexistente",)
+    ds_status = models.CharField(max_length=30, choices=STATUS_CHOICE, default="Não iniciado",)
     ds_controle = models.CharField(max_length=500)
     ds_quem = models.CharField(max_length=500)
     ds_porque = models.CharField(max_length=500)
@@ -126,5 +124,16 @@ class Tratamento(models.Model):
 
     def __str__(self):
         return self.ds_controle
+
+class Monitoramento(models.Model):
+    id_tratamento = models.ForeignKey(Tratamento, on_delete=models.PROTECT)
+    id_ciclo_monitoramento = models.CharField(max_length=7) # "2018/01"
+    ds_status = models.CharField(max_length=500, choices=STATUS_CHOICE,)
+    ds_justificativa = models.CharField(max_length=1000)
+    dt_cadastro = models.DateTimeField(auto_now_add=True)
+    ds_usuario = models.CharField(max_length=30)
+
+    def __str__(self):
+        return self.ds_justificativa
 
 

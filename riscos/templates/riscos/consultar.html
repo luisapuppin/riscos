@@ -9,7 +9,7 @@
         {% csrf_token %} {% for field in form %} {% if field.name == "tipo" %}
         <div style="width:100%; text-align:center; margin-bottom:1rem">
             <div class="btn-group btn-group-toggle" data-toggle="buttons"> {% for radio in field %}
-                <label class="btn btn-info {% if forloop.counter|slugify == parametros.tipo.0 %} active {% endif %}"> {{radio.tag}} {{radio.choice_label}} </label> {% endfor %} </div>
+                <label class="btn btn-info {% if forloop.counter|slugify == parametros.tipo.0|default_if_none:'1' %} active {% endif %}"> {{radio.tag}} {{radio.choice_label}} </label> {% endfor %} </div>
         </div> {% else %}
         <div class="form-group row">
             {{ field.errors }}

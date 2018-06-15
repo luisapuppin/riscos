@@ -1,0 +1,102 @@
+{% extends 'riscos/base.html' %} {% block main_content %}
+
+<style>
+    .card-header::after {
+        font-family: "Font Awesome 5 Free";
+        content: "\f107";
+        font-weight: 900;
+        font-size: 1.2em;
+        margin-top: 7px;
+        float: right;
+    }
+    
+    .card-header.aberto::after {
+        font-family: "Font Awesome 5 Free";
+        content: "\f106";
+        font-weight: 900;
+        font-size: 1.2em;
+        margin-top: 7px;
+        float: right;
+    }
+</style>
+
+<div class="container">
+    <h1 class="titulo-pagina"> Monitoramento </h1>
+    <hr>
+    <br>
+</div>
+
+<div class="container" style="font-size:small;">
+
+    {% if tratamentos %}
+    <div class="accordion" id="accordionTratamentos">
+        {% for item in tratamentos %}
+        <div class="card">
+            <div class="card-body py-3" data-toggle="collapse" data-target="#collapseTrat{{ forloop.counter }}" aria-expanded="true" aria-controls="collapseTrat{{ forloop.counter }}">
+                <h5 class="card-title" >Tratamento: {{item|lower|capfirst}}
+                        {% if item.ds_status == "Ineficaz" or item.ds_status == "Ineficiente" or item.ds_status == "Não iniciado" %}
+                        <a style="color:red"><i class="fas fa-thumbs-down float-right"></i></a> {% elif item.ds_status == "Inexistente" or item.ds_status == "Em andamento" %}
+                        <a style="color:darkgoldenrod"><i class="fas fa-exclamation-triangle float-right"></i></a> {% else %}
+                        <a style="color:green"><i class="fas fa-thumbs-up float-right"></i></a> {% endif %}
+                        <span class="float-right">{{item.ds_status}} &nbsp; &nbsp; </span>
+                </h5>
+                
+                <div class="row">
+                    <div class="col">
+                        <p class="card-subtitle text-muted">Processo: {{item.id_causa_consequencia.id_risco.id_processo|lower|capfirst}}</p>
+                    </div>
+                    <div class="col">
+                        <p class="card-subtitle text-muted">Risco: {{item.id_causa_consequencia.id_risco|lower|capfirst}}</p>
+                    </div>
+                </div>
+                <br/>
+                <div class="row">
+                    <div class="col">
+                        {% if item.dt_quando < hoje %} 
+                        <p class="card-subtitle" style="color: red;"><span style="font-weight: 600;">Data de entrega: </span> {{item.dt_quando}}</p>
+                        {% else %}
+                        <p class="card-subtitle text-muted"><span style="font-weight: 600;">Data de entrega: </span> {{item.dt_quando}}</p>
+                        {% endif %}
+                        
+                    </div>
+                </div>
+            </div>
+            <div id="collapseTrat{{ forloop.counter }}" class="collapse" aria-labelledby="tratamento{{ forloop.counter }}" data-parent="#accordionTratamentos">
+                <div class="card-body">
+                    <form id="monitoramento-form" class="monitoramento-form" action="{% url 'riscos:fazer_monitoramento' %}" method="post">
+                        <div class="row placeholder"></div><br/>
+                        <div style="text-align:right;">
+                                <input type="submit" name="tratamento-{{item.pk}}" value="Atualizar" class="btn btn-success">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <br> {% else %}
+    <p> Nenhum tratamento registrado </p>
+    {% endif %}
+    <br>
+
+    <div style="text-align:right">
+        <a class="btn btn-dark" href="{{request.META.HTTP_REFERER}}">Voltar</a>
+    </div>
+    <br>
+</div>
+<br>
+
+<div class="col" id="formulario">
+    <h6>Monitorar:</h6><br/>
+        {% csrf_token %} {{form}}
+</div>
+
+<script>
+    $("#formulario").hide()
+    // Levar formulário para onde usuário clica
+    $(".accordion div").on("show.bs.collapse", function() {
+        $(".placeholder", this).append($("#formulario"))
+        $("#formulario").show()
+    })
+</script>
+{% endblock %}
