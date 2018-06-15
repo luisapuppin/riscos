@@ -21,8 +21,8 @@ def index(request):
     processos_com_risco = [risco.id_processo for risco in riscos]
     graves = models.Risco.objects.filter(id_probabilidade__gte=LIMITE_GRAVES/F('id_impacto'))
     tratamentos = models.Tratamento.objects.all()
-    vencidos = models.Tratamento.objects.filter(dt_quando__lt=date.today())
-    proximos = models.Tratamento.objects.filter(dt_quando__lt=date.today() + timedelta(days=15)).exclude(pk__in=vencidos)
+    vencidos = models.Tratamento.objects.filter(dt_quando__lt=date.today()).exclude(ds_status="Concluído")
+    proximos = models.Tratamento.objects.filter(dt_quando__lt=date.today() + timedelta(days=15)).exclude(ds_status="Concluído").exclude(pk__in=vencidos)
     context = {
         "macroprocessos": macroprocessos,
         "processos": processos,

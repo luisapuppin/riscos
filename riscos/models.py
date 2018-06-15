@@ -2,10 +2,10 @@ from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 
 STATUS_CHOICE = (
-        ("Não iniciado", "Não iniciado") ,
-        ("Em andamento", "Em andamento"),
-        ("Concluído", "Concluído"),
-    )
+    ("Não iniciado", "Não iniciado"),
+    ("Em andamento", "Em andamento"),
+    ("Concluído", "Concluído"),
+)
 
 class Planejamento(models.Model):
     nr_inicio = models.PositiveSmallIntegerField("ano inicial do pe")
