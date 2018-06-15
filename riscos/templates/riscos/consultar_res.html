@@ -7,7 +7,10 @@
 <div class="card" style="margin-bottom:5px;">
     <div class="card-body py-3">
         <h5 class="card-title">Processo: {{item|lower|capfirst}}
-            <a href="{% url 'riscos:detalhar_processo' target_id=item.pk %}" title="Detalhar processo" class="float-right"><i class="far fa-list-alt"></i></a>
+            <div class="float-right">
+                <a href="{% url 'riscos:detalhar_processo' target_id=item.pk %}" title="Detalhar processo"><i class="far fa-list-alt"></i></a>
+                <a href="{% url 'riscos:editar_processo' target_id=item.pk %}" title="Editar processo"><i class="fas fa-edit"></i></a>
+            </div>
         </h5>
         <div class="row">
             <div class="col">
@@ -22,7 +25,10 @@
 <div class="card" style="margin-bottom:5px;">
     <div class="card-body py-3">
         <h5 class="card-title">Risco: {{item|lower|capfirst}}
-            <a href="{% url 'riscos:detalhar_risco' target_id=item.pk %}" title="Detalhar risco" class="float-right"><i class="far fa-list-alt"></i></a>
+            <div class="float-right">
+                <a href="{% url 'riscos:detalhar_risco' target_id=item.pk %}" title="Detalhar risco"><i class="far fa-list-alt"></i></a>
+                <a href="{% url 'riscos:editar_risco' target_id=item.pk %}" title="Editar risco"><i class="fas fa-edit"></i></a>
+            </div>
         </h5>
         <div class="row">
             <div class="col">

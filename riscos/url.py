@@ -45,6 +45,8 @@ urlpatterns = [
     re_path(r'^risco/listar/$', views.listar_risco, name="listar_risco"),
     re_path(r'^risco/(?P<target_id>[0-9]+)/detalhar/$', views.detalhar_risco, 
             name="detalhar_risco"),
+    re_path(r'^risco/(?P<target_id>[0-9]+)/editar/$', views.editar_risco,
+            name="editar_risco"),
     re_path(r'^processo/(?P<parent_id>[0-9]+)/criar/risco/$', views.criar_risco, name="criar_risco"),
 
     # TRATAMENTO
@@ -52,6 +54,8 @@ urlpatterns = [
             name="listar_tratamento"),
     re_path(r'^tratamento/(?P<target_id>[0-9]+)/detalhar/$', views.detalhar_tratamento, 
             name="detalhar_tratamento"),
+    re_path(r'^tratamento/(?P<target_id>[0-9]+)/editar/$', views.editar_tratamento,
+            name="editar_tratamento"),
     re_path(r'^risco/(?P<parent_id>[0-9]+)/criar/tratamento/$', views.criar_tratamento, name="criar_tratamento"),
 
     # MONITORAMENTO
