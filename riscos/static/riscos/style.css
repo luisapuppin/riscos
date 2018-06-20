@@ -152,3 +152,43 @@ input[id=termo]:focus {
     font-weight: 900;
     padding-right: 5px;
 }
+
+.proc-total::before {
+    font-family: "Font Awesome 5 Free";
+    content: "\f542";
+    font-weight: 900;
+    font-size: 4.0em;
+    position: absolute;
+    left: 0.3em;
+    bottom: 0;
+    color: #017378;
+}
+
+.risco-total::before {
+    font-family: "Font Awesome 5 Free";
+    content: "\f06a";
+    font-weight: 900;
+    font-size: 4.0em;
+    position: absolute;
+    left: 0.3em;
+    bottom: 0;
+    color: #01575B;
+}
+
+.risco-grave::before {
+    font-family: "Font Awesome 5 Free";
+    content: "\f54c";
+    font-weight: 900;
+    font-size: 4.0em;
+    position: absolute;
+    left: 0.3em;
+    bottom: 0;
+    color: #003335;
+}
+
+.card-dash-subtitulo {
+    font-weight: lighter;
+    font-size: smaller;
+    width: 50%;
+    margin-left: 50%;
+}

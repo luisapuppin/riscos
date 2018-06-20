@@ -1,0 +1,47 @@
+﻿------------------------------------------------------
+EXTRAÇÃO BANCO DE DADOS DJANGO - HEROKU
+------------------------------------------------------
+
+Na mesma sessão do Heroku bash fazer: 
+
+Extraia o banco de dados via manage.py shell.
+
+
+	python3.6 manage.py shell
+
+
+Ao abrir o shell escrever:
+
+
+	from django.core.management import call_command
+	output = open("data.json", "w")
+	call_command("dumpdata", "riscos", format=json, stdout=output)
+	output.close()
+
+
+Fechar o shell:
+
+
+	quit()
+
+
+Após extrair o banco de dados, colocá-lo disponível via transfer.sh
+
+
+	cat <file_name> | curl -X PUT -T "-" https://transfer.sh/<file_name>
+
+
+Clicar no https://transfer.sh/<hash>/<file_name> e fazer o download dos dados.
+
+
+------------------------------------------------------
+AVISOS
+------------------------------------------------------
+
+Ler: ephemeral filesystem do Heroku
+Fonte: https://stackoverflow.com/questions/11546151/how-to-make-db-dumpfile-in-django
+Fonte: https://stackoverflow.com/questions/21465789/how-can-i-download-a-file-from-heroku-bash
+
+------------------------------------------------------
+FIM
+------------------------------------------------------
