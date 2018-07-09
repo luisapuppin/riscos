@@ -1,4 +1,6 @@
 from datetime import date, timedelta
+import pandas as pd
+import json
 import random
 
 from django.shortcuts import render, redirect, get_object_or_404, get_list_or_404
@@ -12,6 +14,63 @@ from . import forms
 from . import models
 
 LIMITE_GRAVES = 12
+DS_USUARIO = "usuario-teste"
+
+# ------- FUNÇÕES -------
+
+def populate_risco(list_risco):
+    for values in list_risco:
+        link = models.Processo.objects.filter(ds_processo=values["ds_processo"])[0]
+        link2 = models.Probabilidade.objects.filter(nr_valor=values["probabilidade"])[0]
+        link3 = models.Impacto.objects.filter(nr_valor=values["impacto"])[0]
+        link4 = models.Tipo_Risco.objects.filter(ds_tipo_risco="Operacionais")[0]
+        u = models.Risco.objects.get_or_create(
+            id_processo=link, id_probabilidade=link2, id_impacto=link3,
+            ds_risco=values["ds_risco"], id_tipo_risco=link4, ds_usuario=DS_USUARIO)
+        if u[1] == True:
+            u[0].save()
+    print("[DATABASE] Risco populated!")
+
+def populate_causaconsequencia(list_causaconsequencia):
+    for values in list_causaconsequencia:
+        link = models.Risco.objects.filter(ds_risco=values["ds_risco"])[0]
+        u = models.CausaConsequencia.objects.get_or_create(
+            id_risco=link, ds_causa_consequencia=values["ds_causa_consequencia"],
+            ds_tipo=values["ds_tipo"], ds_usuario=DS_USUARIO)
+        if u[1] == True:
+            u[0].save()
+    print("[DATABASE] CausaConsequencia populated!")
+
+def cadastrar_importacao(obj_processo, json_xls):
+    # Montagem lista de cadastro
+    lista_riscos = []
+    lista_causa_conseq = []
+    try:
+        for i in json_xls:
+            risco = {}
+            risco["ds_processo"] = obj_processo.ds_processo
+            risco["ds_tipo_risco"] = i["Tipo"]
+            risco["impacto"] = i["I"]
+            risco["probabilidade"] = i["P"]
+            risco["ds_risco"] = i["Riscos"].strip()
+            lista_riscos.append(risco)
+            causa = {}
+            causa["ds_risco"] = i["Riscos"].strip()
+            causa["ds_causa_consequencia"] = i["Causa ou Fator"].strip()
+            causa["ds_tipo"] = "Causa"
+            conseq = {}
+            conseq["ds_risco"] = i["Riscos"].strip()
+            conseq["ds_causa_consequencia"] = i["Consequência"].strip()
+            conseq["ds_tipo"] = "Consequência"
+            lista_causa_conseq.append(causa)
+            lista_causa_conseq.append(conseq)
+    except Exception as ds_error:
+        pass
+        # return redirect(reverse("riscos:status_importacao", kwargs={"target_id": target_id, "json_import": output, "status":ds_error}))
+    # Cadastro dos dados
+    populate_risco(lista_riscos)
+    populate_causaconsequencia(lista_causa_conseq)
+    return redirect(reverse("riscos:detalhar_processo", kwargs={"target_id":obj_processo.pk}))
 
 # ------- INDEX -------
 def index(request):
@@ -257,6 +316,35 @@ def detalhar_processo(request, target_id):
         "marker": {"size": 12},
     }
     atividades = models.Atividade.objects.filter(id_processo=target_id).order_by("nr_atividade")
+
+    # Importação de dados
+
+    if request.method == 'POST':
+        form = forms.FormImportacao(request.POST, request.FILES)
+        if form.is_valid():
+            tipo_risco = models.Tipo_Risco.objects.all()
+            tipo_risco = [x.ds_tipo_risco for x in tipo_risco]
+
+            # Leitura XLS
+            planilha = request.FILES["xls_file"]
+            riscos = pd.read_excel(planilha, header=10, usecols="B:J")
+            riscos.columns = riscos.columns.map(lambda x: x.strip())
+            riscos2 = riscos.dropna(subset=["Tipo"])
+            output = json.loads(riscos2.to_json(orient="records", force_ascii=False))
+            tipo_risco_xls = [x.strip() for x in json.loads(riscos2.to_json(force_ascii=False))["Tipo"].values()]
+
+            # Checagem dos Tipos
+            for i in tipo_risco_xls:
+                if i not in tipo_risco:
+                    request.session["output_importacao"] = output
+                    request.session["id_processo"] = target_id
+                    return redirect(reverse("riscos:importacao_confirm"))
+
+            cadastrar_importacao(observacao, output)
+
+    else:
+        form = forms.FormImportacao()
+
     context = {
         "observacao": observacao,
         "riscos": riscos,
@@ -264,8 +352,23 @@ def detalhar_processo(request, target_id):
         "atividades": atividades,
         "sem_tratamento": sem_tratamento,
         "active_bar": "processo",
+        "form": form
     }
     return render(request, 'riscos/detalhar_processo.html', context)
+
+def importacao_confirm(request):
+    form2 = forms.FormConfirmacao(request.POST or None)
+    output = request.session.get('output_importacao')
+    target_id = request.session.get('id_processo')
+    observacao = get_object_or_404(models.Processo, pk=target_id)
+    if form2.is_valid():
+        cadastrar_importacao(observacao, output)
+        return redirect(reverse("riscos:detalhar_processo", kwargs={"target_id": target_id}))
+    context = {
+        "form2": form2,
+        "observacao": observacao
+    }
+    return render(request, 'riscos/importacao_confirm.html', context)
 
 def editar_processo(request, target_id):
     processo = get_object_or_404(models.Processo, pk=target_id)
