@@ -17,7 +17,7 @@
     {% if sem_tratamento %}
     <div class="alert alert-danger">
         <p style="font-weight:bold;">
-            Atenção! {% if sem_tratamento.count > 1 %} Existem {{sem_tratamento.count}} riscos graves e sem controle! {% else %} Existe 1 risco grave e sem controle! {% endif %}
+            Atenção! {% if sem_tratamento.count > 1 %} Existem {{sem_tratamento.count}} riscos graves e sem tratamento! {% else %} Existe 1 risco grave e sem tratamento! {% endif %}
         </p>
         <ol>{% for item in sem_tratamento %}
             <li> {{item}}

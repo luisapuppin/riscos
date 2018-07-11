@@ -40,7 +40,7 @@
 <div class="container" style="font-size:small;">
     {% if sem_tratamento %}
     <div class="alert alert-danger">
-        <p style="font-weight:bold;margin:0;">Risco grave e sem controle! Cadastre um tratamento!
+        <p style="font-weight:bold;margin:0;">Risco grave e sem tratamento! Cadastre um tratamento!
             <a title="Adicionar tratamento" href="{% url 'riscos:criar_tratamento' parent_id=observacao.pk %}" style="color:unset;cursor:pointer;">
                 <i class="fas fa-fire-extinguisher"></i>
             </a>
