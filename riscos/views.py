@@ -49,14 +49,15 @@ def populate_tratamento(list_tratamento):
                 id_causa_consequencia=link, ds_controle=values["ds_controle"],
                 ds_quem=values["ds_quem"], ds_porque=values["ds_porque"],
                 dt_quando=datetime.strptime(values["ds_quando"], "%Y-%m-%dT%H:%M:%SZ").date(),
-                ds_como=values["ds_como"], ds_usuario=DS_USUARIO)
+                ds_como=values["ds_como"], ds_status=values["ds_status"],
+                ds_usuario=DS_USUARIO)
         else:
             u = models.Tratamento.objects.get_or_create(
                 id_causa_consequencia=link, ds_controle=values["ds_controle"],
                 ds_quem=values["ds_quem"], ds_porque=values["ds_porque"],
                 dt_quando=datetime.strptime(values["ds_quando"], "%Y-%m-%dT%H:%M:%SZ").date(),
                 ds_como=values["ds_como"], ds_quanto=values["ds_quanto"],
-                ds_usuario=DS_USUARIO)
+                ds_status=values["ds_status"], ds_usuario=DS_USUARIO)
         if u[1] == True:
             u[0].save()
     print("[DATABASE] Tratamento populated!")
@@ -104,6 +105,12 @@ def cadastrar_plano(json_plano):
             tratamento["ds_quando"] = i["Quando?"]
             tratamento["ds_como"] = i["Como?"]
             tratamento["ds_quanto"] = i["Quanto Custa?"]
+            if i["Status"] == "Iniciado" or i["Status"] == "Parado":
+                tratamento["ds_status"] = "Em andamento"
+            elif i["Status"] == "Não Iniciado":
+                tratamento["ds_status"] = "Não iniciado"
+            else:
+                tratamento["ds_status"] = "Concluído"
             lista_tratamento.append(tratamento)
     except Exception as ds_error:
         pass
