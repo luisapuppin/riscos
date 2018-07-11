@@ -1,4 +1,4 @@
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 import pandas as pd
 import json
 import random
@@ -41,12 +41,32 @@ def populate_causaconsequencia(list_causaconsequencia):
             u[0].save()
     print("[DATABASE] CausaConsequencia populated!")
 
-def cadastrar_importacao(obj_processo, json_xls):
+def populate_tratamento(list_tratamento):
+    for values in list_tratamento:
+        link = models.CausaConsequencia.objects.filter(ds_causa_consequencia=values["ds_causa_consequencia"])[0]
+        if values["ds_quanto"] is None:
+            u = models.Tratamento.objects.get_or_create(
+                id_causa_consequencia=link, ds_controle=values["ds_controle"],
+                ds_quem=values["ds_quem"], ds_porque=values["ds_porque"],
+                dt_quando=datetime.strptime(values["ds_quando"], "%Y-%m-%dT%H:%M:%SZ").date(),
+                ds_como=values["ds_como"], ds_usuario=DS_USUARIO)
+        else:
+            u = models.Tratamento.objects.get_or_create(
+                id_causa_consequencia=link, ds_controle=values["ds_controle"],
+                ds_quem=values["ds_quem"], ds_porque=values["ds_porque"],
+                dt_quando=datetime.strptime(values["ds_quando"], "%Y-%m-%dT%H:%M:%SZ").date(),
+                ds_como=values["ds_como"], ds_quanto=values["ds_quanto"],
+                ds_usuario=DS_USUARIO)
+        if u[1] == True:
+            u[0].save()
+    print("[DATABASE] Tratamento populated!")
+
+def cadastrar_risco(obj_processo, json_risco):
     # Montagem lista de cadastro
     lista_riscos = []
     lista_causa_conseq = []
     try:
-        for i in json_xls:
+        for i in json_risco:
             risco = {}
             risco["ds_processo"] = obj_processo.ds_processo
             risco["ds_tipo_risco"] = i["Tipo"]
@@ -70,7 +90,26 @@ def cadastrar_importacao(obj_processo, json_xls):
     # Cadastro dos dados
     populate_risco(lista_riscos)
     populate_causaconsequencia(lista_causa_conseq)
-    return redirect(reverse("riscos:detalhar_processo", kwargs={"target_id":obj_processo.pk}))
+
+def cadastrar_plano(json_plano):
+    # Montagem lista de cadastro
+    lista_tratamento = []
+    try:
+        for i in json_plano:
+            tratamento = {}
+            tratamento["ds_causa_consequencia"] = i["Causa"].strip()
+            tratamento["ds_controle"] = i["O quê?"]
+            tratamento["ds_quem"] = i["Quem?"]
+            tratamento["ds_porque"] = i["Por quê?"]
+            tratamento["ds_quando"] = i["Quando?"]
+            tratamento["ds_como"] = i["Como?"]
+            tratamento["ds_quanto"] = i["Quanto Custa?"]
+            lista_tratamento.append(tratamento)
+    except Exception as ds_error:
+        pass
+        # return redirect(reverse("riscos:status_importacao", kwargs={"target_id": target_id, "json_import": output, "status":ds_error}))
+    # Cadastro dos dados
+    populate_tratamento(lista_tratamento)
 
 # ------- INDEX -------
 def index(request):
@@ -325,22 +364,29 @@ def detalhar_processo(request, target_id):
             tipo_risco = models.Tipo_Risco.objects.all()
             tipo_risco = [x.ds_tipo_risco for x in tipo_risco]
 
-            # Leitura XLS
+            # Leitura RISCOS
             planilha = request.FILES["xls_file"]
             riscos = pd.read_excel(planilha, header=10, usecols="B:J")
             riscos.columns = riscos.columns.map(lambda x: x.strip())
             riscos2 = riscos.dropna(subset=["Tipo"])
-            output = json.loads(riscos2.to_json(orient="records", force_ascii=False))
+            output_risco = json.loads(riscos2.to_json(orient="records", force_ascii=False))
             tipo_risco_xls = [x.strip() for x in json.loads(riscos2.to_json(force_ascii=False))["Tipo"].values()]
+            # Leitura PLANOS
+            plano = pd.read_excel(planilha, sheet_name = 2, header = 10, usecols = "A:K")
+            plano.columns = plano.columns.map(lambda x: x.strip())
+            plano2 = plano.dropna(subset=["O quê?"])
+            output_plano = json.loads(plano2.to_json(orient="records", force_ascii=False, date_unit="s", date_format="iso"))
 
             # Checagem dos Tipos
             for i in tipo_risco_xls:
                 if i not in tipo_risco:
-                    request.session["output_importacao"] = output
+                    request.session["output_risco"] = output_risco
+                    request.session["output_plano"] = output_plano
                     request.session["id_processo"] = target_id
                     return redirect(reverse("riscos:importacao_confirm"))
 
-            cadastrar_importacao(observacao, output)
+            cadastrar_risco(observacao, output_risco)
+            cadastrar_plano(output_plano)
 
     else:
         form = forms.FormImportacao()
@@ -358,11 +404,13 @@ def detalhar_processo(request, target_id):
 
 def importacao_confirm(request):
     form2 = forms.FormConfirmacao(request.POST or None)
-    output = request.session.get('output_importacao')
+    output_risco = request.session.get('output_risco')
+    output_plano = request.session.get('output_plano')
     target_id = request.session.get('id_processo')
     observacao = get_object_or_404(models.Processo, pk=target_id)
     if form2.is_valid():
-        cadastrar_importacao(observacao, output)
+        cadastrar_risco(observacao, output_risco)
+        cadastrar_plano(output_plano)
         return redirect(reverse("riscos:detalhar_processo", kwargs={"target_id": target_id}))
     context = {
         "form2": form2,
