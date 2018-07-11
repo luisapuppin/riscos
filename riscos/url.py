@@ -32,13 +32,15 @@ urlpatterns = [
 
     # PROCESSO
     re_path(r'^processo/listar/$', views.listar_processo, name="listar_processo"),
+    re_path(r'^processo/importar/$', views.importacao_confirm, name="importacao_confirm"),
     re_path(r'^processo/(?P<target_id>[0-9]+)/detalhar/$', views.detalhar_processo,
             name="detalhar_processo"),
     re_path(r'^processo/(?P<target_id>[0-9]+)/editar/$', views.editar_processo,
             name="editar_processo"),
-    re_path(r'^macroprocesso/(?P<parent_id>[0-9]+)/criar/processo/$', views.criar_processo, name="criar_processo"),
+    re_path(r'^macroprocesso/(?P<parent_id>[0-9]+)/criar/processo/$', views.criar_processo,
+            name="criar_processo"),
 
-    # ATIVIDADE 
+    # ATIVIDADE
     re_path(r'^processo/(?P<parent_id>[0-9]+)/atividade/(?P<acao>[a-z]+)/$', views.criar_atividade, name="criar_atividade"),  
 
     # RISCO

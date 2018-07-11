@@ -228,3 +228,13 @@ class FormConsulta(forms.Form):
         widget=forms.TextInput(attrs={"class":"form-control form-control-sm"})
     )
 
+class FormImportacao(forms.Form):
+    xls_file = forms.FileField(
+        widget=forms.FileInput(
+            attrs={"accept":"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel, application/vnd.ms-excel.sheet.macroEnabled.12"}
+        ),
+        label=""
+    )
+
+class FormConfirmacao(forms.Form):
+    confirmacao = forms.BooleanField(label="")

@@ -1,16 +1,16 @@
 {% extends 'riscos/base.html' %} {% block main_content %}
 
 <style>
-    p > span {
-       font-weight: bold;
-       font-size: 18px;
-       /*color:darkslategray*/
-    }
-    p > strong {
-        /*color: {{cor}}*/
-        color:forestgreen;
+    p>span {
+        font-weight: bold;
+        font-size: 18px;
+        /*color:darkslategray*/
     }
     
+    p>strong {
+        /*color: {{cor}}*/
+        color: forestgreen;
+    }
 </style>
 
 <div class="container">
@@ -50,28 +50,28 @@
         </tr>
     </table>
     <br><br>
-    
+
     <h4>Plano de Ação</h4>
     <hr>
-    
+
     <p><span>O que?</span> {{observacao.ds_oque}}</p>
 
     <p><span>Quem?</span> {{observacao.ds_quem}}</p>
 
     <p><span>Por que?</span> {{observacao.ds_porque}}</p>
 
-    <p><span>Onde?</span> {{observacao.ds_onde}}</p> 
+    <p><span>Onde?</span> {{observacao.ds_onde}}</p>
 
-    <p><span>Quando?</span> {{observacao.dt_quando}} (<strong>{{observacao.dt_quando|timeuntil:hoje}}</strong>)</p> 
+    <p><span>Quando?</span> {{observacao.dt_quando}} (<strong>{{observacao.dt_quando|timeuntil:hoje}}</strong>)</p>
 
-    <p><span>Como?</span> {{observacao.ds_como}}</p> 
+    <p><span>Como?</span> {{observacao.ds_como}}</p>
 
-    <p><span>Quanto?</span> R$ {{observacao.ds_quanto}}</p> 
+    <p><span>Quanto?</span> R$ {{observacao.ds_quanto}}</p>
 
     <br><br>
 
     <div class="float-right">
-        <a class="btn btn-primary" href="#">Editar controle</a>
+        <a class="btn btn-primary" href="#">Editar tratamento</a>
         <a class="btn btn-dark" href="{{request.META.HTTP_REFERER}}">Voltar</a>
     </div>
     <br>

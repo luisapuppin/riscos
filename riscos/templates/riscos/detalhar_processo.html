@@ -17,7 +17,7 @@
     {% if sem_tratamento %}
     <div class="alert alert-danger">
         <p style="font-weight:bold;">
-            Atenção! {% if sem_tratamento.count > 1 %} Existem {{sem_tratamento.count}} riscos graves e sem controle! {% else %} Existe 1 risco grave e sem controle! {% endif %}
+            Atenção! {% if sem_tratamento.count > 1 %} Existem {{sem_tratamento.count}} riscos graves e sem tratamento! {% else %} Existe 1 risco grave e sem tratamento! {% endif %}
         </p>
         <ol>{% for item in sem_tratamento %}
             <li> {{item}}
@@ -158,10 +158,34 @@
 
     <div style="text-align:right;">
         <a class="btn btn-dark" href="{{request.META.HTTP_REFERER}}">Voltar</a>
+        <a class="btn btn-secondary" href="" data-toggle="modal" data-target="#modal">Importar dados</a>
     </div>
     <br>
 </div>
-<br> {% if riscos %}
+<br>
+
+<!--MODAL IMPORTAÇÃO-->
+<div class="modal fade" id="modal" role="dialog">
+    <div class="modal-dialog" style="max-width:960px">
+        <div class="modal-content">
+            <div class="modal-header color-secondary-1-3" style="color:#FFF">
+                <h5 class="modal-title">Importar dados de arquivo excel</h5>
+                <button type="button" class="close" data-dismiss="modal" style="color:#FFF">&times;</button>
+            </div>
+            <form id="importar" method="post" enctype="multipart/form-data"> {% csrf_token %}
+                <div class="modal-body">
+                    {{form}}
+                </div>
+                <div class="modal-footer" style="color:#FFF">
+                    <input type="submit" name="submit" value="Importar dados" class="btn btn-primary">
+                    <a class="btn btn-secondary" data-dismiss="modal">Fechar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% if riscos %}
 <script>
     const trace = "{{data|safe}}";
     var data = [JSON.parse(trace.replace(/'/g, "\""))];
@@ -174,7 +198,6 @@
             range: [0, 5.5],
             title: 'Probabilidade'
         },
-        //title: 'Matriz de risco'
     };
     Plotly.newPlot('myDiv', data, layout);
     console.log("Matriz de riscos plotada.");
