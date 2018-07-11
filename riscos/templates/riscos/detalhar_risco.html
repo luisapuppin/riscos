@@ -198,11 +198,11 @@
 
             <div id="collapseTrat{{ forloop.counter }}" class="collapse" aria-labelledby="tratamento{{ forloop.counter }}" data-parent="#accordionTratamentos">
                 <div class="card-body">
-                    <div class="alert {% if item.ds_status == 'Ineficaz' or item.ds_status == 'Ineficiente' %}
-                        alert-warning {% elif item.ds_status == 'Inexistente' %}
+                    <div class="alert {% if item.ds_status == 'Em andamento' %}
+                        alert-warning {% elif item.ds_status == 'Não iniciado' %}
                         alert-danger {% else %} alert-success {% endif %}">
-                        Status do tratamento: {{item.ds_status}} {% if item.ds_status == "Ineficaz" or item.ds_status == "Ineficiente" %}
-                        <i class="fas fa-thumbs-down"></i> {% elif item.ds_status == "Inexistente" %}
+                        Status do tratamento: {{item.ds_status}} {% if item.ds_status == 'Em andamento' %}
+                        <i class="fas fa-clock"></i> {% elif item.ds_status == 'Não iniciado' %}
                         <i class="fas fa-exclamation-triangle"></i> {% else %}
                         <i class="fas fa-thumbs-up"></i> {% endif %}
                     </div>
