@@ -13,7 +13,7 @@ from itertools import chain
 from . import forms
 from . import models
 
-LIMITE_GRAVES = 12
+LIMITE_GRAVES = 7
 DS_USUARIO = "usuario-teste"
 
 # ------- FUNÇÕES -------
