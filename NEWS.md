@@ -1,3 +1,9 @@
+# v0.8.0
++ Habilita importação de dados via planilha padrão;
++ Adiciona coloração baseada no nível de risco na matriz de riscos;
++ Corrige uso do nome controle para tratamento;
++ Corrige alertas relativos aos status do tratamento.
+
 # v0.7.0
 + Habilita edição dos processos, atividades, riscos e tratamentos;
 + Módulo de monitoramento.
