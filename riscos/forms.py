@@ -132,9 +132,9 @@ class FormTratamento(forms.ModelForm):
         fields = ("id_causa_consequencia", "ds_controle", "ds_status", "ds_quem", "ds_porque",
                   "dt_quando", "ds_como", "ds_quanto",)
         labels = {
-            "id_causa_consequencia": "Controle sobre:",
-            "ds_status": "Status do controle",
-            "ds_controle": "Descrição do controle",
+            "id_causa_consequencia": "Tratamento sobre:",
+            "ds_status": "Status do tratamento",
+            "ds_controle": "Descrição do tratamento",
             "ds_quem": "Quem?",
             "ds_porque": "Por que?",
             "dt_quando": "Quando?",
@@ -228,3 +228,13 @@ class FormConsulta(forms.Form):
         widget=forms.TextInput(attrs={"class":"form-control form-control-sm"})
     )
 
+class FormImportacao(forms.Form):
+    xls_file = forms.FileField(
+        widget=forms.FileInput(
+            attrs={"accept":"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel, application/vnd.ms-excel.sheet.macroEnabled.12"}
+        ),
+        label=""
+    )
+
+class FormConfirmacao(forms.Form):
+    confirmacao = forms.BooleanField(label="")

@@ -1,0 +1,26 @@
+{% extends 'riscos/base.html' %} {% block main_content %}
+
+<div class="container">
+
+    <div class="alert alert-info">
+        <h5 style="text-align:center;"><strong>ATENÇÃO!</strong></h5><br>
+        <p>Foi detectada a presença de Tipos de Risco não cadastrados no SIR. Caso deseje continuar a importação de dados para o sistema, os riscos que não apresentam sua tipologia cadastrada no sistema serão cadastrados com o tipo padrão <strong>"Operacionais"</strong>.</p>
+        <p> Deseja continuar essa ação? </p>
+        <form method="POST">
+            <div>
+                {% csrf_token %}
+                <p>{{form2}} <span>Entendi e concordo com o cadastramento de tipo padrão para os riscos que não apresentam tipologia cadastrada no SIR.</span></p>
+                <p style="font: status-bar;">NOTA: O tipo do risco poderá ser alterado posteriormente na ação de editar presente na página de detalhamento do risco.</p>
+            </div><br>
+            <div style="text-align: right;">
+                <input type="submit" name="submit" value="Confirmar" class="btn btn-success">
+                <a class="btn btn-danger" href="{% url 'riscos:detalhar_processo' target_id=observacao.pk %}">Cancelar</a>
+            </div>
+        </form>
+        <br>
+
+    </div>
+
+</div>
+
+{% endblock %}

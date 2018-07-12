@@ -22,35 +22,47 @@
         <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a> Faltam <strong>{{proximo.dt_quando|timeuntil}}</strong> para entregar <strong>{{proximo}}</strong>
         <a title="Ver risco" href="{% url 'riscos:detalhar_risco' target_id=proximo.id_causa_consequencia.id_risco.pk %}" style="color:unset;"><i class="fas fa-info-circle"></i></a>
     </div>
-    {% endfor %}
-    <br>
+    {% endfor %} <br>
 
     <!--DASHBOARD INFORMAÇÕES GERAIS-->
-    <hr style="border-color:#00662F">
     <div class="card-deck">
-        <div class="card border-0">
-            <div class="card-body text-center">
-                <h1 class="card-text">{{ processos|length }}</h1>
-                <h6 class="card-text">Processos</h6>
-                <h6 class="card-text">cadastrados</h6>
+        <div class="card">
+            <div class="card-body proc-total color-secondary-1-4 rounded" style="color:#FFF">
+                <div class="card-text text-center card-dash-subtitulo">
+                    <h1>{{ processos|length }}</h1>
+                    {% if processos|length == 1 %}
+                    <p>PROCESSO<br>CADASTRADO</p>
+                    {% else %}
+                    <p>PROCESSOS<br>CADASTRADOS</p>
+                    {% endif %}
+                </div>
             </div>
         </div>
-        <div class="card border-0">
-            <div class="card-body text-center">
-                <h1 class="card-text">{{ riscos|length }}</h1>
-                <h6 class="card-text">Riscos</h6>
-                <h6 class="card-text">cadastrados</h6>
+        <div class="card">
+            <div class="card-body risco-total color-secondary-1-3 rounded" style="color:#FFF">
+                <div class="card-text text-center card-dash-subtitulo">
+                    <h1>{{ riscos|length }}</h1>
+                    {% if riscos|length == 1 %}
+                    <p>RISCO<br>CADASTRADO</p>
+                    {% else %}
+                    <p>RISCOS<br>CADASTRADOS</p>
+                    {% endif %}
+                </div>
             </div>
         </div>
-        <div class="card border-0">
-            <div class="card-body text-center" style="padding-top: 15px;">
-                <div id="myDiv"></div>
-                <h6 class="card-text">Riscos graves</h6>
-                <h6 class="card-text">detectados</h6>
+        <div class="card">
+            <div class="card-body risco-grave color-secondary-1-0 rounded" style="color:#FFF">
+                <div class="card-text text-center card-dash-subtitulo">
+                    <h1>{{ graves|length }}</h1>
+                    {% if graves|length == 1 %}
+                    <p>RISCO GRAVE<br>CADASTRADO</p>
+                    {% else %}
+                    <p>RISCOS GRAVES<br>CADASTRADOS</p>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>
-    <hr style="border-color:#00662F">
     <br/>
 
     <!--LISTA DE PROCESSOS-->
@@ -175,32 +187,6 @@
         $(".accordion-dashboard div").on("hide.bs.collapse", function() {
             $(":first", this).removeClass("accordion-open");
         })
-
-        const quantidadeRiscos = Number("{{riscos|length}}")
-        const quantidadeGraves = Number("{{graves|length}}")
-
-        const data = [{
-            values: [quantidadeRiscos - quantidadeGraves, quantidadeGraves],
-            labels: ["Leves", "Graves"],
-            type: "pie",
-            textinfo: "label+value"
-        }];
-
-        const layout = {
-            height: 150,
-            width: 250,
-            showlegend: false,
-            margin: {
-                l: 10,
-                r: 10,
-                b: 10,
-                t: 10,
-                pad: 4
-            },
-            colorway: ["#B0D566", "#E46E6E"]
-        };
-
-        Plotly.newPlot('myDiv', data, layout);
     </script>
 
     {% endblock %}

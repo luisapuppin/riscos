@@ -1,4 +1,6 @@
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
+import pandas as pd
+import json
 import random
 
 from django.shortcuts import render, redirect, get_object_or_404, get_list_or_404
@@ -12,6 +14,109 @@ from . import forms
 from . import models
 
 LIMITE_GRAVES = 12
+DS_USUARIO = "usuario-teste"
+
+# ------- FUNÇÕES -------
+
+def populate_risco(list_risco):
+    for values in list_risco:
+        link = models.Processo.objects.filter(ds_processo=values["ds_processo"])[0]
+        link2 = models.Probabilidade.objects.filter(nr_valor=values["probabilidade"])[0]
+        link3 = models.Impacto.objects.filter(nr_valor=values["impacto"])[0]
+        link4 = models.Tipo_Risco.objects.filter(ds_tipo_risco="Operacionais")[0]
+        u = models.Risco.objects.get_or_create(
+            id_processo=link, id_probabilidade=link2, id_impacto=link3,
+            ds_risco=values["ds_risco"], id_tipo_risco=link4, ds_usuario=DS_USUARIO)
+        if u[1] == True:
+            u[0].save()
+    print("[DATABASE] Risco populated!")
+
+def populate_causaconsequencia(list_causaconsequencia):
+    for values in list_causaconsequencia:
+        link = models.Risco.objects.filter(ds_risco=values["ds_risco"])[0]
+        u = models.CausaConsequencia.objects.get_or_create(
+            id_risco=link, ds_causa_consequencia=values["ds_causa_consequencia"],
+            ds_tipo=values["ds_tipo"], ds_usuario=DS_USUARIO)
+        if u[1] == True:
+            u[0].save()
+    print("[DATABASE] CausaConsequencia populated!")
+
+def populate_tratamento(list_tratamento):
+    for values in list_tratamento:
+        link = models.CausaConsequencia.objects.filter(ds_causa_consequencia=values["ds_causa_consequencia"])[0]
+        if values["ds_quanto"] is None:
+            u = models.Tratamento.objects.get_or_create(
+                id_causa_consequencia=link, ds_controle=values["ds_controle"],
+                ds_quem=values["ds_quem"], ds_porque=values["ds_porque"],
+                dt_quando=datetime.strptime(values["ds_quando"], "%Y-%m-%dT%H:%M:%SZ").date(),
+                ds_como=values["ds_como"], ds_status=values["ds_status"],
+                ds_usuario=DS_USUARIO)
+        else:
+            u = models.Tratamento.objects.get_or_create(
+                id_causa_consequencia=link, ds_controle=values["ds_controle"],
+                ds_quem=values["ds_quem"], ds_porque=values["ds_porque"],
+                dt_quando=datetime.strptime(values["ds_quando"], "%Y-%m-%dT%H:%M:%SZ").date(),
+                ds_como=values["ds_como"], ds_quanto=values["ds_quanto"],
+                ds_status=values["ds_status"], ds_usuario=DS_USUARIO)
+        if u[1] == True:
+            u[0].save()
+    print("[DATABASE] Tratamento populated!")
+
+def cadastrar_risco(obj_processo, json_risco):
+    # Montagem lista de cadastro
+    lista_riscos = []
+    lista_causa_conseq = []
+    try:
+        for i in json_risco:
+            risco = {}
+            risco["ds_processo"] = obj_processo.ds_processo
+            risco["ds_tipo_risco"] = i["Tipo"]
+            risco["impacto"] = i["I"]
+            risco["probabilidade"] = i["P"]
+            risco["ds_risco"] = i["Riscos"].strip()
+            lista_riscos.append(risco)
+            causa = {}
+            causa["ds_risco"] = i["Riscos"].strip()
+            causa["ds_causa_consequencia"] = i["Causa ou Fator"].strip()
+            causa["ds_tipo"] = "Causa"
+            conseq = {}
+            conseq["ds_risco"] = i["Riscos"].strip()
+            conseq["ds_causa_consequencia"] = i["Consequência"].strip()
+            conseq["ds_tipo"] = "Consequência"
+            lista_causa_conseq.append(causa)
+            lista_causa_conseq.append(conseq)
+    except Exception as ds_error:
+        pass
+        # return redirect(reverse("riscos:status_importacao", kwargs={"target_id": target_id, "json_import": output, "status":ds_error}))
+    # Cadastro dos dados
+    populate_risco(lista_riscos)
+    populate_causaconsequencia(lista_causa_conseq)
+
+def cadastrar_plano(json_plano):
+    # Montagem lista de cadastro
+    lista_tratamento = []
+    try:
+        for i in json_plano:
+            tratamento = {}
+            tratamento["ds_causa_consequencia"] = i["Causa"].strip()
+            tratamento["ds_controle"] = i["O quê?"]
+            tratamento["ds_quem"] = i["Quem?"]
+            tratamento["ds_porque"] = i["Por quê?"]
+            tratamento["ds_quando"] = i["Quando?"]
+            tratamento["ds_como"] = i["Como?"]
+            tratamento["ds_quanto"] = i["Quanto Custa?"]
+            if i["Status"] == "Iniciado" or i["Status"] == "Parado":
+                tratamento["ds_status"] = "Em andamento"
+            elif i["Status"] == "Não Iniciado":
+                tratamento["ds_status"] = "Não iniciado"
+            else:
+                tratamento["ds_status"] = "Concluído"
+            lista_tratamento.append(tratamento)
+    except Exception as ds_error:
+        pass
+        # return redirect(reverse("riscos:status_importacao", kwargs={"target_id": target_id, "json_import": output, "status":ds_error}))
+    # Cadastro dos dados
+    populate_tratamento(lista_tratamento)
 
 # ------- INDEX -------
 def index(request):
@@ -246,6 +351,7 @@ def detalhar_processo(request, target_id):
     sem_tratamento = models.Risco.objects.filter(id_probabilidade__gte=LIMITE_GRAVES/F('id_impacto'), id_processo=target_id).exclude(pk__in=com_tratamento)
     x = [(x.id_impacto.nr_valor-(random.randint(10, 60)/100)) for x in riscos]
     y = [(y.id_probabilidade.nr_valor-(random.randint(10, 60)/100)) for y in riscos]
+    cor = [w.id_impacto.nr_valor * w.id_probabilidade.nr_valor for w in riscos]
     texto = [z.ds_risco for z in riscos]
     data = {
         "x": x,
@@ -254,9 +360,49 @@ def detalhar_processo(request, target_id):
         "type": 'scatter',
         "text": texto,
         "textposition": 'bottom center',
-        "marker": {"size": 12},
+        "marker": {
+            "size": 15,
+            "color": cor,
+            "colorscale": [[0, '#008000'], [0.08, "#FFD700"], [0.32, "#FF8C00"], [1, '#B22222']]
+        },
     }
     atividades = models.Atividade.objects.filter(id_processo=target_id).order_by("nr_atividade")
+
+    # Importação de dados
+
+    if request.method == 'POST':
+        form = forms.FormImportacao(request.POST, request.FILES)
+        if form.is_valid():
+            tipo_risco = models.Tipo_Risco.objects.all()
+            tipo_risco = [x.ds_tipo_risco for x in tipo_risco]
+
+            # Leitura RISCOS
+            planilha = request.FILES["xls_file"]
+            riscos = pd.read_excel(planilha, header=10, usecols="B:J")
+            riscos.columns = riscos.columns.map(lambda x: x.strip())
+            riscos2 = riscos.dropna(subset=["Tipo"])
+            output_risco = json.loads(riscos2.to_json(orient="records", force_ascii=False))
+            tipo_risco_xls = [x.strip() for x in json.loads(riscos2.to_json(force_ascii=False))["Tipo"].values()]
+            # Leitura PLANOS
+            plano = pd.read_excel(planilha, sheet_name = 2, header = 10, usecols = "A:K")
+            plano.columns = plano.columns.map(lambda x: x.strip())
+            plano2 = plano.dropna(subset=["O quê?"])
+            output_plano = json.loads(plano2.to_json(orient="records", force_ascii=False, date_unit="s", date_format="iso"))
+
+            # Checagem dos Tipos
+            for i in tipo_risco_xls:
+                if i not in tipo_risco:
+                    request.session["output_risco"] = output_risco
+                    request.session["output_plano"] = output_plano
+                    request.session["id_processo"] = target_id
+                    return redirect(reverse("riscos:importacao_confirm"))
+
+            cadastrar_risco(observacao, output_risco)
+            cadastrar_plano(output_plano)
+
+    else:
+        form = forms.FormImportacao()
+
     context = {
         "observacao": observacao,
         "riscos": riscos,
@@ -264,8 +410,25 @@ def detalhar_processo(request, target_id):
         "atividades": atividades,
         "sem_tratamento": sem_tratamento,
         "active_bar": "processo",
+        "form": form
     }
     return render(request, 'riscos/detalhar_processo.html', context)
+
+def importacao_confirm(request):
+    form2 = forms.FormConfirmacao(request.POST or None)
+    output_risco = request.session.get('output_risco')
+    output_plano = request.session.get('output_plano')
+    target_id = request.session.get('id_processo')
+    observacao = get_object_or_404(models.Processo, pk=target_id)
+    if form2.is_valid():
+        cadastrar_risco(observacao, output_risco)
+        cadastrar_plano(output_plano)
+        return redirect(reverse("riscos:detalhar_processo", kwargs={"target_id": target_id}))
+    context = {
+        "form2": form2,
+        "observacao": observacao
+    }
+    return render(request, 'riscos/importacao_confirm.html', context)
 
 def editar_processo(request, target_id):
     processo = get_object_or_404(models.Processo, pk=target_id)
@@ -362,6 +525,7 @@ def detalhar_risco(request, target_id):
     )
     x = [(x.id_impacto.nr_valor - (random.randint(20, 80)/100)) for x in riscos]
     y = [(y.id_probabilidade.nr_valor - (random.randint(20, 80)/100)) for y in riscos]
+    cor = [w.id_impacto.nr_valor * w.id_probabilidade.nr_valor for w in riscos]
     texto = [z.ds_risco for z in riscos]
     fator = observacao.id_impacto.nr_valor * observacao.id_probabilidade.nr_valor
     sem_tratamento = fator >= 12 and len(tratamentos) == 0
@@ -373,7 +537,11 @@ def detalhar_risco(request, target_id):
         "text": texto,
         "name": "riscos",
         "textposition": 'bottom center',
-        "marker": {"size": 12},
+        "marker": {
+            "size": 15,
+            "color": cor,
+            "colorscale": [[0, '#008000'], [0.2, "#FFD700"], [0.4, "#FF8C00"], [1, '#B22222']]
+        },
     }
     ponto = {
         "x": [observacao.id_impacto.nr_valor-(random.randint(20, 80)/100)],
@@ -383,7 +551,7 @@ def detalhar_risco(request, target_id):
         "text": [observacao.ds_risco],
         "name": observacao.ds_risco,
         "textposition": 'bottom center',
-        "marker": {"size": 18},
+        "marker": {"size": 25, "symbol": "star"},
     }
     context = {
         'observacao': observacao,
