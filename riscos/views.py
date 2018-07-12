@@ -351,6 +351,7 @@ def detalhar_processo(request, target_id):
     sem_tratamento = models.Risco.objects.filter(id_probabilidade__gte=LIMITE_GRAVES/F('id_impacto'), id_processo=target_id).exclude(pk__in=com_tratamento)
     x = [(x.id_impacto.nr_valor-(random.randint(10, 60)/100)) for x in riscos]
     y = [(y.id_probabilidade.nr_valor-(random.randint(10, 60)/100)) for y in riscos]
+    cor = [w.id_impacto.nr_valor * w.id_probabilidade.nr_valor for w in riscos]
     texto = [z.ds_risco for z in riscos]
     data = {
         "x": x,
@@ -359,7 +360,11 @@ def detalhar_processo(request, target_id):
         "type": 'scatter',
         "text": texto,
         "textposition": 'bottom center',
-        "marker": {"size": 12},
+        "marker": {
+            "size": 15,
+            "color": cor,
+            "colorscale": [[0, '#008000'], [0.08, "#FFD700"], [0.32, "#FF8C00"], [1, '#B22222']]
+        },
     }
     atividades = models.Atividade.objects.filter(id_processo=target_id).order_by("nr_atividade")
 
@@ -520,6 +525,7 @@ def detalhar_risco(request, target_id):
     )
     x = [(x.id_impacto.nr_valor - (random.randint(20, 80)/100)) for x in riscos]
     y = [(y.id_probabilidade.nr_valor - (random.randint(20, 80)/100)) for y in riscos]
+    cor = [w.id_impacto.nr_valor * w.id_probabilidade.nr_valor for w in riscos]
     texto = [z.ds_risco for z in riscos]
     fator = observacao.id_impacto.nr_valor * observacao.id_probabilidade.nr_valor
     sem_tratamento = fator >= 12 and len(tratamentos) == 0
@@ -531,7 +537,11 @@ def detalhar_risco(request, target_id):
         "text": texto,
         "name": "riscos",
         "textposition": 'bottom center',
-        "marker": {"size": 12},
+        "marker": {
+            "size": 15,
+            "color": cor,
+            "colorscale": [[0, '#008000'], [0.2, "#FFD700"], [0.4, "#FF8C00"], [1, '#B22222']]
+        },
     }
     ponto = {
         "x": [observacao.id_impacto.nr_valor-(random.randint(20, 80)/100)],
@@ -541,7 +551,7 @@ def detalhar_risco(request, target_id):
         "text": [observacao.ds_risco],
         "name": observacao.ds_risco,
         "textposition": 'bottom center',
-        "marker": {"size": 18},
+        "marker": {"size": 25, "symbol": "star"},
     }
     context = {
         'observacao': observacao,
